@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css" integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+	<title></title>
+</head>
+<body>
+	<nav class="navbar navbar-inverse navbar-static-top">
+
+		<div class="container">
+
+			<div class="navbar-header">
+				<a href=" {{ path_for('home') }}" class="navbar-brand">Matcha</a>
+			</div>
+
+			<div class="nav navbar-nav">
+				<li><a href="{{ path_for('contact') }}">Contact</a></li>
+			</div>
+
+			<div class="nav navbar-nav navbar-right">
+				{% if not user %}
+					<li><a href="{{ path_for('auth.signup') }}"><span class="glyphicon glyphicon-user"></span> Sign Up</a></li>
+					<li><a href="{{path_for('auth.login')}}"><span class="glyphicon glyphicon-log-in"></span> Login</a></li>
+				{% else %}
+					<li><a href="{{ path_for('logout') }}"><span class="glyphicon glyphicon-log-out"></span> Log Out</a></li>
+				{% endif %}
+
+			</div>
+
+		</div>
+	</nav>
+	{% block content %}{% endblock %}
+</body>
+</html>

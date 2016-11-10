@@ -1,0 +1,63 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<h1>Me contacter</h1>
+	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+
+	{% if flash.success %}
+		<div class="alert alert-success">
+			{{ flash.success }}
+		</div>
+	{% endif %}
+
+	{% if flash.error %}
+		<div class="alert alert-danger">
+			{{ flash.error }}
+		</div>
+	{% endif %}
+
+{# <pre> {{ dump(flash.errors) }} </pre>  #}
+{# <pre> {{ dump(old) }} </pre>  #}
+
+	<form action="{{ path_for('contact') }}" method="post">
+
+		{{ csrf() }}
+
+		<div class="form-group{% if flash.errors.name %} has-error {% endif %}" >
+			<label for ="name">Your name</label>
+			<input type="text" class="form-control" name="name" id="name" value="{{ old.name }}" required>
+			{% if flash.errors.name %}
+				<span class="help-block">{{ flash.errors.name }}</span>
+			{% endif %}
+		</div>
+
+		<div class="form-group{% if flash.errors.email %} has-error {% endif %}">
+			<label for ="email">Your email</label>
+			<input type="text" class="form-control" name="email" id="email" value="{{ old.email }}" required>
+			{% if flash.errors.email %}
+				<span class="help-block">{{ flash.errors.email }}</span>
+			{% endif %}
+		</div>
+
+		<div class="form-group{% if flash.errors.password %} has-error {% endif %}">
+			<label for ="password">Your password</label>
+			<input type="password" class="form-control" name="password" id="password" value="{{ old.password }}" required>
+			{% if flash.errors.password %}
+				<span class="help-block">{{ flash.errors.password }}</span>
+			{% endif %}
+		</div>
+
+		<div class="form-group{% if flash.errors.passwordConfirm  %} has-error {% endif %}">
+			<label for ="passwordConfirm">Confirm your password</label>
+			<input type="password" class="form-control" name="passwordConfirm" id="passwordConfirm" value="{{ old.passwordConfirm }}" required>
+			{% if flash.errors.passwordConfirm %}
+				<span class="help-block">{{ flash.errors.passwordConfirm }}</span>
+			{% endif %}
+		</div>
+
+		<div class="form-group">
+			<input type="submit" class="btn btn-primary" value="Envoyer">
+		</div>
+	</form>
+{% endblock %} 

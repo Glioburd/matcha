@@ -1,0 +1,123 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<div class="container">
+		<h1>Additional informations</h1>
+		<p>Please let us know who you are, don't be shy! Try to be the most precise so that we can find you the best matches possible!</p>
+
+	{% if flash.success %}
+		<div class="alert alert-success">
+			{{ flash.success }}
+		</div>
+	{% endif %}
+
+	{% if flash.error %}
+		<div class="alert alert-danger">
+			{{ flash.error }}
+		</div>
+	{% endif %}
+	</div>
+
+	<div class="container">
+		<form action="{{ path_for('auth.signupinfos') }}" method="post">
+
+			{{ csrf() }}
+
+			<div class="form-group{% if flash.errors.sexuality %} has-error {% endif %}">
+
+				<label for ="sexuality">Sexual orientation:</label> (Please check one)<br>
+
+				<label class="radio-inline" for="hetero">Heterosexual</label>
+				<input type="radio" name="sexuality" value="hetero">
+
+				<label class="radio-inline" for="homo">Homosexual</label>
+				<input type="radio" name="sexuality" value="homo">
+
+
+				<label class="radio-inline" for="bi">Bisexual</label>
+				<input type="radio" name="sexuality" value="bi">
+
+				{% if flash.errors.sexuality %}
+					<span class="help-block">{{ flash.errors.sexuality }}</span>
+				{% endif %}
+
+			</div>
+
+		<div class="form-group{% if flash.errors.hobbies %} has-error {% endif %}">
+			<label for="hobbies[]">I like to:</label> (Please check at least 4)
+
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="morph">Morph into creep colony</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="eat">Eat Terrans</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="invade">Invade Aiur</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="obey">Obey to the Overmind</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="gather">Gather minerals</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="infest">Infest command centers</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="praises">Praise sAviOr</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="praisej">Praise Jaedong</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="burrow">Burrow</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="explode">Suicide exploding on marines</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="spawn">Spawn more overlords</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="kill_vessels">Kill science vessels</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="plague">Plague marines</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="hide">Hide in dark swarms</label>
+				</div>
+
+		</div>
+
+		<div class="form-group{% if flash.errors.bio %} has-error {% endif %}">
+			<label for ="bio" >Your biography</label>
+			<textarea type="text" class="form-control" name="bio" id="bio" placeholder="Tell something about yourself" {# required #}>{{ old.bio }}</textarea>
+			{% if flash.errors.bio %}
+				<span class="help-block">{{ flash.errors.bio }}</span>
+			{% endif %}
+		</div>
+
+		<div class="form-group">
+			<input type="submit" class="btn btn-primary" value="Submit">
+		</div>
+	</div>
+	</form>
+
+{% endblock %} 

@@ -1,0 +1,20 @@
+{
+    "name": "gsauvair/slim3",
+    "description": "tuto slim3",
+    "authors": [
+        {
+            "name": "Guilhem",
+            "email": "glioburd@gmail.com"
+        }
+    ],
+    "autoload": {
+        "psr-4":{
+            "App\\":"app/"
+        }
+    },
+    "require": {
+        "slim/slim": "^3.5",
+        "slim/twig-view": "^2.1",
+        "slim/csrf": "^0.7.0"
+    }
+}

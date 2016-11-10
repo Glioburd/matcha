@@ -1,0 +1,49 @@
+{% extends "layout.twig" %}
+
+{% block content %}
+
+	<div class="container">
+		<h1>Log in</h1>
+		<p></p>
+
+		{% if flash.success %}
+			<div class="alert alert-success">
+				{{ flash.success }}
+			</div>
+		{% endif %}
+
+		{% if flash.error %}
+			<div class="alert alert-danger">
+				{{ flash.error }}
+			</div>
+		{% endif %}
+	</div>
+
+
+	<div class="container">
+		<form action="{{ path_for('auth.login') }}" method="post">
+
+			{{ csrf() }}
+
+			<div class="form-group{% if flash.errors.name %} has-error {% endif %}" >
+				<label for ="name">Username:</label>
+				<input type="text" class="form-control" name="name" id="name" value="{{ old.name }}" {# required #}>
+				{% if flash.errors.name %}
+					<span class="help-block">{{ flash.errors.name }}</span>
+				{% endif %}
+			</div>
+
+
+			<div class="form-group{% if flash.errors.password %} has-error {% endif %}">
+				<label for ="password">Your password</label>
+				<input type="password" class="form-control" name="password" id="password" value="{{ old.password }}" {# required #}>
+				{% if flash.errors.password %}
+					<span class="help-block">{{ flash.errors.password }}</span>
+				{% endif %}
+			</div>
+
+			<div class="form-group">
+				<input type="submit" class="btn btn-primary" value="Submit">
+		</form>
+	</div>
+{% endblock %} 
