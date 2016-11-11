@@ -38,7 +38,7 @@ class UserManagerPDO extends UserManager
 		$DB_REQ->execute();
 	}
 	
-	public function addHobbies(User $user, $hobbies, $id, $name) {
+	public function addHobbies(User $user, $hobbies) {
 
 		$hobbiesArray = array('morph',
 			'eat',
@@ -105,8 +105,8 @@ class UserManagerPDO extends UserManager
 				:plague,
 				:hide
 		)');
-		$DB_REQ->bindValue(':id_owner', $id);
-		$DB_REQ->bindValue(':name_owner', $name);
+		$DB_REQ->bindValue(':id_owner', $user->id());
+		$DB_REQ->bindValue(':name_owner', $user->name());
 		$DB_REQ->bindValue(':morph', $values['morph']);
 		$DB_REQ->bindValue(':eat', $values['eat']);
 		$DB_REQ->bindValue(':invade', $values['invade']);
@@ -183,35 +183,56 @@ class UserManagerPDO extends UserManager
 
 			$DB_REQ->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'App\Models\User');
 			$user = $DB_REQ->fetch();
-			// debug($user);
-			// $user->setDateCreation(new DateTime($user->created_at()));
-			// $user->setDateUpdate(new DateTime($user->updated_at()));
+			
+			$DB_REQ->closeCursor();
+
+			$DB_REQ = $this->DB_REQ->prepare('SELECT morph, eat, invade, obey, gather, infest, praises, praisej, burrow, explode, spawn, kill_vessels, plague, hide FROM hobbies WHERE :id_owner = :id_owner');
+			$DB_REQ->bindValue(':id_owner', $id, PDO::PARAM_INT);
+			$DB_REQ->execute();
+			$hobbies = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+
+			$user->setHobbies($hobbies);
 			
 			return $user;
 		}
 	}
 
-
-
-		public function getUniqueByName($name) {
-			if (isset($name) && !empty($name)) {
-				$DB_REQ = $this->DB_REQ->prepare('SELECT name, name, email, password, sexuality, bio, created_at, updated_at, isactive FROM users WHERE name = :name');
+		public function getIdFromName($name) {
+			if ($name) {
+				$DB_REQ = $this->DB_REQ->prepare('SELECT id from users WHERE name = :name');
 				$DB_REQ->bindValue(':name', $name);
 				$DB_REQ->execute();
-
-				$DB_REQ->setFetchMode(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'App\Models\User');
-				$user = $DB_REQ->fetch();
-
-				return $user;
+				$data = $DB_REQ->fetch();
+				return $data;
 			}
+			return NULL;
 		}
 	
-		public function getHobbiesByName($name)
-		{
-			if (isset($name && !empty($name))){ 
-				
-			}
-		}
+		// public function getHobbies(User $user)
+		// {
+		// 	if (!empty($user)){ 
+		// 		$DB_REQ = $this->DB_REQ->prepare('SELECT morph, eat, invade, obey, gather, infest, praises, praisej, burrow, explode, spawn, kill_vessels, plague, hide WHERE :id_owner = :id_owner');
+		// 		$DB_REQ->bindValue(':id_owner', $user->id());
+		// 		$DB_REQ->execute();
+		// 		$hobbies = $DB_REQ->fetchAll(PDO::FETCH_ASSOC);
+		// 		$user->setHobbies($hobbies);
+		// 		return true;
+		// 	}
+		// 	return false;	
+		// }
+
+		// public function getHobbiesByName(User $user)
+		// {
+		// 	if (!empty($user)){ 
+		// 		$DB_REQ = $this->DB_REQ->prepare('SELECT morph, eat, invade, obey, gather, infest, praises, praisej, burrow, explode, spawn, kill_vessels, plague, hide WHERE name_owner = :name_owner');
+		// 		$DB_REQ->bindValue(':name_owner', $user->name());
+		// 		$DB_REQ->execute();
+		// 		$hobbies = $DB_REQ->fetchAll(PDO::FETCH_ASSOC);
+		// 		$user->setHobbies($hobbies);
+		// 		return true;
+		// 	}
+		// 	return false;	
+		// }
 
 
 	/**
@@ -229,16 +250,49 @@ class UserManagerPDO extends UserManager
 		$DB_REQ->bindValue(':isactive', $user->isactive());
 		
 		$DB_REQ->execute();
+
 	}
 
-	protected function updateHobbies(User $user) {
-		$DB_REQ = $this->DB_REQ->prepare('UPDATE hobbies SET morph = :morph, eat = :eat, invade = :invade, obey = :obey, gather = :gather, infest = :infest, praises = :praises, praisej = :praisej, burrow = :burrow, explose = :explose, spawn = :spawn, kill_vessels = :kill_vessels, plague = :plague, hide = :hide WHERE id_owner = :id_owner');
-		
-		$DB_REQ->bindValue(':email', $user->email());
-		$DB_REQ->bindValue(':name', $user->name());
-		$DB_REQ->bindValue(':id', $user->id(), PDO::PARAM_INT);
-		$DB_REQ->bindValue(':isactive', $user->isactive());
-		
+/*
+** DEBUG
+*/
+
+	public function debugHobbies($id) {
+		$hobbies_user = [];
+
+		$DB_REQ = $this->DB_REQ->prepare('SELECT morph, eat, invade, obey, gather, infest, praises, praisej, burrow, explode, spawn, kill_vessels, plague, hide FROM hobbies WHERE :id_owner = :id_owner');
+		$DB_REQ->bindValue(':id_owner', (int) $id, PDO::PARAM_INT);
 		$DB_REQ->execute();
+		$hobbies = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+		echo 'HOBBIES IN DD' . '<br>';
+
+		$tmp = array_filter($hobbies);
+		$tmp = array_keys($tmp);
+
+		debug($tmp);
+
+
+
+
 	}
+
+	// protected function updateHobbies(User $user) {
+	// 	$DB_REQ = $this->DB_REQ->prepare('UPDATE hobbies SET morph = :morph, eat = :eat, invade = :invade, obey = :obey, gather = :gather, infest = :infest, praises = :praises, praisej = :praisej, burrow = :burrow, explose = :explose, spawn = :spawn, kill_vessels = :kill_vessels, plague = :plague, hide = :hide WHERE id_owner = :id_owner');
+	// 	$DB_REQ->bindValue(':morph', $user->['morph']);
+	// 	$DB_REQ->bindValue(':eat', $values['eat']);
+	// 	$DB_REQ->bindValue(':invade', $values['invade']);
+	// 	$DB_REQ->bindValue(':obey', $values['obey']);
+	// 	$DB_REQ->bindValue(':gather', $values['gather']);
+	// 	$DB_REQ->bindValue(':infest', $values['infest']);
+	// 	$DB_REQ->bindValue(':praises', $values['praises']);
+	// 	$DB_REQ->bindValue(':praisej', $values['praisej']);
+	// 	$DB_REQ->bindValue(':burrow', $values['burrow']);
+	// 	$DB_REQ->bindValue(':explode', $values['explode']);
+	// 	$DB_REQ->bindValue(':spawn', $values['spawn']);
+	// 	$DB_REQ->bindValue(':kill_vessels', $values['kill_vessels']);
+	// 	$DB_REQ->bindValue(':plague', $values['plague']);
+	// 	$DB_REQ->bindValue(':hide', $values['hide']);
+		
+	// 	$DB_REQ->execute();
+	// }
 }

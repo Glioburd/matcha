@@ -164,7 +164,8 @@ class User
 	}
 	
 	public function setHobbies($hobbies) {
-		$this->hobbies = $hobbies;
+		$tmp = array_filter($hobbies);
+		$this->hobbies = array_keys($tmp);
 	}
 
 	public function setDateCreation(DateTime $created_at)

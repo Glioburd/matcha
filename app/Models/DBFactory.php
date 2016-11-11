@@ -15,6 +15,6 @@ public static function getMysqlConnexionWithPDO()
 	
 	public static function getMysqlConnexionWithMySQLi()
 	{
-		return new MySQLi('localhost', 'root', 'root', 'codecourse');
+		return new MySQLi('localhost', 'root', 'root', 'slim3');
 	}
 }

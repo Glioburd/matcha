@@ -4,7 +4,9 @@
 
 	<div class="container">
 		<h1>Log in</h1>
-		<p></p>
+		<p>
+			Not a member yet? <a href="{{ path_for('auth.signup') }}">Sign up now !</a>
+		</p>
 
 		{% if flash.success %}
 			<div class="alert alert-success">

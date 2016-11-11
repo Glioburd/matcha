@@ -19,11 +19,13 @@ class PagesController extends Controller {
 	public function home($request, $response) {
 		session_start();
 		$user = unserialize($_SESSION['user']);
-		debug($user);
+		if (!isset($user) || empty($user)) {
+			return $this->redirect($response, 'auth.login', 200);
+		}
+
 		$this->render($response, 'pages/home.twig',[
 			'user' => $user
 			]);
-		session_destroy();
 	}
 
 	public function getContact($request, $response) {
@@ -127,15 +129,20 @@ class PagesController extends Controller {
 			session_start();
 			$id = $_SESSION['id'];
 			$name = $_SESSION['name'];
-			
+			$hobbies = $request->getParam('hobbies');
+
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$user = $UserManagerPDO->getUnique((int) $id);
 
 			$user->setBio($request->getParam('bio'));
 			$user->setSexuality($request->getParam('sexuality'));
+			$user->setHobbies($hobbies);
+
+			/* Save object user's profile to database in users table */
 			$UserManagerPDO->save($user);
-			debug($request->getParam('hobbies'));
-			$UserManagerPDO->addHobbies($user, $request->getParam('hobbies'), $id, $name);
+
+			/* Save object user's hobbies to database in hobbies table */
+			$UserManagerPDO->addHobbies($user, $hobbies);
 		}
 
 		else {
@@ -148,6 +155,7 @@ class PagesController extends Controller {
 	}
 
 	public function getLogIn($request, $response) {
+
 		return $this->render($response, 'pages/login.twig');
 	}
 
@@ -162,8 +170,9 @@ class PagesController extends Controller {
 				if (!Validator::passwordLogin($name, $password, $this->db)) {
 
 					$UserManagerPDO = new UserManagerPDO($this->db);
+					$id = $UserManagerPDO->getIdFromName($name);
+					$user = $UserManagerPDO->getUnique($id);
 
-					$user = $UserManagerPDO->getUniqueByName($name);
 					session_start();
 					$_SESSION['user'] = serialize($user);
 					setcookie("matcha_cookie", $_SESSION['user'], time() + 36000, "/");
