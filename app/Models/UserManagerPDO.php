@@ -202,8 +202,8 @@ class UserManagerPDO extends UserManager
 				$DB_REQ = $this->DB_REQ->prepare('SELECT id from users WHERE name = :name');
 				$DB_REQ->bindValue(':name', $name);
 				$DB_REQ->execute();
-				$data = $DB_REQ->fetch();
-				return $data;
+				$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+				return $data['id'];
 			}
 			return NULL;
 		}

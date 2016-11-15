@@ -1,26 +1,6 @@
-{% extends "layout.twig" %}
+{% extends "app.twig" %}
 
 {% block content %}
-
-	<div class="container">
-		<h1>Log in</h1>
-		<p>
-			Not a member yet? <a href="{{ path_for('auth.signup') }}">Sign up now !</a>
-		</p>
-
-		{% if flash.success %}
-			<div class="alert alert-success">
-				{{ flash.success }}
-			</div>
-		{% endif %}
-
-		{% if flash.error %}
-			<div class="alert alert-danger">
-				{{ flash.error }}
-			</div>
-		{% endif %}
-	</div>
-
 
 	<div class="container">
 		<form action="{{ path_for('auth.login') }}" method="post">

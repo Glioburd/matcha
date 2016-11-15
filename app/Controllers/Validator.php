@@ -7,7 +7,16 @@ use \PDO;
 * 
 */
 class Validator
+
 {
+
+	public static function isConnected() {
+		if (!isset($_SESSION['user']) || empty($_SESSION['user'])) {
+			return false;
+		}
+		return true;
+	}
+
 	public static function nameLengthCheck($name) {
 
 		if (strlen($name) < 2 || strlen($name) > 32) {
@@ -112,9 +121,12 @@ class Validator
 		$DB_REQ->execute();
 
 		$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
-		if (password_hash($password, PASSWORD_DEFAULT) != $data['password']) {
+
+		if (!password_verify($password, $data['password'])) {
+
 			return false;
 		}
+		
 		return true;
 	}
 

@@ -1,23 +1,10 @@
-{% extends "layout.twig" %}
+{% extends "app.twig" %}
 
 {% block content %}
 
 	<div class="container">
 		<h1>Additional informations</h1>
 		<p>Please let us know who you are, don't be shy! Try to be the most precise so that we can find you the best matches possible!</p>
-
-	{% if flash.success %}
-		<div class="alert alert-success">
-			{{ flash.success }}
-		</div>
-	{% endif %}
-
-	{% if flash.error %}
-		<div class="alert alert-danger">
-			{{ flash.error }}
-		</div>
-	{% endif %}
-	</div>
 
 	<div class="container">
 		<form action="{{ path_for('auth.signupinfos') }}" method="post">

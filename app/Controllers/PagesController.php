@@ -17,20 +17,29 @@ class PagesController extends Controller {
 	const NAME_DOESNT_EXISTS = 0;
 
 	public function home($request, $response) {
-		session_start();
-		$user = unserialize($_SESSION['user']);
-		if (!isset($user) || empty($user)) {
-			return $this->redirect($response, 'auth.login', 200);
+		if (Validator::isConnected()) {
+			$user = unserialize($_SESSION['user']);
+			$this->render($response, 'home.twig',[
+				'user' => $user
+				]);
+			// debug($user);
+			// debug($_SESSION['user']);
 		}
-
-		$this->render($response, 'pages/home.twig',[
-			'user' => $user
-			]);
+		else
+			return $this->redirect($response, 'auth.login', 200);	
 	}
 
 	public function getContact($request, $response) {
 
-		return $this->render($response, 'pages/contact.twig');
+		if (Validator::isConnected()) {
+			$user = unserialize($_SESSION['user']);
+			return $this->render($response, 'pages/contact.twig', [
+				'user' => $user
+				]);
+		}
+		else {
+			return $this->redirect($response, 'auth.login', 200);	
+		}
 	}
 
 	public function postContact($request, $response){
@@ -38,8 +47,12 @@ class PagesController extends Controller {
 	}
 
 	public function getSignUp($request, $response) {
-
+		if (!Validator::isConnected()) {
 			return $this->render($response, 'pages/signUp.twig');
+		}
+		else {
+			return $this->redirect($response, 'home', 200);	
+		}
 	}
 
 	public function postSignUp($request, $response){
@@ -88,7 +101,6 @@ class PagesController extends Controller {
 			$UserManagerPDO->save($user);
 			$last_id = $this->db->lastInsertId();
 
-			session_start();
 			$_SESSION['id'] = $last_id;
 			$_SESSION['name'] = $request->getParam('name');
 
@@ -126,7 +138,6 @@ class PagesController extends Controller {
 
 		if (empty($errors)) {
 
-			session_start();
 			$id = $_SESSION['id'];
 			$name = $_SESSION['name'];
 			$hobbies = $request->getParam('hobbies');
@@ -156,7 +167,12 @@ class PagesController extends Controller {
 
 	public function getLogIn($request, $response) {
 
-		return $this->render($response, 'pages/login.twig');
+		if (!Validator::isConnected()) {
+			return $this->render($response, 'pages/login.twig');
+		}
+		else {
+			return $this->redirect($response, 'home', 200);				
+		}
 	}
 
 	public function postLogIn($request, $response) {
@@ -167,13 +183,12 @@ class PagesController extends Controller {
 
 		if (Validator::loginNameCheck($name, $this->db)) {
 			if (Validator::isActive($name, $this->db)) {
-				if (!Validator::passwordLogin($name, $password, $this->db)) {
+				if (Validator::passwordLogin($name, $password, $this->db)) {
 
 					$UserManagerPDO = new UserManagerPDO($this->db);
 					$id = $UserManagerPDO->getIdFromName($name);
 					$user = $UserManagerPDO->getUnique($id);
 
-					session_start();
 					$_SESSION['user'] = serialize($user);
 					setcookie("matcha_cookie", $_SESSION['user'], time() + 36000, "/");
 				}
@@ -202,7 +217,6 @@ class PagesController extends Controller {
 	}
 
 	public function getLogOut($request, $response) {
-		session_start();
 		unset($_SESSION['user']);
 		setcookie("matcha_cookie", null, -1, "/");
 		session_destroy();
