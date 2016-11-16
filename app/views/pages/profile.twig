@@ -1,0 +1,55 @@
+{% extends "app.twig" %}
+
+{% block content %}
+{{userprofile.name}}'s profile.
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">Last seen:</h3>
+	</div>
+	<div class="panel-body">
+
+		{{ userprofile.updated_at|date("F jS \\a\\t g:ia") }}
+
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">Visitors:</h3>
+	</div>
+	<div class="panel-body">
+		Nobody lol
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">Biography:</h3>
+	</div>
+	<div class="panel-body">
+		{{userprofile.bio}}
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">Sexuality:</h3>
+	</div>
+	<div class="panel-body">
+		{{userprofile.sexuality}}
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">Hobbies:</h3>
+	</div>
+	<div class="panel-body">
+		{% for hobbies in user.hobbies %}
+		#{{ hobbies }}
+	{% endfor %}
+	</div>
+</div>
+
+{% endblock %} 

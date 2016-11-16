@@ -38,4 +38,6 @@ $app->post('/auth/login', 'App\Controllers\PagesController:postLogIn');
 
 $app->get('/logout', 'App\Controllers\PagesController:getLogOut')->setName('logout');
 
+$app->get('/profile/{userprofile}', 'App\Controllers\PagesController:getProfile')->setName('user.profile');
+
 $app->run();

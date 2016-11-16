@@ -1,6 +1,8 @@
 <?php
 
 namespace App\Models;
+use \DateTime;
+
 
 /**
  * Classe représentant une user, créée à l'occasion d'un TP du tutoriel « La programmation orientée objet en PHP » disponible sur http://www.openclassrooms.com/
@@ -198,14 +200,10 @@ class User
 		return $this->id;
 	}
 	
-
-
 	public function sayhi()
 	{
 		echo 'Hi';
 	}
-
-
 
 	public function name()
 	{

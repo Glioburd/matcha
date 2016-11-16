@@ -1,6 +1,11 @@
 <?php
 
 namespace App\Controllers;
+use \Datetime;
+use App\Controllers\Validator;
+use App\Models\UserManagerPDO;
+use App\Models\User;
+use \PDO;
 
 /**
 * 

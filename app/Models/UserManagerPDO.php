@@ -253,6 +253,19 @@ class UserManagerPDO extends UserManager
 
 	}
 
+	public function updateLastSeen(User $user) {
+
+		$DB_REQ = $this->DB_REQ->prepare('UPDATE users SET updated_at = NOW() WHERE id = :id');
+		
+		$DB_REQ->bindValue(':id', $user->id(), PDO::PARAM_INT);
+		// $DB_REQ->bindValue(':updated_at', NOW(), PDO::PARAM_STR);
+		
+		$DB_REQ->execute();
+
+		$date = new Datetime('now');
+		$user->setDateUpdate($date);
+	}
+
 /*
 ** DEBUG
 */

@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use \Datetime;
 use App\Controllers\Validator;
 use App\Models\UserManagerPDO;
 use App\Models\User;
@@ -26,7 +27,7 @@ class PagesController extends Controller {
 			// debug($_SESSION['user']);
 		}
 		else
-			return $this->redirect($response, 'auth.login', 200);	
+			return $this->redirect($response, 'auth.login', 200);
 	}
 
 	public function getContact($request, $response) {
@@ -38,7 +39,7 @@ class PagesController extends Controller {
 				]);
 		}
 		else {
-			return $this->redirect($response, 'auth.login', 200);	
+			return $this->redirect($response, 'auth.login', 200);
 		}
 	}
 
@@ -186,8 +187,12 @@ class PagesController extends Controller {
 				if (Validator::passwordLogin($name, $password, $this->db)) {
 
 					$UserManagerPDO = new UserManagerPDO($this->db);
+
 					$id = $UserManagerPDO->getIdFromName($name);
+
 					$user = $UserManagerPDO->getUnique($id);
+
+					$UserManagerPDO->updateLastSeen($user);					
 
 					$_SESSION['user'] = serialize($user);
 					setcookie("matcha_cookie", $_SESSION['user'], time() + 36000, "/");
@@ -221,5 +226,36 @@ class PagesController extends Controller {
 		setcookie("matcha_cookie", null, -1, "/");
 		session_destroy();
 		return $this->redirect($response, 'home', 200);
+	}
+
+	public function getProfile($request, $response, $args) {
+
+		if (Validator::isConnected()) {
+
+			$user = unserialize($_SESSION['user']);
+			$userprofile = $args['userprofile'];
+			$UserManagerPDO = new UserManagerPDO($this->db);
+
+			if ($idprofile = $UserManagerPDO->getIdFromName($userprofile)) {
+
+				$userprofile = $UserManagerPDO->getUnique($idprofile);
+				return $this->render($response, 'pages/profile.twig',[
+					'userprofile' => $userprofile,
+					'user' => $user
+				]);
+
+
+			}
+
+			else {
+
+				echo 'doesnt exists'; // a modifier + tard
+			}
+
+		}
+
+		else {
+			return $this->redirect($response, 'auth.login', 200);	
+		}
 	}
 }
