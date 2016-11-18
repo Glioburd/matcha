@@ -13,7 +13,7 @@
 					<input type="text" class="form-control" value="{{ user.name }}">
 				</div><!-- /input-group -->
 			</div><!-- /.col-lg-6 -->
-			
+
 		</div><!-- /.row -->
 	</div>
 </div>
@@ -29,7 +29,7 @@
 					<input type="email" class="form-control" value="{{ user.email }}">
 				</div><!-- /input-group -->
 			</div><!-- /.col-lg-6 -->
-			
+
 		</div><!-- /.row -->
 	</div>
 </div>
@@ -59,22 +59,12 @@
 {% for hobby in user.hobbies %}
 	{{hobby}}
 {% endfor %}</pre>
-								
+
 	<div class="panel-body">
 		<div class="form-group{% if flash.errors.hobbies %} has-error {% endif %}">
 
 				<div class="checkbox">
-
-					{% for hobby in user.hobbies %}
-
-						{% if hobby == hobbies[0] %}
-							<label><input type="checkbox" checked name="hobbies[]" value="morph" 
-						{% else %}
-							<label><input type="checkbox" name="hobbies[]" value="morph" 
-						{% endif %}
-									
-					{% endfor %}
-					>Morph into creep colony</label>
+							<label><input type="checkbox" checked name="hobbies[]" value="morph" {% if (user.hobbies["eat"]) %} checked {% endif %}>Morph into creep colony</label>
 				</div>
 
 				<div class="checkbox">

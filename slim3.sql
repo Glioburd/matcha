@@ -28,7 +28,7 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
+  `id` int(11) AUTO_INCREMENT PRIMARY KEY,
   `name` varchar(255) NOT NULL,
   `email` varchar(255) NOT NULL UNIQUE,
   `password` varchar(255) NOT NULL,
@@ -45,7 +45,7 @@ CREATE TABLE `users` (
 --
 
 CREATE TABLE `hobbies` (
-  `id` int(11) NOT NULL,
+  `id` int(11) AUTO_INCREMENT PRIMARY KEY,
   `id_owner` int(11) NOT NULL,
   `name_owner` varchar(255) NOT NULL,
   `morph` tinyint(4) UNSIGNED DEFAULT NULL COMMENT 'Morph into creep colony',
@@ -68,41 +68,8 @@ CREATE TABLE `hobbies` (
 -- Index pour les tables exportées
 --
 
---
--- Index pour la table `hobbies`
---
-ALTER TABLE `hobbies`
-  ADD PRIMARY KEY (`id`);
-
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
-
 ALTER TABLE `hobbies`
   ADD FOREIGN KEY (`id_owner`) REFERENCES users(id) ON DELETE CASCADE;
-
---
--- Index pour la table `users`
---
-
-
---
--- AUTO_INCREMENT pour les tables exportées
---
-
---
--- AUTO_INCREMENT pour la table `hobbies`
---
-ALTER TABLE `hobbies`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-
---
--- AUTO_INCREMENT pour la table `users`
---
-ALTER TABLE `users`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
-/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
-/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
-/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 
 --
 -- Contenu de la table `users`
@@ -117,5 +84,3 @@ INSERT INTO `users` (`id`, `name`, `email`, `password`, `bio`, `sexuality`, `cre
 
 INSERT INTO `hobbies` (`id`, `id_owner`, `name_owner`, `morph`, `eat`, `invade`, `obey`, `gather`, `infest`, `praises`, `praisej`, `burrow`, `explode`, `spawn`, `kill_vessels`, `plague`, `hide`) VALUES
 (1, 1, 'Admin', 1, 1, 1, 1, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-
-
