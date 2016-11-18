@@ -258,4 +258,36 @@ class PagesController extends Controller {
 			return $this->redirect($response, 'auth.login', 200);	
 		}
 	}
+
+	public function getSettings($request, $response) {
+
+		if (Validator::isConnected()) {
+
+			$user = unserialize($_SESSION['user']);
+			return $this->render($response, 'pages/settings.twig',[
+				'user' => $user
+			]);
+		}
+
+		else {
+
+			return $this->redirect($response, 'auth.login', 200);
+		}
+	}
+
+	public function getEdit($request, $response) {
+
+		if (Validator::isConnected()) {
+
+			$user = unserialize($_SESSION['user']);
+			return $this->render($response, 'pages/editProfile.twig',[
+				'user' => $user
+			]);
+		}
+
+		else {
+
+			return $this->redirect($response, 'auth.login', 200);
+		}
+	}
 }

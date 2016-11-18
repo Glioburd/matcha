@@ -17,7 +17,7 @@
 
 			<div class="form-group{% if flash.errors.email %} has-error {% endif %}">
 				<label for ="email">Your email</label>
-				<input type="text" class="form-control" name="email" id="email" value="{{ old.email }}" {# required #}>
+				<input type="email" class="form-control" name="email" id="email" value="{{ old.email }}" {# required #}>
 				{% if flash.errors.email %}
 					<span class="help-block">{{ flash.errors.email }}</span>
 				{% endif %}

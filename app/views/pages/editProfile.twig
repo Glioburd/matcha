@@ -1,0 +1,137 @@
+{% extends "app.twig" %}
+
+{% block content %}
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">Edit your name:</h3>
+	</div>
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="input-group">
+					<input type="text" class="form-control" value="{{ user.name }}">
+				</div><!-- /input-group -->
+			</div><!-- /.col-lg-6 -->
+			
+		</div><!-- /.row -->
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">Edit your mail:</h3>
+	</div>
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-lg-6">
+				<div class="input-group">
+					<input type="email" class="form-control" value="{{ user.email }}">
+				</div><!-- /input-group -->
+			</div><!-- /.col-lg-6 -->
+			
+		</div><!-- /.row -->
+	</div>
+</div>
+
+<div class="panel panel-default">
+	<div class="panel-heading">
+		<h3 class="panel-title">Edit your bio:</h3>
+	</div>
+	<div class="panel-body">
+		<div class="row">
+
+			<div class="col-lg-12">
+					<textarea class="form-control">{{ user.bio }}</textarea>
+			</div>
+
+		</div><!-- /.row -->
+	</div>
+</div>
+
+<div class="panel panel-default">
+
+	<div class="panel-heading">
+		<h3 class="panel-tite">Edit your hobbies:</h3>
+	</div>
+
+<pre>
+{% for hobby in user.hobbies %}
+	{{hobby}}
+{% endfor %}</pre>
+								
+	<div class="panel-body">
+		<div class="form-group{% if flash.errors.hobbies %} has-error {% endif %}">
+
+				<div class="checkbox">
+
+					{% for hobby in user.hobbies %}
+
+						{% if hobby == hobbies[0] %}
+							<label><input type="checkbox" checked name="hobbies[]" value="morph" 
+						{% else %}
+							<label><input type="checkbox" name="hobbies[]" value="morph" 
+						{% endif %}
+									
+					{% endfor %}
+					>Morph into creep colony</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" id="eat" name="hobbies[]" value="eat">Eat Terrans</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="invade">Invade Aiur</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="obey">Obey to the Overmind</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="gather">Gather minerals</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="infest">Infest command centers</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="praises">Praise sAviOr</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="praisej">Praise Jaedong</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="burrow">Burrow</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="explode">Suicide exploding on marines</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="spawn">Spawn more overlords</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="kill_vessels">Kill science vessels</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="plague">Plague marines</label>
+				</div>
+
+				<div class="checkbox">
+					<label><input type="checkbox" name="hobbies[]" value="hide">Hide in dark swarms</label>
+				</div>
+
+		</div>
+	</div>
+
+</div>
+
+{% endblock %}

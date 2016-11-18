@@ -21,6 +21,24 @@ SET time_zone = "+00:00";
 --
 
 -- --------------------------------------------------------
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `users`
+--
+
+CREATE TABLE `users` (
+  `id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL,
+  `email` varchar(255) NOT NULL UNIQUE,
+  `password` varchar(255) NOT NULL,
+  `bio` text,
+  `sexuality` varchar(255) DEFAULT 'bisexual',
+  `created_at` datetime NOT NULL,
+  `updated_at` datetime NOT NULL,
+  `isactive` tinyint(4) NOT NULL DEFAULT '1',
+  `rank` tinyint(4) NOT NULL DEFAULT '0'
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
 -- Structure de la table `hobbies`
@@ -47,38 +65,6 @@ CREATE TABLE `hobbies` (
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --
--- Contenu de la table `hobbies`
---
-
-INSERT INTO `hobbies` (`id`, `id_owner`, `name_owner`, `morph`, `eat`, `invade`, `obey`, `gather`, `infest`, `praises`, `praisej`, `burrow`, `explode`, `spawn`, `kill_vessels`, `plague`, `hide`) VALUES
-(1, 1, 'Glioburd', 1, 1, 1, 1, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
-
--- --------------------------------------------------------
-
---
--- Structure de la table `users`
---
-
-CREATE TABLE `users` (
-  `id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL,
-  `email` varchar(255) NOT NULL,
-  `password` varchar(255) NOT NULL,
-  `bio` text,
-  `sexuality` varchar(255) DEFAULT 'bisexual',
-  `created_at` datetime NOT NULL,
-  `updated_at` datetime NOT NULL,
-  `isactive` tinyint(4) NOT NULL DEFAULT '1'
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
-
---
--- Contenu de la table `users`
---
-
-INSERT INTO `users` (`id`, `name`, `email`, `password`, `bio`, `sexuality`, `created_at`, `updated_at`, `isactive`) VALUES
-(1, 'Glioburd', 'g@g.com', '$2y$10$ToC4Mag/3W7in1gJxTOWI.QoxQa2VrKnqoSGlNUAvBel13iuvtOqa', 'dsfdsfjdosfdoudsoifudsofudsoifudsoifudsoifds', 'hetero', '2016-11-10 17:53:37', '2016-11-10 18:03:43', 1);
-
---
 -- Index pour les tables exportées
 --
 
@@ -88,11 +74,16 @@ INSERT INTO `users` (`id`, `name`, `email`, `password`, `bio`, `sexuality`, `cre
 ALTER TABLE `hobbies`
   ADD PRIMARY KEY (`id`);
 
+ALTER TABLE `users`
+  ADD PRIMARY KEY (`id`);
+
+ALTER TABLE `hobbies`
+  ADD FOREIGN KEY (`id_owner`) REFERENCES users(id) ON DELETE CASCADE;
+
 --
 -- Index pour la table `users`
 --
-ALTER TABLE `users`
-  ADD PRIMARY KEY (`id`);
+
 
 --
 -- AUTO_INCREMENT pour les tables exportées
@@ -103,6 +94,7 @@ ALTER TABLE `users`
 --
 ALTER TABLE `hobbies`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+
 --
 -- AUTO_INCREMENT pour la table `users`
 --
@@ -111,3 +103,19 @@ ALTER TABLE `users`
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
 /*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+--
+-- Contenu de la table `users`
+--
+
+INSERT INTO `users` (`id`, `name`, `email`, `password`, `bio`, `sexuality`, `created_at`, `updated_at`, `isactive`, `rank`) VALUES
+(1, 'Admin', 'admin@matcha.com', '$2y$10$ToC4Mag/3W7in1gJxTOWI.QoxQa2VrKnqoSGlNUAvBel13iuvtOqa', 'dsfdsfjdosfdoudsoifudsofudsoifudsoifudsoifds', 'hetero', NOW(), NOW(), 1, 1);
+
+--
+-- Contenu de la table `hobbies`
+--
+
+INSERT INTO `hobbies` (`id`, `id_owner`, `name_owner`, `morph`, `eat`, `invade`, `obey`, `gather`, `infest`, `praises`, `praisej`, `burrow`, `explode`, `spawn`, `kill_vessels`, `plague`, `hide`) VALUES
+(1, 1, 'Admin', 1, 1, 1, 1, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+
+

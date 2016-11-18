@@ -16,9 +16,8 @@
 
 				<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ user.name }}<span class="caret"></span></a>
 					<ul class="dropdown-menu">
-						{# <li><a href="{{ path_for('user.profile')}} {{/}} {{ user.name }} "><span class="glyphicon glyphicon-user"></span> Profile</a></li> #}
 						<li><a href="{{ path_for('user.profile', { 'userprofile': user.name }) }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
-						<li><a href="#"><span class="glyphicon glyphicon-wrench"></span> Settings</a></li>
+						<li><a href="{{ path_for('user.settings') }}"><span class="glyphicon glyphicon-wrench"></span> Settings</a></li>
 						<li><a href="{{ path_for('logout') }}"><span class="glyphicon glyphicon-log-out"></span> Log Out</a></li>
 					</ul>
 				</li>
