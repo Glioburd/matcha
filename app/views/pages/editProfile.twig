@@ -56,67 +56,70 @@
 	</div>
 
 <pre>
-{% for hobby in user.hobbies %}
-	{{hobby}}
-{% endfor %}</pre>
+{{dump(user.hobbies)}}}</pre>
+ {% if "eat" in user.hobbies %}
+	{{"TRUE"}}
+	{% else %}
+	{{"FALSE"}}
+	{% endif %}
 
 	<div class="panel-body">
 		<div class="form-group{% if flash.errors.hobbies %} has-error {% endif %}">
 
 				<div class="checkbox">
-							<label><input type="checkbox" checked name="hobbies[]" value="morph" {% if (user.hobbies["eat"]) %} checked {% endif %}>Morph into creep colony</label>
+							<label><input type="checkbox" name="hobbies[]" value="morph" {% if "morph" in user.hobbies %} checked {% endif %}>Morph into creep colony</label>
 				</div>
 
 				<div class="checkbox">
-					<label><input type="checkbox" id="eat" name="hobbies[]" value="eat">Eat Terrans</label>
+					<label><input type="checkbox" name="hobbies[]" value="eat" {% if "eat" in user.hobbies %} checked {% endif %}>Eat Terrans</label>
 				</div>
 
 				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="invade">Invade Aiur</label>
+					<label><input type="checkbox" name="hobbies[]" value="invade" {% if "invade" in user.hobbies %} checked {% endif %}>Invade Aiur</label>
 				</div>
 
 				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="obey">Obey to the Overmind</label>
+					<label><input type="checkbox" name="hobbies[]" value="obey" {% if "obey" in user.hobbies %} checked {% endif %}>Obey to the Overmind</label>
 				</div>
 
 				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="gather">Gather minerals</label>
+					<label><input type="checkbox" name="hobbies[]" value="gather" {% if "gather" in user.hobbies %} checked {% endif %}>Gather minerals</label>
 				</div>
 
 				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="infest">Infest command centers</label>
+					<label><input type="checkbox" name="hobbies[]" value="infest"{% if "infest" in user.hobbies %} checked {% endif %}>Infest command centers</label>
 				</div>
 
 				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="praises">Praise sAviOr</label>
+					<label><input type="checkbox" name="hobbies[]" value="praises"{% if "praises" in user.hobbies %} checked {% endif %}>Praise sAviOr</label>
 				</div>
 
 				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="praisej">Praise Jaedong</label>
+					<label><input type="checkbox" name="hobbies[]" value="praisej" {% if "praisej" in user.hobbies %} checked {% endif %}>Praise Jaedong</label>
 				</div>
 
 				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="burrow">Burrow</label>
+					<label><input type="checkbox" name="hobbies[]" value="burrow" {% if "burrow" in user.hobbies %} checked {% endif %}>Burrow</label>
 				</div>
 
 				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="explode">Suicide exploding on marines</label>
+					<label><input type="checkbox" name="hobbies[]" value="explode" {% if "explode" in user.hobbies %} checked {% endif %}>Suicide exploding on marines</label>
 				</div>
 
 				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="spawn">Spawn more overlords</label>
+					<label><input type="checkbox" name="hobbies[]" value="spawn"{% if "spawn" in user.hobbies %} checked {% endif %}>Spawn more overlords</label>
 				</div>
 
 				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="kill_vessels">Kill science vessels</label>
+					<label><input type="checkbox" name="hobbies[]" value="kill_vessels" {% if "kill_vessels" in user.hobbies %} checked {% endif %}>Kill science vessels</label>
 				</div>
 
 				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="plague">Plague marines</label>
+					<label><input type="checkbox" name="hobbies[]" value="plague" {% if "plague" in user.hobbies %} checked {% endif %}>Plague marines</label>
 				</div>
 
 				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="hide">Hide in dark swarms</label>
+					<label><input type="checkbox" name="hobbies[]" value="hide" {% if "hide" in user.hobbies %} checked {% endif %}>Hide in dark swarms</label>
 				</div>
 
 		</div>
