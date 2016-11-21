@@ -11,6 +11,22 @@
 
 			{{ csrf() }}
 
+			<div class="form-group{% if flash.errors.gender %} has-error {% endif %}">
+
+				<label for ="gender">Gender:</label> (Please check one)<br>
+
+				<label class="radio-inline" for="male" checked>Male</label>
+				<input type="radio" name="gender" value="m">
+
+				<label class="radio-inline" for="female">Female</label>
+				<input type="radio" name="gender" value="f">
+
+				{% if flash.errors.gender %}
+					<span class="help-block">{{ flash.errors.gender }}</span>
+				{% endif %}
+
+			</div>
+
 			<div class="form-group{% if flash.errors.sexuality %} has-error {% endif %}">
 
 				<label for ="sexuality">Sexual orientation:</label> (Please check one)<br>
@@ -31,80 +47,82 @@
 
 			</div>
 
-		<div class="form-group{% if flash.errors.hobbies %} has-error {% endif %}">
-			<label for="hobbies[]">I like to:</label> (Please check at least 4)
+			<div class="form-group{% if flash.errors.hobbies %} has-error {% endif %}">
+				<label for="hobbies[]">I like to:</label> (Please check at least 4)
 
 
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="morph">Morph into creep colony</label>
-				</div>
+					<div class="checkbox">
+						<label><input type="checkbox" name="hobbies[]" value="morph">Morph into creep colony</label>
+					</div>
 
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="eat">Eat Terrans</label>
-				</div>
+					<div class="checkbox">
+						<label><input type="checkbox" name="hobbies[]" value="eat">Eat Terrans</label>
+					</div>
 
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="invade">Invade Aiur</label>
-				</div>
+					<div class="checkbox">
+						<label><input type="checkbox" name="hobbies[]" value="invade">Invade Aiur</label>
+					</div>
 
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="obey">Obey to the Overmind</label>
-				</div>
+					<div class="checkbox">
+						<label><input type="checkbox" name="hobbies[]" value="obey">Obey to the Overmind</label>
+					</div>
 
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="gather">Gather minerals</label>
-				</div>
+					<div class="checkbox">
+						<label><input type="checkbox" name="hobbies[]" value="gather">Gather minerals</label>
+					</div>
 
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="infest">Infest command centers</label>
-				</div>
+					<div class="checkbox">
+						<label><input type="checkbox" name="hobbies[]" value="infest">Infest command centers</label>
+					</div>
 
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="praises">Praise sAviOr</label>
-				</div>
+					<div class="checkbox">
+						<label><input type="checkbox" name="hobbies[]" value="praises">Praise sAviOr</label>
+					</div>
 
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="praisej">Praise Jaedong</label>
-				</div>
+					<div class="checkbox">
+						<label><input type="checkbox" name="hobbies[]" value="praisej">Praise Jaedong</label>
+					</div>
 
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="burrow">Burrow</label>
-				</div>
+					<div class="checkbox">
+						<label><input type="checkbox" name="hobbies[]" value="burrow">Burrow</label>
+					</div>
 
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="explode">Suicide exploding on marines</label>
-				</div>
+					<div class="checkbox">
+						<label><input type="checkbox" name="hobbies[]" value="explode">Suicide exploding on marines</label>
+					</div>
 
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="spawn">Spawn more overlords</label>
-				</div>
+					<div class="checkbox">
+						<label><input type="checkbox" name="hobbies[]" value="spawn">Spawn more overlords</label>
+					</div>
 
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="kill_vessels">Kill science vessels</label>
-				</div>
+					<div class="checkbox">
+						<label><input type="checkbox" name="hobbies[]" value="killVessels">Kill science vessels</label>
+					</div>
 
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="plague">Plague marines</label>
-				</div>
+					<div class="checkbox">
+						<label><input type="checkbox" name="hobbies[]" value="plague">Plague marines</label>
+					</div>
 
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="hide">Hide in dark swarms</label>
-				</div>
+					<div class="checkbox">
+						<label><input type="checkbox" name="hobbies[]" value="hide">Hide in dark swarms</label>
+					</div>
+				{% if flash.errors.hobbies %}
+					<span class="help-block">{{ flash.errors.hobbies }}</span>
+				{% endif %}
+			</div>
 
+			<div class="form-group{% if flash.errors.bio %} has-error {% endif %}">
+				<label for ="bio" >Your biography</label>
+				<textarea type="text" class="form-control" name="bio" id="bio" placeholder="Tell something about yourself" {# required #}>{{ old.bio }}</textarea>
+				{% if flash.errors.bio %}
+					<span class="help-block">{{ flash.errors.bio }}</span>
+				{% endif %}
+			</div>
+
+			<div class="form-group">
+				<input type="submit" class="btn btn-primary" value="Submit">
+			</div>
 		</div>
-
-		<div class="form-group{% if flash.errors.bio %} has-error {% endif %}">
-			<label for ="bio" >Your biography</label>
-			<textarea type="text" class="form-control" name="bio" id="bio" placeholder="Tell something about yourself" {# required #}>{{ old.bio }}</textarea>
-			{% if flash.errors.bio %}
-				<span class="help-block">{{ flash.errors.bio }}</span>
-			{% endif %}
-		</div>
-
-		<div class="form-group">
-			<input type="submit" class="btn btn-primary" value="Submit">
-		</div>
-	</div>
 	</form>
 
 {% endblock %} 

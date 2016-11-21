@@ -129,8 +129,12 @@ class PagesController extends Controller {
 			$errors['bio'] = 'Your description must contain at least 20 characters. Don\'t be shy!';
 		}
 
-		if (!Validator::sexualityCheck($request->getParam('sexuality'))) {
-			$errors['sexuality'] = 'You must check a sexual orientation';
+		if (!Validator::radioCheck($request->getParam('sexuality'))) {
+			$errors['sexuality'] = 'You must pick a sexual orientation';
+		}
+
+		if (!Validator::radioCheck($request->getParam('gender'))) {
+			$errors['gender'] = 'You must pick a gender';
 		}
 
 		if (!Validator::hobbiesCheck($request->getParam('hobbies'))) {
@@ -148,6 +152,7 @@ class PagesController extends Controller {
 
 			$user->setBio($request->getParam('bio'));
 			$user->setSexuality($request->getParam('sexuality'));
+			$user->setGender($request->getParam('gender'));
 			$user->setHobbies($hobbies);
 
 			/* Save object user's profile to database in users table */
@@ -162,11 +167,18 @@ class PagesController extends Controller {
 			$this->flash($errors, 'errors');
 			return $this->redirect($response, 'auth.signupinfos', 302);
 		}
+
 		unset($_SESSION['id']);
+		unset($_SESSION['name']);
+		// debug($request->getParams());
 		return $this->redirect($response, 'home', 200);
 	}
 
 	public function getLogIn($request, $response) {
+		if ($this->container->debug) {
+			echo "USER:<br>";
+			debug($user);
+		}
 
 		if (!Validator::isConnected()) {
 			return $this->render($response, 'pages/login.twig');
@@ -174,6 +186,7 @@ class PagesController extends Controller {
 		else {
 			return $this->redirect($response, 'home', 200);				
 		}
+
 	}
 
 	public function postLogIn($request, $response) {
@@ -233,12 +246,14 @@ class PagesController extends Controller {
 		if (Validator::isConnected()) {
 
 			$user = unserialize($_SESSION['user']);
-			$userprofile = $args['userprofile'];
+			$userprofilearg = $args['userprofile'];
 			$UserManagerPDO = new UserManagerPDO($this->db);
 
-			if ($idprofile = $UserManagerPDO->getIdFromName($userprofile)) {
+			if ($idprofile = $UserManagerPDO->getIdFromName($userprofilearg)) {
 
 				$userprofile = $UserManagerPDO->getUnique($idprofile);
+								// debug($userprofile);
+								debug($user);
 				return $this->render($response, 'pages/profile.twig',[
 					'userprofile' => $userprofile,
 					'user' => $user
@@ -289,5 +304,69 @@ class PagesController extends Controller {
 
 			return $this->redirect($response, 'auth.login', 200);
 		}
+	}
+
+	public function postEdit($request, $response) {
+
+		$errors = [];
+		$user = unserialize($_SESSION['user']);
+
+		if ($request->getParam('name') != $user->name() && !Validator::nameAvailability($request->getParam('name'), $this->db)) {
+			$errors['name'] = 'Username already used.';
+		}
+
+		if (!Validator::nameLengthCheck($request->getParam('name'))) {
+			$errors['name'] = 'Your username must contain between 2 and 32 characters.';
+		}
+
+		if ($request->getParam('email') != $user->email()) {
+
+			if (Validator::mailCheck($request->getParam('email'), $this->container->db) === INVALID_EMAIL) {
+				$errors['email'] = 'E-mail adress is invalid.';
+			}
+
+			elseif (Validator::mailCheck($request->getParam('email'), $this->container->db) === EMAIL_ALREADY_EXISTS) {
+				$errors['email'] = 'E-mail is already used.';
+			}
+		}	
+
+		if (!Validator::bioLengthCheck($request->getParam('bio'))) {
+			$errors['bio'] = 'Your description must contain at least 20 characters. Don\'t be shy!';
+		}
+
+		if (!Validator::radioCheck($request->getParam('sexuality'))) {
+			$errors['sexuality'] = 'You must pick a sexual orientation';
+		}
+
+		if (!Validator::hobbiesCheck($request->getParam('hobbies'))) {
+			$errors['hobbies'] = 'You must pick at least 4 hobbies';
+		}
+
+		if (!Validator::hobbiesCheck($request->getParam('hobbies'))) {
+			$errors['hobbies'] = 'You must pick at least 4 hobbies';
+		}
+
+		if (empty($errors)) {
+
+			$user->setBio($request->getParam('bio'));
+			$user->setName($request->getParam('name'));
+			$user->setEmail($request->getParam('email'));
+			$user->setGender($request->getParam('gender'));
+			$user->updateHobbies($request->getParam('hobbies'));
+
+			$UserManagerPDO = new UserManagerPDO($this->db);
+			$UserManagerPDO->update($user);
+			$UserManagerPDO->updateHobbies($user, $request->getParam('hobbies'));
+			$_SESSION['user'] = serialize($user);
+		}
+
+		else {
+			$this->flash('One field has not been filled correctly ☹', 'error');	
+			$this->flash($errors, 'errors');
+			return $this->redirect($response, 'user.edit', 302);
+		}
+
+		$this->flash('Your informations have been succesfully updated ☺', 'success');	
+		return $this->redirect($response, 'user.edit', 200);
 	}
 }

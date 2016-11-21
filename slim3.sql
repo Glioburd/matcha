@@ -29,9 +29,10 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `users` (
   `id` int(11) AUTO_INCREMENT PRIMARY KEY,
-  `name` varchar(255) NOT NULL,
+  `name` varchar(255) NOT NULL UNIQUE,
   `email` varchar(255) NOT NULL UNIQUE,
   `password` varchar(255) NOT NULL,
+  `gender` char(1),
   `bio` text,
   `sexuality` varchar(255) DEFAULT 'bisexual',
   `created_at` datetime NOT NULL,
@@ -47,7 +48,6 @@ CREATE TABLE `users` (
 CREATE TABLE `hobbies` (
   `id` int(11) AUTO_INCREMENT PRIMARY KEY,
   `id_owner` int(11) NOT NULL,
-  `name_owner` varchar(255) NOT NULL,
   `morph` tinyint(4) UNSIGNED DEFAULT NULL COMMENT 'Morph into creep colony',
   `eat` tinyint(4) UNSIGNED DEFAULT NULL COMMENT 'Eat Terrans',
   `invade` tinyint(4) UNSIGNED DEFAULT NULL COMMENT 'Invade Aiur',
@@ -59,7 +59,7 @@ CREATE TABLE `hobbies` (
   `burrow` tinyint(4) UNSIGNED DEFAULT NULL COMMENT 'Burrow',
   `explode` tinyint(4) UNSIGNED DEFAULT NULL COMMENT 'Die while exploding',
   `spawn` tinyint(4) UNSIGNED DEFAULT NULL COMMENT 'Spawn more overlords',
-  `kill_vessels` tinyint(4) UNSIGNED DEFAULT NULL COMMENT 'Kill science vessels',
+  `killVessels` tinyint(4) UNSIGNED DEFAULT NULL COMMENT 'Kill science vessels',
   `plague` tinyint(4) UNSIGNED DEFAULT NULL COMMENT 'Plague marines',
   `hide` tinyint(4) UNSIGNED DEFAULT NULL COMMENT 'Hide in dark swarms'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
@@ -75,12 +75,14 @@ ALTER TABLE `hobbies`
 -- Contenu de la table `users`
 --
 
-INSERT INTO `users` (`id`, `name`, `email`, `password`, `bio`, `sexuality`, `created_at`, `updated_at`, `isactive`, `rank`) VALUES
-(1, 'Admin', 'admin@matcha.com', '$2y$10$ToC4Mag/3W7in1gJxTOWI.QoxQa2VrKnqoSGlNUAvBel13iuvtOqa', 'dsfdsfjdosfdoudsoifudsofudsoifudsoifudsoifds', 'hetero', NOW(), NOW(), 1, 1);
+INSERT INTO `users` (`id`, `name`, `email`, `password`, `bio`, `gender`, `sexuality`, `created_at`, `updated_at`, `isactive`, `rank`) VALUES
+(1, 'Admin', 'admin@matcha.com', '$2y$10$ToC4Mag/3W7in1gJxTOWI.QoxQa2VrKnqoSGlNUAvBel13iuvtOqa', 'dsfdsfjdosfdoudsoifudsofudsoifudsoifudsoifds', 'm','hetero', NOW(), NOW(), 1, 1);
 
 --
 -- Contenu de la table `hobbies`
 --
 
-INSERT INTO `hobbies` (`id`, `id_owner`, `name_owner`, `morph`, `eat`, `invade`, `obey`, `gather`, `infest`, `praises`, `praisej`, `burrow`, `explode`, `spawn`, `kill_vessels`, `plague`, `hide`) VALUES
-(1, 1, 'Admin', 1, 1, 1, 1, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+-- INSERT INTO `hobbies` (`id`, `id_owner`, `morph`, `eat`, `invade`, `obey`, `gather`, `infest`, `praises`, `praisej`, `burrow`, `explode`, `spawn`, `killVessels`, `plague`, `hide`) VALUES
+-- (1, 1, 1, 1, 1, 1, 1, 1, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 1);
+INSERT INTO `hobbies` (`id_owner`, `morph`, `eat`, `invade`, `obey`) VALUES
+(1, 1, 1, 1, 1);

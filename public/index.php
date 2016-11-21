@@ -42,6 +42,7 @@ $app->get('/profile/{userprofile}', 'App\Controllers\PagesController:getProfile'
 $app->post('/profile/{userprofile}', 'App\Controllers\PagesController:postProfile');
 
 $app->get('/edit', 'App\Controllers\PagesController:getEdit')->setName('user.edit');
+$app->post('/edit', 'App\Controllers\PagesController:postEdit');
 
 $app->get('/settings', 'App\Controllers\PagesController:getSettings')->setName('user.settings');
 

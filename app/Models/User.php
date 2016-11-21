@@ -16,6 +16,7 @@ class User
 			$name,
 			$email,
 			$bio,
+			$gender,
 			$sexuality,
 			$password,
 			$created_at,
@@ -170,6 +171,10 @@ class User
 		$this->hobbies = array_keys($tmp);
 	}
 
+	public function updateHobbies($hobbies) {
+		$this->hobbies = $hobbies;
+	}
+
 	public function setDateCreation(DateTime $created_at)
 	{
 		$this->created_at = $created_at;
@@ -182,6 +187,10 @@ class User
 
 	public function setisactive($isactive){
 		$this->isactive = $isactive;
+	}
+
+	public function setGender($gender){
+		$this->gender = $gender;
 	}
 	
 	// GETTERS //
@@ -225,6 +234,11 @@ class User
 		return $this->sexuality;
 	}
 
+	public function gender()
+	{
+		return $this->gender;
+	}
+
 	public function password()
 	{
 		return $this->password;
@@ -234,7 +248,7 @@ class User
 	{
 		return $this->created_at;
 	}
-	
+
 	public function updated_at()
 	{
 		return $this->updated_at;

@@ -1,130 +1,179 @@
 {% extends "app.twig" %}
 
 {% block content %}
+<div class="container">
+	<form action="{{ path_for('user.edit') }}" method="post">
 
-<div class="panel panel-default">
-	<div class="panel-heading">
-		<h3 class="panel-title">Edit your name:</h3>
-	</div>
-	<div class="panel-body">
-		<div class="row">
-			<div class="col-lg-6">
-				<div class="input-group">
-					<input type="text" class="form-control" value="{{ user.name }}">
-				</div><!-- /input-group -->
-			</div><!-- /.col-lg-6 -->
+	{{ csrf() }}
 
-		</div><!-- /.row -->
-	</div>
-</div>
+		<div class="panel panel-default{% if flash.errors.name %} has-error {% endif %}">
 
-<div class="panel panel-default">
-	<div class="panel-heading">
-		<h3 class="panel-title">Edit your mail:</h3>
-	</div>
-	<div class="panel-body">
-		<div class="row">
-			<div class="col-lg-6">
-				<div class="input-group">
-					<input type="email" class="form-control" value="{{ user.email }}">
-				</div><!-- /input-group -->
-			</div><!-- /.col-lg-6 -->
-
-		</div><!-- /.row -->
-	</div>
-</div>
-
-<div class="panel panel-default">
-	<div class="panel-heading">
-		<h3 class="panel-title">Edit your bio:</h3>
-	</div>
-	<div class="panel-body">
-		<div class="row">
-
-			<div class="col-lg-12">
-					<textarea class="form-control">{{ user.bio }}</textarea>
+			<div class="panel-heading">
+				<h3 class="panel-title">Edit your name:</h3>
 			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-6">
+						<div class="input-group">
+							<input type="text" class="form-control" name="name" id="name" value="{{ user.name }}">
+							{% if flash.errors.name %}
+								<span class="help-block">{{ flash.errors.name }}</span>
+							{% endif %}
+						</div><!-- /input-group -->
+					</div><!-- /.col-lg-6 -->
 
-		</div><!-- /.row -->
-	</div>
-</div>
+				</div><!-- /.row -->
+			</div>
+		</div>
 
-<div class="panel panel-default">
+		<div class="panel panel-default{% if flash.errors.email %} has-error {% endif %}">
+			<div class="panel-heading">
+				<h3 class="panel-title">Edit your mail:</h3>
+			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-6">
+						<div class="input-group">
+							<input type="email" class="form-control" name="email" id="email" value="{{ user.email }}">
+							{% if flash.errors.email %}
+							<span class="help-block">{{ flash.errors.email }}</span>
+							{% endif %}
+						</div><!-- /input-group -->
+					</div><!-- /.col-lg-6 -->
 
-	<div class="panel-heading">
-		<h3 class="panel-tite">Edit your hobbies:</h3>
-	</div>
+				</div><!-- /.row -->
+			</div>
+		</div>
 
-<pre>
-{{dump(user.hobbies)}}}</pre>
- {% if "eat" in user.hobbies %}
-	{{"TRUE"}}
-	{% else %}
-	{{"FALSE"}}
-	{% endif %}
+		<div class="form-group{% if flash.errors.gender %} has-error {% endif %}">
 
-	<div class="panel-body">
-		<div class="form-group{% if flash.errors.hobbies %} has-error {% endif %}">
+			<label for ="gender">Edit your gender:</label><br>
 
-				<div class="checkbox">
-							<label><input type="checkbox" name="hobbies[]" value="morph" {% if "morph" in user.hobbies %} checked {% endif %}>Morph into creep colony</label>
-				</div>
+			<label class="radio-inline" for="male" checked>Male</label>
+			<input type="radio" name="gender" value="m">
 
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="eat" {% if "eat" in user.hobbies %} checked {% endif %}>Eat Terrans</label>
-				</div>
-
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="invade" {% if "invade" in user.hobbies %} checked {% endif %}>Invade Aiur</label>
-				</div>
-
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="obey" {% if "obey" in user.hobbies %} checked {% endif %}>Obey to the Overmind</label>
-				</div>
-
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="gather" {% if "gather" in user.hobbies %} checked {% endif %}>Gather minerals</label>
-				</div>
-
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="infest"{% if "infest" in user.hobbies %} checked {% endif %}>Infest command centers</label>
-				</div>
-
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="praises"{% if "praises" in user.hobbies %} checked {% endif %}>Praise sAviOr</label>
-				</div>
-
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="praisej" {% if "praisej" in user.hobbies %} checked {% endif %}>Praise Jaedong</label>
-				</div>
-
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="burrow" {% if "burrow" in user.hobbies %} checked {% endif %}>Burrow</label>
-				</div>
-
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="explode" {% if "explode" in user.hobbies %} checked {% endif %}>Suicide exploding on marines</label>
-				</div>
-
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="spawn"{% if "spawn" in user.hobbies %} checked {% endif %}>Spawn more overlords</label>
-				</div>
-
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="kill_vessels" {% if "kill_vessels" in user.hobbies %} checked {% endif %}>Kill science vessels</label>
-				</div>
-
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="plague" {% if "plague" in user.hobbies %} checked {% endif %}>Plague marines</label>
-				</div>
-
-				<div class="checkbox">
-					<label><input type="checkbox" name="hobbies[]" value="hide" {% if "hide" in user.hobbies %} checked {% endif %}>Hide in dark swarms</label>
-				</div>
+			<label class="radio-inline" for="female">Female</label>
+			<input type="radio" name="gender" value="f">
 
 		</div>
-	</div>
 
+		<div class="panel panel-default{% if flash.errors.sexuality %} has-error {% endif %}">
+			<div class="panel-heading">
+				<h3 class="panel-title">Edit your sexual orientation:</h3>
+			</div>
+			<div class="panel-body">
+				<label class="radio-inline" for="hetero">Heterosexual</label>
+				<input type="radio" name="sexuality" value="hetero" {% if "hetero" in user.sexuality %}  checked {% endif %}>
+
+				<label class="radio-inline" for="homo">Homosexual</label>
+				<input type="radio" name="sexuality" value="homo" {% if "homo" in user.sexuality %}  checked {% endif %}>
+
+				<label class="radio-inline" for="bi">Bisexual</label>
+				<input type="radio" name="sexuality" value="bi" {% if "bi" in user.sexuality %}  checked {% endif %}>
+			</div>
+
+			{% if flash.errors.sexuality %}
+				<span class="help-block">{{ flash.errors.sexuality }}</span>
+			{% endif %}
+		</div>
+
+
+
+		<div class="panel panel-default">
+
+			<div class="panel-heading">
+				<h3 class="panel-tite">Edit your hobbies:</h3>
+			</div>
+
+			<pre>{{dump(user.hobbies)}}}</pre>
+
+				<div class="panel-body">
+					<div class="form-group{% if flash.errors.hobbies %} has-error {% endif %}">
+
+							<div class="checkbox">
+										<label><input type="checkbox" name="hobbies[]" value="morph" {% if "morph" in user.hobbies %} checked {% endif %}>Morph into creep colony</label>
+							</div>
+
+							<div class="checkbox">
+								<label><input type="checkbox" name="hobbies[]" value="eat" {% if "eat" in user.hobbies %} checked {% endif %}>Eat Terrans</label>
+							</div>
+
+							<div class="checkbox">
+								<label><input type="checkbox" name="hobbies[]" value="invade" {% if "invade" in user.hobbies %} checked {% endif %}>Invade Aiur</label>
+							</div>
+
+							<div class="checkbox">
+								<label><input type="checkbox" name="hobbies[]" value="obey" {% if "obey" in user.hobbies %} checked {% endif %}>Obey to the Overmind</label>
+							</div>
+
+							<div class="checkbox">
+								<label><input type="checkbox" name="hobbies[]" value="gather" {% if "gather" in user.hobbies %} checked {% endif %}>Gather minerals</label>
+							</div>
+
+							<div class="checkbox">
+								<label><input type="checkbox" name="hobbies[]" value="infest"{% if "infest" in user.hobbies %} checked {% endif %}>Infest command centers</label>
+							</div>
+
+							<div class="checkbox">
+								<label><input type="checkbox" name="hobbies[]" value="praises"{% if "praises" in user.hobbies %} checked {% endif %}>Praise sAviOr</label>
+							</div>
+
+							<div class="checkbox">
+								<label><input type="checkbox" name="hobbies[]" value="praisej" {% if "praisej" in user.hobbies %} checked {% endif %}>Praise Jaedong</label>
+							</div>
+
+							<div class="checkbox">
+								<label><input type="checkbox" name="hobbies[]" value="burrow" {% if "burrow" in user.hobbies %} checked {% endif %}>Burrow</label>
+							</div>
+
+							<div class="checkbox">
+								<label><input type="checkbox" name="hobbies[]" value="explode" {% if "explode" in user.hobbies %} checked {% endif %}>Suicide exploding on marines</label>
+							</div>
+
+							<div class="checkbox">
+								<label><input type="checkbox" name="hobbies[]" value="spawn"{% if "spawn" in user.hobbies %} checked {% endif %}>Spawn more overlords</label>
+							</div>
+
+							<div class="checkbox">
+								<label><input type="checkbox" name="hobbies[]" value="killVessels" {% if "killVessels" in user.hobbies %} checked {% endif %}>Kill science vessels</label>
+							</div>
+
+							<div class="checkbox">
+								<label><input type="checkbox" name="hobbies[]" value="plague" {% if "plague" in user.hobbies %} checked {% endif %}>Plague marines</label>
+							</div>
+
+							<div class="checkbox">
+								<label><input type="checkbox" name="hobbies[]" value="hide" {% if "hide" in user.hobbies %} checked {% endif %}>Hide in dark swarms</label>
+							</div>
+						{% if flash.errors.hobbies %}
+							<span class="help-block">{{ flash.errors.hobbies }}</span>
+						{% endif %}
+					</div>
+
+				</div>
+
+			<div class="panel panel-default">
+				<div class="panel-heading">
+					<h3 class="panel-title">Edit your bio:</h3>
+				</div>
+				<div class="panel-body">
+					<div class="row">
+						<div class="col-lg-12">
+								<textarea class="form-control" name="bio" id="bio" >{{ user.bio }}</textarea>
+								{% if flash.errors.bio %}
+									<span class="help-block">{{ flash.errors.bio }}</span>
+								{% endif %}
+						</div>
+
+					</div><!-- /.row -->
+				</div>
+			</div>
+
+			<div class="form-group">
+				<input type="submit" class="btn btn-primary" value="Submit">
+			</div>
+
+		</div>
+	</form>
 </div>
-
 {% endblock %}

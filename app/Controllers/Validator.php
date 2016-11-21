@@ -26,6 +26,18 @@ class Validator
 		return true;
 	}
 
+	public static function nameAvailability($name, $db) {
+
+		$DB_REQ = $db->prepare('SELECT name FROM users WHERE name = :name');
+		$DB_REQ->bindParam(':name', $name);
+		$DB_REQ->execute();
+		if($DB_REQ->rowCount() > 0){
+			return false;
+		}
+
+		return true;
+	}
+
 	public static function mailCheck($email, $db) {
 		if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
 			return INVALID_EMAIL;
@@ -74,12 +86,13 @@ class Validator
 		return true;
 	}
 
-	public static function sexualityCheck($sexuality) {
-		if (empty($sexuality)) {
+	public static function radioCheck($data) {
+		if (empty($data)) {
 			return false;
 		}
 		return true;
 	}
+
 
 	public function hobbiesCheck($hobbies) {
 		$checked_arr = $hobbies;
@@ -130,23 +143,4 @@ class Validator
 		return true;
 	}
 
-	// public static function sexualityCheck($hobbies) {
-	// 	if () {
-	// 		return false;
-	// 	}
-	// 	return true;
-	// }
-
-	// public function checkMail($mail) {
-
-	// 	$DB_REQ = $DB_PDO->prepare("SELECT email FROM users WHERE email = :email");
-	// 	$DB_REQ->bindParam(':email', $email);
-	// 	$DB_REQ->execute();
-
-	// 	if($DB_REQ->rowCount() > 0){
-	// 		error_popup("This e-mail is already used.");
-	// 		return false;
-	// 	}	
-	// 	return true;
-	// }
 }
