@@ -4,12 +4,20 @@
 <h1>{{userprofile.name}}'s profile.</h1>
 
 <div class="container">
-
+{###------------------------------------------------------------------------------------------------------------------###}
+{####------------------------------------------EDIT BUTTON------------------------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
 	{% if userprofile.name == user.name %}
+
 		<form action="{{ path_for('user.edit') }}">
 			<button type="submit" class="btn btn-primary">Edit profile</button>
 		</form>
+
 	{% endif %}
+
+{###------------------------------------------------------------------------------------------------------------------###}
+{###---------------------------------------------LAST SEEN PANNEL-----------------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
 
 	<div class="panel panel-default">
 		<div class="panel-heading">
@@ -21,6 +29,11 @@
 
 		</div>
 	</div>
+
+{###------------------------------------------------------------------------------------------------------------------###}
+{###---------------------------------------------GALLERY PANNEL-------------------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
+
 	<div class="panel panel-default">
 
 			<div class="panel-heading">
@@ -29,35 +42,38 @@
 
 			<div class="panel-body">
 				<div class="row">
-				<div class="col-xs-6 col-md-3">
-					<a href="#" class="thumbnail">
-						<img src="http://hd4desktop.online/images/m/a-hydralisk-starcraft-artwork-HD-Wallpaper.jpg" alt="...">
-					</a>
+					<div class="col-xs-6 col-md-3">
+						<a href="#" class="thumbnail">
+							<img src="http://hd4desktop.online/images/m/a-hydralisk-starcraft-artwork-HD-Wallpaper.jpg" alt="...">
+						</a>
+
+					</div>
+
+					<div class="col-xs-6 col-md-3">
+						<a href="#" class="thumbnail">
+							<img src="http://hd4desktop.online/images/m/a-hydralisk-starcraft-artwork-HD-Wallpaper.jpg" alt="...">
+						</a>
+					</div>
+
+					<div class="col-xs-6 col-md-3">
+						<a href="#" class="thumbnail">
+							<img src="http://hd4desktop.online/images/m/a-hydralisk-starcraft-artwork-HD-Wallpaper.jpg" alt="...">
+						</a>
+					</div>
+
+					<div class="col-xs-6 col-md-3">
+						<a href="#" class="thumbnail">
+							<img src="http://hd4desktop.online/images/m/a-hydralisk-starcraft-artwork-HD-Wallpaper.jpg" alt="...">
+						</a>
+					</div>
 
 				</div>
-
-				<div class="col-xs-6 col-md-3">
-					<a href="#" class="thumbnail">
-						<img src="http://hd4desktop.online/images/m/a-hydralisk-starcraft-artwork-HD-Wallpaper.jpg" alt="...">
-					</a>
-				</div>
-
-				<div class="col-xs-6 col-md-3">
-					<a href="#" class="thumbnail">
-						<img src="http://hd4desktop.online/images/m/a-hydralisk-starcraft-artwork-HD-Wallpaper.jpg" alt="...">
-					</a>
-				</div>
-
-				<div class="col-xs-6 col-md-3">
-					<a href="#" class="thumbnail">
-						<img src="http://hd4desktop.online/images/m/a-hydralisk-starcraft-artwork-HD-Wallpaper.jpg" alt="...">
-					</a>
-				</div>
-
-			</div>
 		</div>
 	</div>
 
+{###------------------------------------------------------------------------------------------------------------------###}
+{###------------------------------------------VISITORS PANNEL---------------------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
 
 	<div class="panel panel-default">
 		<div class="panel-heading">
@@ -68,6 +84,10 @@
 		</div>
 	</div>
 
+{###------------------------------------------------------------------------------------------------------------------###}
+{###------------------------------------------BIOGRAPHY PANNEL--------------------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
+
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<h3 class="panel-title">Biography:</h3>
@@ -77,6 +97,11 @@
 		</div>
 	</div>
 
+{###------------------------------------------------------------------------------------------------------------------###}
+{###------------------------------------------SEXUALITY PANNEL--------------------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
+
+
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<h3 class="panel-title">Sexuality:</h3>
@@ -85,6 +110,11 @@
 			{{userprofile.sexuality}}
 		</div>
 	</div>
+
+
+{###------------------------------------------------------------------------------------------------------------------###}
+{###------------------------------------------HOBBIES PANNEL----------------------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
 
 	<div class="panel panel-default">
 		<div class="panel-heading">
@@ -96,5 +126,6 @@
 		{% endfor %}
 		</div>
 	</div>
+	
 </div>
 {% endblock %} 
