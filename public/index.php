@@ -18,8 +18,8 @@ require ('../app/container.php');
 $container = $app->getContainer();
 $app->add(new FlashMiddleware($container->view->getEnvironment()));
 $app->add(new OldMiddleware($container->view->getEnvironment()));
-$app->add(new App\Middlewares\TwigCsrfMiddleware($container->view->getEnvironment(), $container->csrf));
-$app->add($container->csrf);
+// $app->add(new App\Middlewares\TwigCsrfMiddleware($container->view->getEnvironment(), $container->csrf));
+// $app->add($container->csrf);
 
 
 $app->get('/', 'App\Controllers\PagesController:home')->setName('home');
@@ -45,5 +45,11 @@ $app->get('/edit', 'App\Controllers\PagesController:getEdit')->setName('user.edi
 $app->post('/edit', 'App\Controllers\PagesController:postEdit');
 
 $app->get('/settings', 'App\Controllers\PagesController:getSettings')->setName('user.settings');
+
+// $app->get('/edit', 'App\Controllers\PagesController:getEdit')->setName('user.edit');
+$app->get('/uploadpic', 'App\Controllers\PagesController:getUploadPicture')->setName('upload.picture');
+$app->post('/uploadpic', 'App\Controllers\PagesController:postUploadPicture');
+
+$app->post('/uploadpic2', 'App\Controllers\PagesController:postUploadPicture2')->setName('upload.picture2');;
 
 $app->run();

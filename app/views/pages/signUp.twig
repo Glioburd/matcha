@@ -5,7 +5,7 @@
 	<div class="container">
 		<form action="{{ path_for('auth.signup') }}" method="post">
 
-			{{ csrf() }}
+			{# {{ csrf() }} #}
 
 			<div class="form-group{% if flash.errors.name %} has-error {% endif %}" >
 				<label for ="name">Your name</label>

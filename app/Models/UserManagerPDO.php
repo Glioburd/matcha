@@ -259,6 +259,15 @@ class UserManagerPDO extends UserManager
 			$hobbies = $DB_REQ->fetch(PDO::FETCH_ASSOC);
 			// debug((int) $id);
 			$user->setHobbies($hobbies);
+
+			$DB_REQ->closeCursor();
+
+			$DB_REQ = $this->DB_REQ->prepare('SELECT src FROM pictures WHERE id_owner = :id_owner');
+			$DB_REQ->bindValue(':id_owner', $id, PDO::PARAM_INT);
+			$DB_REQ->execute();
+			$pictures= $DB_REQ->fetch(PDO::FETCH_ASSOC);
+			// debug($pictures);
+			$user->setPictures($pictures['src']);
 			
 			return $user;
 		}
@@ -305,6 +314,15 @@ class UserManagerPDO extends UserManager
 
 		$date = new Datetime('now');
 		$user->setDateUpdate($date);
+	}
+
+	public function addPicture($src, User $user) {
+		$DB_REQ = $this->DB_REQ->prepare('INSERT INTO pictures (id_owner, src) VALUES (:id_owner, :src)');
+		$DB_REQ->bindValue(':id_owner', $user->id());
+		$DB_REQ->bindValue(':src', $src);
+		$DB_REQ->execute();
+
+		// $user->addPicture($src);
 	}
 
 /*

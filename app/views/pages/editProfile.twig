@@ -1,15 +1,48 @@
 {% extends "app.twig" %}
 
 {% block content %}
-<div class="container">
-	<form action="{{ path_for('user.edit') }}" method="post">
 
-	{{ csrf() }}
+<h1>Edit Your Profile:</h1>
+
+<div class="container">
+
+{###------------------------------------------------------------------------------------------------------------------###}
+{###------------------------------------------EDIT GALERY*********----------------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
+
+<h2>Pictures:</h2>
+{{flash.errors.image }}
+<div class="panel panel-default{% if flash.errors.image %} has-error {% endif %}">
+
+			<div class="panel-heading">
+				<h3 class="panel-title">Edit your gallery:</h3>
+			</div>
+
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-6">
+						<form action="{{ path_for('upload.picture') }}" method="post" enctype="multipart/form-data">
+							Select image to upload:							
+							<input type="file" name="fileToUpload" id="fileToUpload">
+							<div class="form-group">
+								<input type="submit" class="btn btn-primary" value="Upload Image" name="submit">
+								{% if flash.errors.image %}
+									<span class="help-block">{{ flash.errors.image }}</span>
+								{% endif %}
+							</div>
+						</form>
+					</div>
+				</div>
+			</div>
+		</div>
+<hr>
 
 {###------------------------------------------------------------------------------------------------------------------###}
 {###------------------------------------------EDIT NAME PANNEL--------------------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
 
+<h2>Infos:</h2>
+	<form action="{{ path_for('user.edit') }}" method="post">
 		<div class="panel panel-default{% if flash.errors.name %} has-error {% endif %}">
 
 			<div class="panel-heading">
@@ -54,20 +87,26 @@
 			</div>
 		</div>
 
+
 {###------------------------------------------------------------------------------------------------------------------###}
 {###------------------------------------------EDIT GENDER PANNEL------------------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
 
-		<div class="form-group{% if flash.errors.gender %} has-error {% endif %}">
+		<div class="panel panel-default{% if flash.errors.gender %} has-error {% endif %}">
+			<div class="panel-heading">
+				<label for ="gender">Edit your gender:</label><br>
+			</div>
+			<div class="panel-body">
+				<label class="radio-inline" for="male">Male</label>
+				<input type="radio" name="gender" value="m" {% if user.gender == "m" %} checked {% endif %}>
 
-			<label for ="gender">Edit your gender:</label><br>
+				<label class="radio-inline" for="female">Female</label>
+				<input type="radio" name="gender" value="f" {% if user.gender == "f" %} checked {% endif %}>
+			</div>
 
-			<label class="radio-inline" for="male" checked>Male</label>
-			<input type="radio" name="gender" value="m">
-
-			<label class="radio-inline" for="female">Female</label>
-			<input type="radio" name="gender" value="f">
-
+			{% if flash.errors.gender %}
+				<span class="help-block">{{ flash.errors.gender }}</span>
+			{% endif %}
 		</div>
 
 {###------------------------------------------------------------------------------------------------------------------###}
@@ -80,13 +119,13 @@
 			</div>
 			<div class="panel-body">
 				<label class="radio-inline" for="hetero">Heterosexual</label>
-				<input type="radio" name="sexuality" value="hetero" {% if "hetero" in user.sexuality %}  checked {% endif %}>
+				<input type="radio" name="sexuality" value="hetero" {% if "hetero" in user.sexuality %} checked {% endif %}>
 
 				<label class="radio-inline" for="homo">Homosexual</label>
-				<input type="radio" name="sexuality" value="homo" {% if "homo" in user.sexuality %}  checked {% endif %}>
+				<input type="radio" name="sexuality" value="homo" {% if "homo" in user.sexuality %} checked {% endif %}>
 
 				<label class="radio-inline" for="bi">Bisexual</label>
-				<input type="radio" name="sexuality" value="bi" {% if "bi" in user.sexuality %}  checked {% endif %}>
+				<input type="radio" name="sexuality" value="bi" {% if "bi" in user.sexuality %} checked {% endif %}>
 			</div>
 
 			{% if flash.errors.sexuality %}
@@ -103,8 +142,6 @@
 			<div class="panel-heading">
 				<h3 class="panel-tite">Edit your hobbies:</h3>
 			</div>
-
-			<pre>{{dump(user.hobbies)}}}</pre>
 
 				<div class="panel-body">
 					<div class="form-group{% if flash.errors.hobbies %} has-error {% endif %}">
@@ -203,4 +240,5 @@
 	
 	</form>
 </div>
+
 {% endblock %}

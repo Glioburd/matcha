@@ -9,5 +9,5 @@ function console_log( $data ){
 function debug ( $data ) {
 	echo '<pre>';
 	var_dump($data);
-	echo '</pre>';
+	echo '</pre>';	
 }

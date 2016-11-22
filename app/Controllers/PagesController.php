@@ -18,16 +18,23 @@ class PagesController extends Controller {
 	const NAME_DOESNT_EXISTS = 0;
 
 	public function home($request, $response) {
+
 		if (Validator::isConnected()) {
+
 			$user = unserialize($_SESSION['user']);
 			$this->render($response, 'home.twig',[
 				'user' => $user
 				]);
-			// debug($user);
-			// debug($_SESSION['user']);
+
+			if ($this->container->debug) {
+				echo "<pre><h2>USER:</h2></pre>";
+				debug($user);
+			}
+
 		}
 		else
 			return $this->redirect($response, 'auth.login', 200);
+
 	}
 
 	public function getContact($request, $response) {
@@ -252,8 +259,14 @@ class PagesController extends Controller {
 			if ($idprofile = $UserManagerPDO->getIdFromName($userprofilearg)) {
 
 				$userprofile = $UserManagerPDO->getUnique($idprofile);
-								// debug($userprofile);
-								debug($user);
+				
+				if ($this->container->debug) {
+					echo "<pre><h2>USERPROFILE:" . $userprofile->name() . "</h2></pre>";
+					debug($userprofile);
+					echo "<pre><h2>USER:" . $user->name() . "</h2></pre>";
+					debug($user);
+				}
+
 				return $this->render($response, 'pages/profile.twig',[
 					'userprofile' => $userprofile,
 					'user' => $user
@@ -338,8 +351,8 @@ class PagesController extends Controller {
 			$errors['sexuality'] = 'You must pick a sexual orientation';
 		}
 
-		if (!Validator::hobbiesCheck($request->getParam('hobbies'))) {
-			$errors['hobbies'] = 'You must pick at least 4 hobbies';
+		if (!Validator::radioCheck($request->getParam('gender'))) {
+			$errors['gender'] = 'You must pick a gender';
 		}
 
 		if (!Validator::hobbiesCheck($request->getParam('hobbies'))) {
@@ -369,4 +382,84 @@ class PagesController extends Controller {
 		$this->flash('Your informations have been succesfully updated ☺', 'success');	
 		return $this->redirect($response, 'user.edit', 200);
 	}
+
+	public function postUploadPicture($request, $response) {
+
+		define('MB', 1048576);
+		$user = unserialize($_SESSION['user']);
+		$errors = [];
+		$target_dir = __DIR__ . '/../../uploads/' . $user->id() . '/';
+		$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
+		$uploadOk = 1;
+		$imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
+
+		// Check if image file is a actual image or fake image
+
+		if(!empty($request->getParam('submit'))) {
+
+			$check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
+			if($check !== false) {
+				$errors['image'] = "File is an image - " . $check["mime"] . ".";
+				$uploadOk = 1;
+			}
+
+			else {
+				$errors['image'] = "File is not an image.";
+				$uploadOk = 0;
+			}
+		}
+
+
+		if (!file_exists($target_dir)) {
+			if (!mkdir($target_dir)) {
+				// $errors['image'] =  "An error occured when making your gallery folder.";
+				$errors['image'] =  $target_dir;
+
+				$uploadOk = 0;
+			}
+		}
+
+		if (file_exists($target_file)) {
+			$errors['image'] =  "Sorry, file already exists.";
+			$uploadOk = 0;
+		}
+
+		// Check file size
+		if ($_FILES["fileToUpload"]["size"] > 5 * MB) {
+			$errors['image'] =  "Sorry, your file is too large.";
+			$uploadOk = 0;
+		}
+
+		// Allow certain file formats
+
+		if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
+		&& $imageFileType != "gif" ) {
+			$errors['image'] =  "Only JPG, JPEG, PNG & GIF files are allowed.";
+			$uploadOk = 0;
+		}
+
+		// Check if $uploadOk is set to 0 by an error
+
+		if ($uploadOk == 0) {
+			$this->flash("Sorry, your file was not uploaded.", 'error');
+			$this->flash($errors, 'errors');
+			return $this->redirect($response, 'user.edit', 302);
+
+		// if everything is ok, try to upload file
+
+		} else {
+			if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
+				$this->flash("The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded ☺.");
+				$UserManagerPDO = new UserManagerPDO($this->db);
+				$UserManagerPDO->addPicture($target_file, $user);
+				$_SESSION['user'] = serialize($UserManagerPDO->getUnique($user->id()));
+				return $this->redirect($response, 'user.edit', 200);
+			} else {
+				$errors['image'] =  "Sorry, there was an error uploading your file.";
+				$this->flash($errors, 'errors');
+				return $this->redirect($response, 'user.edit', 302);
+			}
+		}
+	}
+
 }

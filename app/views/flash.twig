@@ -1,15 +1,17 @@
 {###------------------------------------------------------------------------------------------------------------------###}
 {###------------------------------------------ALERT PANNEL------------------------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
+<div class="container">
+	{% if flash.success %}
+		<div class="alert alert-success">
+			{{ flash.success }}
+		</div>
+	{% endif %}
 
-{% if flash.success %}
-	<div class="alert alert-success">
-		{{ flash.success }}
-	</div>
-{% endif %}
+		{% if flash.error %}
+		<div class="alert alert-danger">
+			{{ flash.error }}
+		</div>
 
-	{% if flash.error %}
-	<div class="alert alert-danger">
-		{{ flash.error }}
-	</div>
-{% endif %}
+	{% endif %}
+</div>

@@ -22,6 +22,7 @@ class User
 			$created_at,
 			$updated_at,
 			$isactive,
+			$pictures = [],
 			$hobbies = [];
 	
 	/**
@@ -141,31 +142,13 @@ class User
 			$this->password = $password;
 		}
 	}
+	
+	public function setPictures($src) {
+		// $tmp = array_filter($pictures);
+		// $this->pictures = array_keys($tmp);
+		$this->pictures[] = $src;
+	}
 
-	public function setTitre($titre)
-	{
-		if (!is_string($titre) || empty($titre))
-		{
-			$this->erreurs[] = self::TITRE_INVALIDE;
-		}
-		else
-		{
-			$this->titre = $titre;
-		}
-	}
-	
-	public function setContenu($contenu)
-	{
-		if (!is_string($contenu) || empty($contenu))
-		{
-			$this->erreurs[] = self::CONTENU_INVALIDE;
-		}
-		else
-		{
-			$this->contenu = $contenu;
-		}
-	}
-	
 	public function setHobbies($hobbies) {
 		$tmp = array_filter($hobbies);
 		$this->hobbies = array_keys($tmp);
