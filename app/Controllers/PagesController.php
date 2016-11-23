@@ -271,6 +271,7 @@ class PagesController extends Controller {
 					debug($user);
 					echo "Difference entre user et userprofile : <br>";
 					print_r(recursive_array_diff((array)$user, (array)$userprofile));
+					debug($_SESSION['debug']);
 				}
 
 				return $this->render($response, 'pages/profile.twig',[

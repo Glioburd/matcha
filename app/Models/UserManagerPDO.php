@@ -291,9 +291,11 @@ class UserManagerPDO extends UserManager
 			$DB_REQ->bindValue(':id_owner', $id, PDO::PARAM_INT);
 			$DB_REQ->bindValue(':ismainpic', 0, PDO::PARAM_INT);
 			$DB_REQ->execute();
-			$pictures= $DB_REQ->fetch(PDO::FETCH_ASSOC);
+			$pictures= $DB_REQ->fetchAll(PDO::FETCH_COLUMN);
 
-			$user->setPictures($pictures['src']);
+			$_SESSION['debug'] = $pictures;
+
+			$user->setPictures($pictures);
 			
 			$DB_REQ->closeCursor();
 

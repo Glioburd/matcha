@@ -146,7 +146,7 @@ class User
 	
 	public function setPictures($src) {
 
-		$this->pictures[] = $src;
+		$this->pictures = $src;
 	}
 
 	public function setMainPicture ($src) {

@@ -27,8 +27,8 @@ class TwigCsrfMiddleware
 			$name = $request->getAttribute($nameKey);
 			$value = $request->getAttribute($valueKey);
 			return "
-			<input type=\"text\" name=\"$nameKey\" value=\"$name\">
-			<input type=\"text\" name=\"$valueKey\" value=\"$value\">
+			<input type=\"hidden\" name=\"$nameKey\" value=\"$name\">
+			<input type=\"hidden\" name=\"$valueKey\" value=\"$value\">
 			";
 		}, ['is_safe' => ['html']]));
 		return $next($request, $response);

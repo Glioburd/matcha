@@ -62,18 +62,17 @@
 			<div class="panel-body">
 				<div class="row">
 
+					{% if userprofile.mainpicture %}
+						{% set href, src = '../' ~ userprofile.mainpicture, '../' ~ userprofile.mainpicture %}
+					{% else %}
+						{% set href, src = "#", "http://hd4desktop.online/images/m/a-hydralisk-starcraft-artwork-HD-Wallpaper.jpg" %}						
+					{% endif %}
+
 					<div class="col-xs-6 col-md-offset-3">
-						<a href="#" class="thumbnail">
-							<img 
-							{% if userprofile.mainpicture %}
-								src="../{{userprofile.mainpicture}}"
-							{% else %}
-								src="http://hd4desktop.online/images/m/a-hydralisk-starcraft-artwork-HD-Wallpaper.jpg" 
-							{% endif %}
-							 alt="profile picture">
+						<a href="{{href}}" class="thumbnail">
+							<img src="{{src}}" alt="profile picture">
 						</a>
 					</div>
-
 				</div>
 		</div>
 	</div>
@@ -90,54 +89,19 @@
 
 			<div class="panel-body">
 				<div class="row">
-					<div class="col-xs-6 col-md-3">
-						<a href="#" class="thumbnail">
-							<img 
-							{% if userprofile.pictures[0] %}
-								src="../{{userprofile.pictures[0]}}"
-							{% else %}
-								src="http://hd4desktop.online/images/m/a-hydralisk-starcraft-artwork-HD-Wallpaper.jpg" 
-							{% endif %}
-							 alt="profile picture">
-						</a>
 
-					</div>
-
-					<div class="col-xs-6 col-md-3">
-						<a href="#" class="thumbnail">
-							<img 
-							{% if userprofile.pictures[1] %}
-								src="../{{userprofile.pictures[1]}}"
+					{% for i in 0..3 %}
+							{% if userprofile.pictures[i] %}
+								{% set href, src = '../' ~ userprofile.pictures[i], '../' ~ userprofile.pictures[i] %}
 							{% else %}
-								src="http://hd4desktop.online/images/m/a-hydralisk-starcraft-artwork-HD-Wallpaper.jpg" 
-							{% endif %}
-							 alt="profile picture">
-						</a>
-					</div>
-
-					<div class="col-xs-6 col-md-3">
-						<a href="#" class="thumbnail">
-							<img 
-							{% if userprofile.pictures[2] %}
-								src="../{{userprofile.pictures[2]}}"
-							{% else %}
-								src="http://hd4desktop.online/images/m/a-hydralisk-starcraft-artwork-HD-Wallpaper.jpg" 
-							{% endif %}
-							 alt="profile picture">
-						</a>
-					</div>
-
-					<div class="col-xs-6 col-md-3">
-						<a href="#" class="thumbnail">
-							<img 
-							{% if userprofile.pictures[3] %}
-								src="../{{userprofile.pictures[3]}}"
-							{% else %}
-								src="http://hd4desktop.online/images/m/a-hydralisk-starcraft-artwork-HD-Wallpaper.jpg" 
-							{% endif %}
-							 alt="profile picture">
-						</a>
-					</div>
+								{% set href, src = "#", "http://hd4desktop.online/images/m/a-hydralisk-starcraft-artwork-HD-Wallpaper.jpg" %}						
+						{% endif %}
+						<div class="col-xs-6 col-md-3">
+							<a href="{{href}}" class="thumbnail">
+								<img src="{{src}}" alt="profile picture">
+							</a>
+						</div>	
+					{% endfor %}
 
 				</div>
 		</div>
