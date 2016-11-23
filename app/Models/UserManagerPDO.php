@@ -29,7 +29,9 @@ class UserManagerPDO extends UserManager
 	 */
 	protected function add(User $user)
 	{
-		$DB_REQ = $this->DB_REQ->prepare('INSERT INTO users(name, email, password, created_at, updated_at) VALUES(:name, :email, :password, NOW(), NOW())');
+		$DB_REQ = $this->DB_REQ->prepare('
+			INSERT INTO users(name, email, password, created_at, updated_at)
+			VALUES(:name, :email, :password, NOW(), NOW())');
 		
 		$DB_REQ->bindValue(':name', $user->name());
 		$DB_REQ->bindValue(':email', $user->email());
@@ -197,7 +199,9 @@ class UserManagerPDO extends UserManager
 	 */
 	public function count()
 	{
-		return $this->DB_REQ->query('SELECT COUNT(*) FROM users')->fetchColumn();
+		return $this->DB_REQ->query('
+			SELECT COUNT(*)
+			FROM users')->fetchColumn();
 	}
 	
 	/**
@@ -205,7 +209,10 @@ class UserManagerPDO extends UserManager
 	 */
 	public function delete($id)
 	{
-		$this->DB_REQ->exec('DELETE FROM users WHERE id = '.(int) $id);
+		$this->DB_REQ->exec('
+			DELETE FROM users
+			WHERE id = '.(int) $id
+			);
 	}
 	
 	/**
@@ -213,7 +220,11 @@ class UserManagerPDO extends UserManager
 	 */
 	public function getList($debut = -1, $limite = -1)
 	{
-		$sql = 'SELECT id, name, email, password, created_at, updated_at, isactive FROM users ORDER BY id DESC';
+		$sql = '
+		SELECT id, name, email, password, created_at, updated_at, isactive
+		FROM users
+		ORDER BY
+			id DESC';
 		
 		// On vérifie l'intégrité des paramètres fournis.
 		if ($debut != -1 || $limite != -1)
@@ -244,7 +255,11 @@ class UserManagerPDO extends UserManager
 	public function getUnique($id)
 	{
 		if (isset($id) && !empty($id)) {
-			$DB_REQ = $this->DB_REQ->prepare('SELECT id, name, email, password, gender, sexuality, bio, created_at, updated_at, isactive FROM users WHERE id = :id');
+			$DB_REQ = $this->DB_REQ->prepare('
+				SELECT id, name, email, password, gender, sexuality, bio, created_at, updated_at, isactive 
+				FROM users 
+				WHERE id = :id
+				');
 			$DB_REQ->bindValue(':id', (int) $id, PDO::PARAM_INT);
 			$DB_REQ->execute();
 
@@ -253,29 +268,59 @@ class UserManagerPDO extends UserManager
 			
 			$DB_REQ->closeCursor();
 
-			$DB_REQ = $this->DB_REQ->prepare('SELECT morph, eat, invade, obey, gather, infest, praises, praisej, burrow, explode, spawn, killVessels, plague, hide FROM hobbies WHERE id_owner = :id_owner');
+			$DB_REQ = $this->DB_REQ->prepare('
+				SELECT morph, eat, invade, obey, gather, infest, praises, praisej, burrow, explode, spawn, killVessels, plague, hide
+				FROM hobbies
+				WHERE id_owner = :id_owner
+				');
 			$DB_REQ->bindValue(':id_owner', $id, PDO::PARAM_INT);
 			$DB_REQ->execute();
 			$hobbies = $DB_REQ->fetch(PDO::FETCH_ASSOC);
-			// debug((int) $id);
+
 			$user->setHobbies($hobbies);
 
 			$DB_REQ->closeCursor();
 
-			$DB_REQ = $this->DB_REQ->prepare('SELECT src FROM pictures WHERE id_owner = :id_owner');
+			$DB_REQ = $this->DB_REQ->prepare('
+
+				SELECT src FROM pictures
+				WHERE id_owner = :id_owner
+					AND ismainpic = :ismainpic'
+					);
+
 			$DB_REQ->bindValue(':id_owner', $id, PDO::PARAM_INT);
+			$DB_REQ->bindValue(':ismainpic', 0, PDO::PARAM_INT);
 			$DB_REQ->execute();
 			$pictures= $DB_REQ->fetch(PDO::FETCH_ASSOC);
-			// debug($pictures);
+
 			$user->setPictures($pictures['src']);
 			
+			$DB_REQ->closeCursor();
+
+			$DB_REQ = $this->DB_REQ->prepare('
+
+				SELECT src FROM pictures
+				WHERE id_owner = :id_owner
+					AND ismainpic = :ismainpic'
+					);
+
+			$DB_REQ->bindValue(':id_owner', $id, PDO::PARAM_INT);
+			$DB_REQ->bindValue(':ismainpic', 1, PDO::PARAM_INT);
+			$DB_REQ->execute();
+			$mainpicture= $DB_REQ->fetch(PDO::FETCH_ASSOC);
+
+			$user->setMainPicture($mainpicture['src']);
+
 			return $user;
 		}
 	}
 
 		public function getIdFromName($name) {
 			if ($name) {
-				$DB_REQ = $this->DB_REQ->prepare('SELECT id from users WHERE name = :name');
+				$DB_REQ = $this->DB_REQ->prepare('
+					SELECT id 
+					FROM users
+					WHERE name = :name');
 				$DB_REQ->bindValue(':name', $name);
 				$DB_REQ->execute();
 				$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
@@ -290,7 +335,11 @@ class UserManagerPDO extends UserManager
 	 */
 	public function update(User $user)
 	{
-		$DB_REQ = $this->DB_REQ->prepare('UPDATE users SET name = :name, email = :email, gender = :gender, sexuality = :sexuality, bio = :bio, updated_at = NOW(), isactive = :isactive WHERE id = :id');
+		$DB_REQ = $this->DB_REQ->prepare('
+			UPDATE users
+			SET name = :name, email = :email, gender = :gender, sexuality = :sexuality, bio = :bio, updated_at = NOW(), isactive = :isactive
+			WHERE id = :id
+			');
 		
 		$DB_REQ->bindValue(':email', $user->email());
 		$DB_REQ->bindValue(':name', $user->name());
@@ -306,7 +355,11 @@ class UserManagerPDO extends UserManager
 
 	public function updateLastSeen(User $user) {
 
-		$DB_REQ = $this->DB_REQ->prepare('UPDATE users SET updated_at = NOW() WHERE id = :id');
+		$DB_REQ = $this->DB_REQ->prepare('
+			UPDATE users
+			SET updated_at = NOW()
+			WHERE id = :id
+			');
 		
 		$DB_REQ->bindValue(':id', $user->id(), PDO::PARAM_INT);
 		
@@ -317,9 +370,29 @@ class UserManagerPDO extends UserManager
 	}
 
 	public function addPicture($src, User $user) {
-		$DB_REQ = $this->DB_REQ->prepare('INSERT INTO pictures (id_owner, src) VALUES (:id_owner, :src)');
+		$DB_REQ = $this->DB_REQ->prepare('
+			SELECT ismainpic
+			FROM pictures
+			WHERE id_owner = :id_owner
+			');
+
+		$DB_REQ->bindValue(':id_owner', $user->id());
+		$DB_REQ->execute();
+		$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+		if (in_array(1, $data)) {
+			$ismainpic = 0;
+		} else {
+			$ismainpic = 1;
+		}
+		$DB_REQ = $this->DB_REQ->prepare('
+
+			INSERT INTO pictures (id_owner, src, ismainpic)
+			VALUES (:id_owner, :src, :ismainpic)
+			');
+
 		$DB_REQ->bindValue(':id_owner', $user->id());
 		$DB_REQ->bindValue(':src', $src);
+		$DB_REQ->bindValue(':ismainpic', $ismainpic);
 		$DB_REQ->execute();
 
 		// $user->addPicture($src);
@@ -332,7 +405,12 @@ class UserManagerPDO extends UserManager
 	public function debugHobbies($id) {
 		$hobbies_user = [];
 
-		$DB_REQ = $this->DB_REQ->prepare('SELECT morph, eat, invade, obey, gather, infest, praises, praisej, burrow, explode, spawn, killVessels, plague, hide FROM hobbies WHERE :id_owner = :id_owner');
+		$DB_REQ = $this->DB_REQ->prepare('
+			SELECT morph, eat, invade, obey, gather, infest, praises, praisej, burrow, explode, spawn, killVessels, plague, hide
+			FROM hobbies
+			WHERE :id_owner = :id_owner
+			');
+
 		$DB_REQ->bindValue(':id_owner', (int) $id, PDO::PARAM_INT);
 		$DB_REQ->execute();
 		$hobbies = $DB_REQ->fetch(PDO::FETCH_ASSOC);

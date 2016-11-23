@@ -21,7 +21,9 @@ class PagesController extends Controller {
 
 		if (Validator::isConnected()) {
 
-			$user = unserialize($_SESSION['user']);
+		// $user = unserialize($_SESSION['user']);
+			$UserManagerPDO = new UserManagerPDO($this->db);
+			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
 			$this->render($response, 'home.twig',[
 				'user' => $user
 				]);
@@ -40,7 +42,8 @@ class PagesController extends Controller {
 	public function getContact($request, $response) {
 
 		if (Validator::isConnected()) {
-			$user = unserialize($_SESSION['user']);
+			$UserManagerPDO = new UserManagerPDO($this->db);
+			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
 			return $this->render($response, 'pages/contact.twig', [
 				'user' => $user
 				]);
@@ -214,8 +217,8 @@ class PagesController extends Controller {
 
 					$UserManagerPDO->updateLastSeen($user);					
 
-					$_SESSION['user'] = serialize($user);
-					setcookie("matcha_cookie", $_SESSION['user'], time() + 36000, "/");
+					$_SESSION['id'] = serialize($id);
+					setcookie("matcha_cookie", $_SESSION['id'], time() + 36000, "/");
 				}
 
 				else {
@@ -251,10 +254,11 @@ class PagesController extends Controller {
 	public function getProfile($request, $response, $args) {
 
 		if (Validator::isConnected()) {
-
-			$user = unserialize($_SESSION['user']);
-			$userprofilearg = $args['userprofile'];
 			$UserManagerPDO = new UserManagerPDO($this->db);
+			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
+			// $user = unserialize($_SESSION['user']);
+			$userprofilearg = $args['userprofile'];
+	
 
 			if ($idprofile = $UserManagerPDO->getIdFromName($userprofilearg)) {
 
@@ -265,6 +269,8 @@ class PagesController extends Controller {
 					debug($userprofile);
 					echo "<pre><h2>USER:" . $user->name() . "</h2></pre>";
 					debug($user);
+					echo "Difference entre user et userprofile : <br>";
+					print_r(recursive_array_diff((array)$user, (array)$userprofile));
 				}
 
 				return $this->render($response, 'pages/profile.twig',[
@@ -291,7 +297,9 @@ class PagesController extends Controller {
 
 		if (Validator::isConnected()) {
 
-			$user = unserialize($_SESSION['user']);
+			// $user = unserialize($_SESSION['user']);
+			$UserManagerPDO = new UserManagerPDO($this->db);
+			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
 			return $this->render($response, 'pages/settings.twig',[
 				'user' => $user
 			]);
@@ -307,7 +315,9 @@ class PagesController extends Controller {
 
 		if (Validator::isConnected()) {
 
-			$user = unserialize($_SESSION['user']);
+			// $user = unserialize($_SESSION['user']);
+			$UserManagerPDO = new UserManagerPDO($this->db);
+			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
 			return $this->render($response, 'pages/editProfile.twig',[
 				'user' => $user
 			]);
@@ -322,7 +332,9 @@ class PagesController extends Controller {
 	public function postEdit($request, $response) {
 
 		$errors = [];
-		$user = unserialize($_SESSION['user']);
+		// $user = unserialize($_SESSION['user']);
+		$UserManagerPDO = new UserManagerPDO($this->db);
+		$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
 
 		if ($request->getParam('name') != $user->name() && !Validator::nameAvailability($request->getParam('name'), $this->db)) {
 			$errors['name'] = 'Username already used.';
@@ -370,7 +382,7 @@ class PagesController extends Controller {
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$UserManagerPDO->update($user);
 			$UserManagerPDO->updateHobbies($user, $request->getParam('hobbies'));
-			$_SESSION['user'] = serialize($user);
+			// $_SESSION['user'] = serialize($user);
 		}
 
 		else {
@@ -386,9 +398,11 @@ class PagesController extends Controller {
 	public function postUploadPicture($request, $response) {
 
 		define('MB', 1048576);
-		$user = unserialize($_SESSION['user']);
+		// $user = unserialize($_SESSION['user']);
+		$user = unserialize($_SESSION['id']);
 		$errors = [];
-		$target_dir = __DIR__ . '/../../uploads/' . $user->id() . '/';
+		// $target_dir = __DIR__ . '/../../uploads/' . $user->id() . '/';
+		$target_dir = '../../matcha/uploads/' . $user->id() . '/';
 		$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
 		$uploadOk = 1;
 		$imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
@@ -452,7 +466,7 @@ class PagesController extends Controller {
 				$this->flash("The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded ☺.");
 				$UserManagerPDO = new UserManagerPDO($this->db);
 				$UserManagerPDO->addPicture($target_file, $user);
-				$_SESSION['user'] = serialize($UserManagerPDO->getUnique($user->id()));
+				// $_SESSION['user'] = serialize($UserManagerPDO->getUnique($user->id()));
 				return $this->redirect($response, 'user.edit', 200);
 			} else {
 				$errors['image'] =  "Sorry, there was an error uploading your file.";

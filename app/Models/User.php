@@ -22,6 +22,7 @@ class User
 			$created_at,
 			$updated_at,
 			$isactive,
+			$mainpicture,
 			$pictures = [],
 			$hobbies = [];
 	
@@ -144,9 +145,12 @@ class User
 	}
 	
 	public function setPictures($src) {
-		// $tmp = array_filter($pictures);
-		// $this->pictures = array_keys($tmp);
+
 		$this->pictures[] = $src;
+	}
+
+	public function setMainPicture ($src) {
+		$this->mainpicture = $src;
 	}
 
 	public function setHobbies($hobbies) {
@@ -192,6 +196,15 @@ class User
 		return $this->id;
 	}
 	
+	public function pictures() {
+		return $this->pictures;
+	}
+
+	public function mainpicture() {
+		return $this->mainpicture;
+	}
+
+
 	public function sayhi()
 	{
 		echo 'Hi';

@@ -11,7 +11,7 @@ class Validator
 {
 
 	public static function isConnected() {
-		if (!isset($_SESSION['user']) || empty($_SESSION['user'])) {
+		if (!isset($_SESSION['id']) || empty($_SESSION['id'])) {
 			return false;
 		}
 		return true;
