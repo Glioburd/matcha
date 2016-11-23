@@ -4,8 +4,9 @@ namespace App\Controllers;
 
 use \Datetime;
 use App\Controllers\Validator;
-use App\Models\UserManagerPDO;
 use App\Models\User;
+use App\Controllers\Debug;
+use App\Models\UserManagerPDO;
 use \PDO;
 
 include __DIR__ . '../../../debug.php';
@@ -21,17 +22,13 @@ class PagesController extends Controller {
 
 		if (Validator::isConnected()) {
 
-		// $user = unserialize($_SESSION['user']);
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
 			$this->render($response, 'home.twig',[
 				'user' => $user
 				]);
 
-			if ($this->container->debug) {
-				echo "<pre><h2>USER:</h2></pre>";
-				debug($user);
-			}
+		Debug::debugUser($this->container, $user);
 
 		}
 		else
@@ -180,17 +177,13 @@ class PagesController extends Controller {
 
 		unset($_SESSION['id']);
 		unset($_SESSION['name']);
-		// debug($request->getParams());
 		return $this->redirect($response, 'home', 200);
 	}
 
 	public function getLogIn($request, $response) {
-		if ($this->container->debug) {
-			echo "USER:<br>";
-			debug($user);
-		}
 
 		if (!Validator::isConnected()) {
+			Debug::debugUser($this->container, $user);
 			return $this->render($response, 'pages/login.twig');
 		}
 		else {
@@ -256,27 +249,27 @@ class PagesController extends Controller {
 		if (Validator::isConnected()) {
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
-			// $user = unserialize($_SESSION['user']);
 			$userprofilearg = $args['userprofile'];
 	
 
 			if ($idprofile = $UserManagerPDO->getIdFromName($userprofilearg)) {
 
-				$userprofile = $UserManagerPDO->getUnique($idprofile);
+				$userProfile = $UserManagerPDO->getUnique($idprofile);
 				
-				if ($this->container->debug) {
-					echo "<pre><h2>USERPROFILE:" . $userprofile->name() . "</h2></pre>";
-					debug($userprofile);
-					echo "<pre><h2>USER:" . $user->name() . "</h2></pre>";
-					debug($user);
-					echo "Difference entre user et userprofile : <br>";
-					print_r(recursive_array_diff((array)$user, (array)$userprofile));
-					debug($_SESSION['debug']);
+				if ($user->id() != $userProfile->id()) {
+					$UserManagerPDO->addVisit($user->name(), $userProfile->name());
 				}
 
+				else {
+					$visits = $UserManagerPDO->getVisits($userProfile->name());
+				}
+
+				Debug::debugUsers($this->container, $user, $userProfile);
+
 				return $this->render($response, 'pages/profile.twig',[
-					'userprofile' => $userprofile,
-					'user' => $user
+					'userprofile' => $userProfile,
+					'user' => $user,
+					'visits' => $visits
 				]);
 
 

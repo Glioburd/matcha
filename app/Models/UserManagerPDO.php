@@ -400,6 +400,39 @@ class UserManagerPDO extends UserManager
 		// $user->addPicture($src);
 	}
 
+	public function addVisit ($visitorname, $visitedname) {
+		if (!empty($visitorname) && !empty($visitedname)){
+
+			$DB_REQ = $this->DB_REQ->prepare('
+				INSERT INTO visitors (name_owner, name_visitor, visited_at)
+				VALUES (:name_owner, :name_visitor, NOW())
+				');
+			$DB_REQ->bindValue(':name_owner', $visitedname);
+			$DB_REQ->bindValue(':name_visitor', $visitorname);
+			$DB_REQ->execute();
+		}
+
+		return NULL;
+	}
+
+	public function getVisits($name_owner) {
+		if (!empty($name_owner)) {
+
+			$DB_REQ = $this->DB_REQ->prepare('
+				SELECT name_owner, name_visitor, visited_at
+				FROM visitors
+				WHERE name_owner = :name_owner
+				');
+			$DB_REQ->bindValue(':name_owner', $name_owner);
+			$DB_REQ->execute();
+			$data = $DB_REQ->fetchAll(PDO::FETCH_ASSOC);
+			return $data;
+		}
+
+		return NULL;
+	}
+
+
 /*
 ** DEBUG
 */
