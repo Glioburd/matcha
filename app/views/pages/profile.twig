@@ -1,14 +1,14 @@
 {% extends "app.twig" %}
 
 {% block content %}
-<h1>{{userprofile.name}}'s profile:</h1>
+<h1>{{userprofile.login}}'s profile:</h1>
 
 <div class="container">
 
 {###------------------------------------------------------------------------------------------------------------------###}
 {####------------------------------------------EDIT BUTTON------------------------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
-	{% if userprofile.name == user.name %}
+	{% if userprofile.login == user.login %}
 
 		<form action="{{ path_for('user.edit') }}">
 			<button type="submit" class="btn btn-primary">Edit profile</button>
@@ -154,7 +154,7 @@
 {###------------------------------------------------------------------------------------------------------------------###}
 {###------------------------------------------VISITORS PANNEL---------------------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
-	{% if userprofile.name == user.name %}
+	{% if userprofile.login == user.login %}
 
 	<div class="panel panel-default">
 		<div class="panel-heading">
@@ -166,7 +166,7 @@
 			{% else %}
 				{% for visit in visits %}
 					<p>
-						<strong><a href="#">{{ visit.name_visitor }}</a></strong> lurked you the {{ visit.visited_at|date("F jS \\a\\t g:ia") }}. How creepy!
+						<strong><a href="#">{{ visit.login }}</a></strong> lurked you the {{ visit.visited_at|date("F jS \\a\\t g:ia") }}. How creepy!
 					</p>
 				{% endfor %}
 				

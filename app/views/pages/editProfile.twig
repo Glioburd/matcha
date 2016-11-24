@@ -38,24 +38,24 @@
 <hr>
 
 {###------------------------------------------------------------------------------------------------------------------###}
-{###------------------------------------------EDIT NAME PANNEL--------------------------------------------------------###}
+{###------------------------------------------EDIT LOGIN PANNEL-------------------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
 
 <h2>Infos:</h2>
 	<form action="{{ path_for('user.edit') }}" method="post">
-		<div class="panel panel-default{% if flash.errors.name %} has-error {% endif %}">
+		<div class="panel panel-default{% if flash.errors.login %} has-error {% endif %}">
 
 			<div class="panel-heading">
-				<h3 class="panel-title">Edit your name:</h3>
+				<h3 class="panel-title">Edit your login:</h3>
 			</div>
 
 			<div class="panel-body">
 				<div class="row">
 					<div class="col-lg-6">
 						<div class="input-group">
-							<input type="text" class="form-control" name="name" id="name" value="{{ user.name }}">
-							{% if flash.errors.name %}
-								<span class="help-block">{{ flash.errors.name }}</span>
+							<input type="text" class="form-control" name="login" id="login" value="{{ user.login }}">
+							{% if flash.errors.login %}
+								<span class="help-block">{{ flash.errors.login }}</span>
 							{% endif %}
 						</div>
 					</div>

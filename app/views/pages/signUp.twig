@@ -7,33 +7,73 @@
 
 			{# {{ csrf() }} #}
 
+{###------------------------------------------------------------------------------------------------------------------###}
+{###-------------------------------------------LOGIN FIELD------------------------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
+
 			<div class="form-group{% if flash.errors.name %} has-error {% endif %}" >
-				<label for ="name">Your name</label>
-				<input type="text" class="form-control" name="name" id="name" value="{{ old.name }}" {# required #}>
-				{% if flash.errors.name %}
-					<span class="help-block">{{ flash.errors.name }}</span>
+				<label for ="name">Your login</label>
+				<input type="text" class="form-control" name="login" id="login" value="{{ old.login }}" required>
+				{% if flash.errors.login %}
+					<span class="help-block">{{ flash.errors.login }}</span>
 				{% endif %}
 			</div>
 
+{###------------------------------------------------------------------------------------------------------------------###}
+{###-------------------------------------------FIRSTNAME FIELD--------------------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
+
+			<div class="form-group{% if flash.errors.firstname %} has-error {% endif %}" >
+				<label for ="name">Your first name</label>
+				<input type="text" class="form-control" name="firstname" id="firstname" value="{{ old.firstname }}" required>
+				{% if flash.errors.firstname %}
+					<span class="help-block">{{ flash.errors.firstname }}</span>
+				{% endif %}
+			</div>
+
+{###------------------------------------------------------------------------------------------------------------------###}
+{###-------------------------------------------LASTNAME FIELD---------------------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
+
+			<div class="form-group{% if flash.errors.name %} has-error {% endif %}" >
+				<label for ="name">Your last name</label>
+				<input type="text" class="form-control" name="lastname" id="lastname" value="{{ old.lastname }}" required>
+				{% if flash.errors.lastname %}
+					<span class="help-block">{{ flash.errors.lastname }}</span>
+				{% endif %}
+			</div>
+
+{###------------------------------------------------------------------------------------------------------------------###}
+{###-------------------------------------------EMAIL FIELD------------------------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
+
 			<div class="form-group{% if flash.errors.email %} has-error {% endif %}">
 				<label for ="email">Your email</label>
-				<input type="email" class="form-control" name="email" id="email" value="{{ old.email }}" {# required #}>
+				<input type="email" class="form-control" name="email" id="email" value="{{ old.email }}" required>
 				{% if flash.errors.email %}
 					<span class="help-block">{{ flash.errors.email }}</span>
 				{% endif %}
 			</div>
 
+{###------------------------------------------------------------------------------------------------------------------###}
+{###----------------------------------------------PASSOWRD FIELD------------------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
+
 			<div class="form-group{% if flash.errors.password %} has-error {% endif %}">
 				<label for ="password">Your password</label>
-				<input type="password" class="form-control" name="password" id="password" value="{{ old.password }}" {# required #}>
+				<input type="password" class="form-control" name="password" id="password" value="{{ old.password }}" required>
 				{% if flash.errors.password %}
 					<span class="help-block">{{ flash.errors.password }}</span>
 				{% endif %}
 			</div>
 
+{###------------------------------------------------------------------------------------------------------------------###}
+{###----------------------------------------------CONFIRM PASSOWRD FIELD----------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
+
 			<div class="form-group{% if flash.errors.passwordConfirm  %} has-error {% endif %}">
 				<label for ="passwordConfirm">Confirm your password</label>
-				<input type="password" class="form-control" name="passwordConfirm" id="passwordConfirm" value="{{ old.passwordConfirm }}" {# required #}>
+				<input type="password" class="form-control" name="passwordConfirm" id="passwordConfirm" value="{{ old.passwordConfirm }}" required>
 				{% if flash.errors.passwordConfirm %}
 					<span class="help-block">{{ flash.errors.passwordConfirm }}</span>
 				{% endif %}
@@ -41,6 +81,8 @@
 
 			<div class="form-group">
 				<input type="submit" class="btn btn-primary" value="Submit">
+
+
 		</form>
 	</div>
 {% endblock %} 

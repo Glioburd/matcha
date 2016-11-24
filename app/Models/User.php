@@ -13,7 +13,9 @@ class User
 {
 	protected $erreurs = [],
 			$id,
-			$name,
+			$login,
+			$firstName,
+			$lastName,
 			$email,
 			$bio,
 			$gender,
@@ -81,7 +83,7 @@ class User
 	 */
 	public function isValid()
 	{
-		return !(empty($this->name) || empty($this->email) || empty($this->password));
+		return !(empty($this->login) || empty($this->email) || empty($this->password));
 	}
 	
 	
@@ -92,15 +94,39 @@ class User
 		$this->id = (int) $id;
 	}
 	
-	public function setName($name)
+	public function setlogin($login)
 	{
-		if (!is_string($name) || empty($name))
+		if (!is_string($login) || empty($login))
 		{
 			$this->erreurs[] = self::AUTEUR_INVALIDE;
 		}
 		else
 		{
-			$this->name = $name;
+			$this->login = $login;
+		}
+	}
+
+	public function setFirstName($firstName)
+	{
+		if (!is_string($firstName) || empty($firstName))
+		{
+			$this->erreurs[] = self::AUTEUR_INVALIDE;
+		}
+		else
+		{
+			$this->firstName = $firstName;
+		}
+	}
+
+	public function setLastName($lastName)
+	{
+		if (!is_string($lastName) || empty($lastName))
+		{
+			$this->erreurs[] = self::AUTEUR_INVALIDE;
+		}
+		else
+		{
+			$this->lastName = $lastName;
 		}
 	}
 
@@ -210,11 +236,21 @@ class User
 		echo 'Hi';
 	}
 
-	public function name()
+	public function login()
 	{
-		return $this->name;
+		return $this->login;
+	}
+
+	public function firstName()
+	{
+		return $this->firstName;
 	}
 	
+	public function lastName()
+	{
+		return $this->lastName;
+	}
+
 	public function email()
 	{
 		return $this->email;

@@ -11,11 +11,11 @@
 
 			{# {{ csrf() }} #}
 
-			<div class="form-group{% if flash.errors.name %} has-error {% endif %}" >
-				<label for ="name">Username:</label>
-				<input type="text" class="form-control" name="name" id="name" value="{{ old.name }}" {# required #}>
-				{% if flash.errors.name %}
-					<span class="help-block">{{ flash.errors.name }}</span>
+			<div class="form-group{% if flash.errors.login %} has-error {% endif %}" >
+				<label for ="login">Username:</label>
+				<input type="text" class="form-control" name="login" id="login" value="{{ old.login }}" {# required #}>
+				{% if flash.errors.login %}
+					<span class="help-block">{{ flash.errors.login }}</span>
 				{% endif %}
 			</div>
 

@@ -16,7 +16,7 @@ include __DIR__ . '../../../debug.php';
 */
 class PagesController extends Controller {
 
-	const NAME_DOESNT_EXISTS = 0;
+	const LOGIN_DOESNT_EXISTS = 0;
 
 	public function home($request, $response) {
 
@@ -67,8 +67,16 @@ class PagesController extends Controller {
 
 		$errors = [];
 
-		if (!Validator::nameLengthCheck($request->getParam('name'))) {
-			$errors['name'] = 'Your username must contain between 2 and 32 characters.';
+		if (!Validator::loginLengthCheck($request->getParam('login'))) {
+			$errors['login'] = 'Your username must contain between 2 and 32 characters.';
+		}
+
+		if (!Validator::nameCheck($request->getParam('firstname'))) {
+			$errors['firstname'] = 'The first name must contain only letters, no numbers or spaces allowed.';
+		}
+
+		if (!Validator::nameCheck($request->getParam('lastname'))) {
+			$errors['firstname'] = 'The last name must contain only letters, no numbers or spaces allowed.';
 		}
 
 		if (Validator::mailCheck($request->getParam('email'), $this->container->db) === INVALID_EMAIL) {
@@ -100,8 +108,10 @@ class PagesController extends Controller {
 		if (empty($errors)) {
 
 			$user = new User([
-				'name' => $request->getParam('name'),
-				'email' => $request->getParam('email'),	
+				'login' => $request->getParam('login'),
+				'email' => $request->getParam('email'),
+				'firstName' => $request->getParam('firstname'),
+				'lastName' => $request->getParam('lastname'),
 				'password' => password_hash($request->getParam('password'), PASSWORD_DEFAULT),
 				]);
 
@@ -110,7 +120,7 @@ class PagesController extends Controller {
 			$last_id = $this->db->lastInsertId();
 
 			$_SESSION['id'] = $last_id;
-			$_SESSION['name'] = $request->getParam('name');
+			$_SESSION['login'] = $request->getParam('login');
 
 		}
 
@@ -151,7 +161,7 @@ class PagesController extends Controller {
 		if (empty($errors)) {
 
 			$id = $_SESSION['id'];
-			$name = $_SESSION['name'];
+			$login = $_SESSION['login'];
 			$hobbies = $request->getParam('hobbies');
 
 			$UserManagerPDO = new UserManagerPDO($this->db);
@@ -166,7 +176,9 @@ class PagesController extends Controller {
 			$UserManagerPDO->save($user);
 
 			/* Save object user's hobbies to database in hobbies table */
-			$UserManagerPDO->addHobbies($user, $hobbies);
+			$UserManagerPDO->addExtras($user, $hobbies);
+
+
 		}
 
 		else {
@@ -176,7 +188,7 @@ class PagesController extends Controller {
 		}
 
 		unset($_SESSION['id']);
-		unset($_SESSION['name']);
+		unset($_SESSION['login']);
 		return $this->redirect($response, 'home', 200);
 	}
 
@@ -195,16 +207,16 @@ class PagesController extends Controller {
 	public function postLogIn($request, $response) {
 
 		$errors = [];
-		$name = $request->getParam('name');
+		$login = $request->getParam('login');
 		$password = $request->getParam('password');
 
-		if (Validator::loginNameCheck($name, $this->db)) {
-			if (Validator::isActive($name, $this->db)) {
-				if (Validator::passwordLogin($name, $password, $this->db)) {
+		if (Validator::loginCheck($login, $this->db)) {
+			if (Validator::isActive($login, $this->db)) {
+				if (Validator::passwordLogin($login, $password, $this->db)) {
 
 					$UserManagerPDO = new UserManagerPDO($this->db);
 
-					$id = $UserManagerPDO->getIdFromName($name);
+					$id = $UserManagerPDO->getIdFromLogin($login);
 
 					$user = $UserManagerPDO->getUnique($id);
 
@@ -220,12 +232,12 @@ class PagesController extends Controller {
 			}
 
 			else {
-				$errors['name'] = 'This account hasn\'t been activated yet.';
+				$errors['login'] = 'This account hasn\'t been activated yet.';
 			}
 		}
 
 		else {
-			$errors['name'] = 'This username doesn\'t exist.';
+			$errors['login'] = 'This username doesn\'t exist.';
 		}
 
 		if (!empty($errors)) {
@@ -252,16 +264,16 @@ class PagesController extends Controller {
 			$userprofilearg = $args['userprofile'];
 	
 
-			if ($idprofile = $UserManagerPDO->getIdFromName($userprofilearg)) {
+			if ($idprofile = $UserManagerPDO->getIdFromLogin($userprofilearg)) {
 
 				$userProfile = $UserManagerPDO->getUnique($idprofile);
 				
 				if ($user->id() != $userProfile->id()) {
-					$UserManagerPDO->addVisit($user->name(), $userProfile->name());
+					$UserManagerPDO->addVisit($user->id(), $userProfile->id());
 				}
 
 				else {
-					$visits = $UserManagerPDO->getVisits($userProfile->name());
+					$visits = $UserManagerPDO->getVisits($userProfile->id());
 				}
 
 				Debug::debugUsers($this->container, $user, $userProfile);
@@ -330,12 +342,12 @@ class PagesController extends Controller {
 		$UserManagerPDO = new UserManagerPDO($this->db);
 		$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
 
-		if ($request->getParam('name') != $user->name() && !Validator::nameAvailability($request->getParam('name'), $this->db)) {
-			$errors['name'] = 'Username already used.';
+		if ($request->getParam('login') != $user->login() && !Validator::loginAvailability($request->getParam('login'), $this->db)) {
+			$errors['login'] = 'Username already used.';
 		}
 
-		if (!Validator::nameLengthCheck($request->getParam('name'))) {
-			$errors['name'] = 'Your username must contain between 2 and 32 characters.';
+		if (!Validator::loginLengthCheck($request->getParam('login'))) {
+			$errors['login'] = 'Your username must contain between 2 and 32 characters.';
 		}
 
 		if ($request->getParam('email') != $user->email()) {
@@ -368,13 +380,13 @@ class PagesController extends Controller {
 		if (empty($errors)) {
 
 			$user->setBio($request->getParam('bio'));
-			$user->setName($request->getParam('name'));
+			$user->setLogin($request->getParam('login'));
 			$user->setEmail($request->getParam('email'));
 			$user->setGender($request->getParam('gender'));
 			$user->updateHobbies($request->getParam('hobbies'));
 
 			$UserManagerPDO = new UserManagerPDO($this->db);
-			$UserManagerPDO->update($user);
+			$UserManagerPDO->save($user);
 			$UserManagerPDO->updateHobbies($user, $request->getParam('hobbies'));
 			// $_SESSION['user'] = serialize($user);
 		}

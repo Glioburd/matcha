@@ -12,30 +12,38 @@ class Validator
 
 	public static function isConnected() {
 		if (!isset($_SESSION['id']) || empty($_SESSION['id'])) {
-			return false;
+			return FALSE;
 		}
-		return true;
+		return TRUE;
 	}
 
-	public static function nameLengthCheck($name) {
+	public static function loginLengthCheck($login) {
 
-		if (strlen($name) < 2 || strlen($name) > 32) {
-			return false;
+		if (strlen($login) < 2 || strlen($login) > 32) {
+			return FALSE;
 		}
 
-		return true;
+		return TRUE;
 	}
 
-	public static function nameAvailability($name, $db) {
+	public function nameCheck($name) {
 
-		$DB_REQ = $db->prepare('SELECT name FROM users WHERE name = :name');
-		$DB_REQ->bindParam(':name', $name);
+		if (!preg_match("/^[a-zA-Z]*$/",$name)) {
+			return FALSE;
+		}
+		return TRUE;
+	}
+
+	public static function loginAvailability($login, $db) {
+
+		$DB_REQ = $db->prepare('SELECT login FROM users WHERE login = :login');
+		$DB_REQ->bindParam(':login', $login);
 		$DB_REQ->execute();
 		if($DB_REQ->rowCount() > 0){
-			return false;
+			return FALSE;
 		}
 
-		return true;
+		return TRUE;
 	}
 
 	public static function mailCheck($email, $db) {
@@ -43,22 +51,24 @@ class Validator
 			return INVALID_EMAIL;
 		}
 
-		$DB_REQ = $db->prepare('SELECT email FROM users WHERE email = :email');
+		$DB_REQ = $db->prepare('SELECT COUNT(*) FROM users WHERE email = :email');
 		$DB_REQ->bindParam(':email', $email);
 		$DB_REQ->execute();
 
-		if($DB_REQ->rowCount() > 0){
+		$result = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+
+		if(intval($result['count']) > 0){
 			return EMAIL_ALREADY_EXISTS;
 		}
 
-		return true;
+		return TRUE;
 	}
 
 	public static function bioLengthCheck($bio) {
 		if (strlen($bio) < 20) {
-			return false;
+			return FALSE;
 		}
-		return true;
+		return TRUE;
 	}
 
 	public static function passwordCheck($pwd) {
@@ -74,23 +84,23 @@ class Validator
 			return 3;
 		}
 
-		return false;
+		return FALSE;
 	}
 
 	public static function passwordConfirm($pwd, $pwdConfirm) {
 
 		if ($pwd != $pwdConfirm){
-			return false;
+			return FALSE;
 		}
 
-		return true;
+		return TRUE;
 	}
 
 	public static function radioCheck($data) {
 		if (empty($data)) {
-			return false;
+			return FALSE;
 		}
-		return true;
+		return TRUE;
 	}
 
 
@@ -98,49 +108,49 @@ class Validator
 		$checked_arr = $hobbies;
 		$count = count($checked_arr);
 		if ($count < 4) {
-			return false;
+			return FALSE;
 		}
-		return true;
+		return TRUE;
 	}
 
-	public function loginNameCheck($name, $db) {
-		$DB_REQ = $db->prepare('SELECT name FROM users WHERE name = :name');
-		$DB_REQ->bindParam(':name', $name);
+	public function loginCheck($login, $db) {
+		$DB_REQ = $db->prepare('SELECT login FROM users WHERE login = :login');
+		$DB_REQ->bindParam(':login', $login);
 		$DB_REQ->execute();
 
 		if($DB_REQ->rowCount() === 0) {
-			return false;
+			return FALSE;
 		}
-		return true;
+		return TRUE;
 
 	}
 
-	public function isActive($name, $db) {
-		$DB_REQ = $db->prepare('SELECT isactive FROM users WHERE name = :name');
-		$DB_REQ->bindParam(':name', $name);
+	public function isActive($login, $db) {
+		$DB_REQ = $db->prepare('SELECT isactive FROM users WHERE login = :login');
+		$DB_REQ->bindParam(':login', $login);
 		$DB_REQ->execute();
 
 		$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
 		if ($data['isactive'] == '0') {
-			return false;
+			return FALSE;
 
 		}
-		return true;
+		return TRUE;
 	}
 
-	public function passwordLogin($name, $password, $db) {
-		$DB_REQ = $db->prepare('SELECT password FROM users WHERE name = :name');
-		$DB_REQ->bindParam(':name', $name);
+	public function passwordLogin($login, $password, $db) {
+		$DB_REQ = $db->prepare('SELECT password FROM users WHERE login = :login');
+		$DB_REQ->bindParam(':login', $login);
 		$DB_REQ->execute();
 
 		$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
 
 		if (!password_verify($password, $data['password'])) {
 
-			return false;
+			return FALSE;
 		}
 		
-		return true;
+		return TRUE;
 	}
 
 }

@@ -30,17 +30,27 @@ class UserManagerPDO extends UserManager
 	protected function add(User $user)
 	{
 		$DB_REQ = $this->DB_REQ->prepare('
-			INSERT INTO users(name, email, password, created_at, updated_at)
-			VALUES(:name, :email, :password, NOW(), NOW())');
+			INSERT INTO users(login, email, firstName, lastName, password, created_at, updated_at)
+			VALUES(:login, :email, :firstName, :lastName, :password, NOW(), NOW())');
 		
-		$DB_REQ->bindValue(':name', $user->name());
+		$DB_REQ->bindValue(':login', $user->login());
 		$DB_REQ->bindValue(':email', $user->email());
+		$DB_REQ->bindValue(':firstName', $user->firstName());
+		$DB_REQ->bindValue(':lastName', $user->lastName());
 		$DB_REQ->bindValue(':password', $user->password());
 		
 		$DB_REQ->execute();
 	}
-	
-	public function addHobbies(User $user, $hobbies) {
+
+	public function addExtras(User $user, $hobbies) {
+
+		$DB_REQ = $this->DB_REQ->prepare('
+			INSERT INTO popularity(id_owner)
+			VALUES(:id_owner)
+			');
+		$DB_REQ->bindValue(':id_owner', $user->id());
+		$DB_REQ->execute();
+		$DB_REQ->closeCursor();
 
 		$hobbiesArray = array('morph',
 			'eat',
@@ -221,7 +231,7 @@ class UserManagerPDO extends UserManager
 	public function getList($debut = -1, $limite = -1)
 	{
 		$sql = '
-		SELECT id, name, email, password, created_at, updated_at, isactive
+		SELECT id, login, email, password, created_at, updated_at, isactive
 		FROM users
 		ORDER BY
 			id DESC';
@@ -256,7 +266,7 @@ class UserManagerPDO extends UserManager
 	{
 		if (isset($id) && !empty($id)) {
 			$DB_REQ = $this->DB_REQ->prepare('
-				SELECT id, name, email, password, gender, sexuality, bio, created_at, updated_at, isactive 
+				SELECT id, login, email, password, gender, sexuality, bio, created_at, updated_at, isactive 
 				FROM users 
 				WHERE id = :id
 				');
@@ -317,34 +327,48 @@ class UserManagerPDO extends UserManager
 		}
 	}
 
-		public function getIdFromName($name) {
-			if ($name) {
-				$DB_REQ = $this->DB_REQ->prepare('
-					SELECT id 
-					FROM users
-					WHERE name = :name');
-				$DB_REQ->bindValue(':name', $name);
-				$DB_REQ->execute();
-				$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
-				return $data['id'];
-			}
-			return NULL;
+	public function getIdFromLogin($login) {
+		if ($login) {
+			$DB_REQ = $this->DB_REQ->prepare('
+				SELECT id 
+				FROM users
+				WHERE login = :login');
+			$DB_REQ->bindValue(':login', $login);
+			$DB_REQ->execute();
+			$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+			return $data['id'];
 		}
+		return NULL;
+	}
+
+	public function getLoginFromId($id) {
+		if ($id) {
+			$DB_REQ = $this->DB_REQ->prepare('
+				SELECT login 
+				FROM users
+				WHERE id = :id');
+			$DB_REQ->bindValue(':id', $id);
+			$DB_REQ->execute();
+			$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+			return $data['login'];
+		}
+		return NULL;
+	}
 	
 
 	/**
 	 * @see UserManager::update()
 	 */
-	public function update(User $user)
+	protected function update(User $user)
 	{
 		$DB_REQ = $this->DB_REQ->prepare('
 			UPDATE users
-			SET name = :name, email = :email, gender = :gender, sexuality = :sexuality, bio = :bio, updated_at = NOW(), isactive = :isactive
+			SET login = :login, email = :email, gender = :gender, sexuality = :sexuality, bio = :bio, updated_at = NOW(), isactive = :isactive
 			WHERE id = :id
 			');
 		
 		$DB_REQ->bindValue(':email', $user->email());
-		$DB_REQ->bindValue(':name', $user->name());
+		$DB_REQ->bindValue(':login', $user->login());
 		$DB_REQ->bindValue(':gender', $user->gender());	
 		$DB_REQ->bindValue(':id', $user->id(), PDO::PARAM_INT);
 		$DB_REQ->bindValue(':sexuality', $user->sexuality());
@@ -400,32 +424,74 @@ class UserManagerPDO extends UserManager
 		// $user->addPicture($src);
 	}
 
-	public function addVisit ($visitorname, $visitedname) {
-		if (!empty($visitorname) && !empty($visitedname)){
+	public function addVisit ($idVisitor, $idVisited) {
 
-			$DB_REQ = $this->DB_REQ->prepare('
-				INSERT INTO visitors (name_owner, name_visitor, visited_at)
-				VALUES (:name_owner, :name_visitor, NOW())
+		if (!empty($idVisitor) && !empty($idVisited)) {
+
+			$DB_REQ = $this->DB_REQ->prepare('SELECT id_visitor
+				FROM visitors
+				WHERE id_owner = :id_owner
+					AND id_visitor = :id_visitor
 				');
-			$DB_REQ->bindValue(':name_owner', $visitedname);
-			$DB_REQ->bindValue(':name_visitor', $visitorname);
+			$DB_REQ->bindValue(':id_owner', $idVisited, PDO::PARAM_INT);
+			$DB_REQ->bindValue(':id_visitor', $idVisitor, PDO::PARAM_INT);	
 			$DB_REQ->execute();
+
+			$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+			$DB_REQ->closeCursor();
+
+			if($data['id_visitor']) {
+
+				$DB_REQ = $this->DB_REQ->prepare('
+					UPDATE visitors
+					SET visited_at = NOW()
+					WHERE id_visitor = :id_visitor
+						AND id_owner = :id_owner
+					');
+				$DB_REQ->bindValue(':id_owner', $idVisited, PDO::PARAM_INT);
+				$DB_REQ->bindValue(':id_visitor', $idVisitor, PDO::PARAM_INT);
+				$DB_REQ->execute();
+
+			} else {
+
+				$DB_REQ = $this->DB_REQ->prepare('
+					INSERT INTO visitors (id_owner, id_visitor, visited_at)
+					VALUES (:id_owner, :id_visitor, NOW())
+					');
+				$DB_REQ->bindValue(':id_owner', $idVisited, PDO::PARAM_INT);
+				$DB_REQ->bindValue(':id_visitor', $idVisitor, PDO::PARAM_INT);
+				$DB_REQ->execute();
+				$DB_REQ->closeCursor();
+
+				$DB_REQ = $this->DB_REQ->prepare('
+					UPDATE popularity
+					SET score = score + 1
+					WHERE id_owner = :id_owner
+					');
+				$DB_REQ->bindValue(':id_owner', $idVisited, PDO::PARAM_INT);
+				$DB_REQ->execute();
+			}
 		}
 
 		return NULL;
 	}
 
-	public function getVisits($name_owner) {
-		if (!empty($name_owner)) {
+	public function getVisits($id_owner) {
+		if (!empty($id_owner)) {
 
 			$DB_REQ = $this->DB_REQ->prepare('
-				SELECT name_owner, name_visitor, visited_at
+				SELECT id_owner, users.login, visited_at
 				FROM visitors
-				WHERE name_owner = :name_owner
+				INNER JOIN users
+				ON users.id = visitors.id_visitor
+				WHERE id_owner = :id_owner
+				ORDER BY visited_at DESC
+				LIMIT 5;
 				');
-			$DB_REQ->bindValue(':name_owner', $name_owner);
+			$DB_REQ->bindValue(':id_owner', $id_owner, PDO::PARAM_INT);
 			$DB_REQ->execute();
 			$data = $DB_REQ->fetchAll(PDO::FETCH_ASSOC);
+
 			return $data;
 		}
 
