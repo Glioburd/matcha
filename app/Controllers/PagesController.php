@@ -482,4 +482,14 @@ class PagesController extends Controller {
 		}
 	}
 
+	public function postLike($request, $response) {
+		if (Validator::isConnected() && !empty($request->getParams())) {
+			$UserManagerPDO = new UserManagerPDO;
+			$user = unserialize($_SESSION['id']);
+		}
+		else {
+			echo 'Huh?';
+		}
+	}
+
 }

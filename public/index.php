@@ -50,6 +50,8 @@ $app->get('/settings', 'App\Controllers\PagesController:getSettings')->setName('
 $app->get('/uploadpic', 'App\Controllers\PagesController:getUploadPicture')->setName('upload.picture');
 $app->post('/uploadpic', 'App\Controllers\PagesController:postUploadPicture');
 
+$app->post('/like', 'App\Controllers\PagesController:postlike')->setName('like');
+
 $app->post('/uploadpic2', 'App\Controllers\PagesController:postUploadPicture2')->setName('upload.picture2');;
 
 $app->run();

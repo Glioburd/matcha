@@ -266,7 +266,7 @@ class UserManagerPDO extends UserManager
 	{
 		if (isset($id) && !empty($id)) {
 			$DB_REQ = $this->DB_REQ->prepare('
-				SELECT id, login, email, password, gender, sexuality, bio, created_at, updated_at, isactive 
+				SELECT id, login, email, firstName, lastName, password, gender, sexuality, bio, created_at, updated_at, isactive 
 				FROM users 
 				WHERE id = :id
 				');
@@ -498,6 +498,11 @@ class UserManagerPDO extends UserManager
 		return NULL;
 	}
 
+	// public function like(User $user) {
+	// 		$DB_REQ = $this->DB_REQ->prepare('
+	// 			SELECT 
+	// 			');
+	// }
 
 /*
 ** DEBUG
@@ -521,9 +526,6 @@ class UserManagerPDO extends UserManager
 		$tmp = array_keys($tmp);
 
 		debug($tmp);
-
-
-
 
 	}
 }

@@ -165,7 +165,6 @@ if (intval($result['count']) == 0) {
 		CREATE TABLE popularity (
 			`id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 			`id_owner` int(11) NOT NULL,
-			`id_liker` int(11) NOT NULL,
 			`score` int(11) NOT NULL DEFAULT 0
 		);");
 
@@ -180,8 +179,39 @@ if (intval($result['count']) == 0) {
 
 	$DB_REQ->execute();
 
+}
+
+$DB_REQ = $container->db->query("
+	SELECT COUNT(*) AS count
+	FROM information_schema.tables
+	WHERE table_name = 'likes'
+		AND TABLE_SCHEMA='matcha'
+	;");
+
+$result = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+
+if (intval($result['count']) == 0) {
+
 	$DB_REQ = $DB_PDO->prepare("
-		ALTER TABLE `popularity`
+		CREATE TABLE likes (
+			`id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+			`id_owner` int(11) NOT NULL,
+			`id_liker` int(11) NOT NULL
+		);");
+
+	$DB_REQ->execute();
+
+	$DB_REQ = $DB_PDO->prepare("
+		ALTER TABLE `likes`
+		ADD FOREIGN KEY (id_owner)
+		REFERENCES users(id)
+		ON DELETE CASCADE
+		;");
+
+	$DB_REQ->execute();
+
+	$DB_REQ = $DB_PDO->prepare("
+		ALTER TABLE `likes`
 		ADD FOREIGN KEY (id_liker)
 		REFERENCES users(id)
 		ON DELETE CASCADE
