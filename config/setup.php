@@ -48,6 +48,8 @@ $DB_REQ = $container->db->query("
 		AND TABLE_SCHEMA='matcha'
 	;");
 
+$result = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+
 if (intval($result['count']) == 0) {
 	$DB_REQ = $DB_PDO->prepare("
 		CREATE TABLE hobbies (
@@ -86,6 +88,8 @@ $DB_REQ = $container->db->query("
 		AND TABLE_SCHEMA='matcha'
 	;");
 
+$result = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+
 if (intval($result['count']) == 0) {
 	$DB_REQ = $DB_PDO->prepare("
 		CREATE TABLE pictures (
@@ -114,6 +118,8 @@ $DB_REQ = $container->db->query("
 	WHERE table_name = 'pictures'
 		AND TABLE_SCHEMA='matcha'
 	;");
+
+$result = $DB_REQ->fetch(PDO::FETCH_ASSOC);
 
 if (intval($result['count']) == 0) {
 	$DB_REQ = $DB_PDO->prepare("
@@ -151,12 +157,15 @@ $DB_REQ = $container->db->query("
 	WHERE table_name = 'popularity'
 		AND TABLE_SCHEMA='matcha'
 	;");
+	
+$result = $DB_REQ->fetch(PDO::FETCH_ASSOC);
 
 if (intval($result['count']) == 0) {
 	$DB_REQ = $DB_PDO->prepare("
 		CREATE TABLE popularity (
 			`id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 			`id_owner` int(11) NOT NULL,
+			`id_liker` int(11) NOT NULL,
 			`score` int(11) NOT NULL DEFAULT 0
 		);");
 
@@ -165,6 +174,15 @@ if (intval($result['count']) == 0) {
 	$DB_REQ = $DB_PDO->prepare("
 		ALTER TABLE `popularity`
 		ADD FOREIGN KEY (id_owner)
+		REFERENCES users(id)
+		ON DELETE CASCADE
+		;");
+
+	$DB_REQ->execute();
+
+	$DB_REQ = $DB_PDO->prepare("
+		ALTER TABLE `popularity`
+		ADD FOREIGN KEY (id_liker)
 		REFERENCES users(id)
 		ON DELETE CASCADE
 		;");
