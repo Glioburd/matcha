@@ -104,7 +104,7 @@ class Validator
 	}
 
 
-	public function hobbiesCheck($hobbies) {
+	public static function hobbiesCheck($hobbies) {
 		$checked_arr = $hobbies;
 		$count = count($checked_arr);
 		if ($count < 4) {
@@ -113,7 +113,7 @@ class Validator
 		return TRUE;
 	}
 
-	public function loginCheck($login, $db) {
+	public static function loginCheck($login, $db) {
 		$DB_REQ = $db->prepare('SELECT login FROM users WHERE login = :login');
 		$DB_REQ->bindParam(':login', $login);
 		$DB_REQ->execute();
@@ -125,7 +125,7 @@ class Validator
 
 	}
 
-	public function isActive($login, $db) {
+	public static function isActive($login, $db) {
 		$DB_REQ = $db->prepare('SELECT isactive FROM users WHERE login = :login');
 		$DB_REQ->bindParam(':login', $login);
 		$DB_REQ->execute();
@@ -138,7 +138,7 @@ class Validator
 		return TRUE;
 	}
 
-	public function passwordLogin($login, $password, $db) {
+	public static function passwordLogin($login, $password, $db) {
 		$DB_REQ = $db->prepare('SELECT password FROM users WHERE login = :login');
 		$DB_REQ->bindParam(':login', $login);
 		$DB_REQ->execute();
@@ -151,6 +151,48 @@ class Validator
 		}
 		
 		return TRUE;
+	}
+
+	public static function validateAge($birthday, $age = 18) {
+		// $birthday can be UNIX_TIMESTAMP or just a string-date.
+		if(is_string($birthday)) {
+			$birthday = strtotime($birthday);
+		}
+
+		// check
+		// 31536000 is the number of seconds in a 365 days year.
+		if(time() - $birthday < $age * 31536000)  {
+			echo 'FALSE';
+			return FALSE;
+		}
+		echo 'TRUE';
+		return TRUE;
+	}
+
+
+	public static function birthDayCheck($date) {
+
+		if (isset($date)) {
+
+			$test_arr = str_replace('-', '/', $date);
+			$test_arr = explode('-', $date);
+			$tmp[0] = $test_arr[1];
+			$tmp[1] = $test_arr[2];
+			$tmp[2] = $test_arr[0];
+			$test_arr = $tmp;
+
+
+			if (checkdate($test_arr[0], $test_arr[1], $test_arr[2])) {
+				self::validateAge();
+				if (self::validateAge($date)) {
+					return TRUE;
+				}
+				return TOO_YOUNG;
+
+			} else {
+				return INVALID_BIRTHDATE;
+			}
+		}
 	}
 
 }

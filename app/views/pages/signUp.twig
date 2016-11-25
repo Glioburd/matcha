@@ -35,7 +35,7 @@
 {###-------------------------------------------LASTNAME FIELD---------------------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
 
-			<div class="form-group{% if flash.errors.name %} has-error {% endif %}" >
+			<div class="form-group{% if flash.errors.lastname %} has-error {% endif %}" >
 				<label for ="name">Your last name</label>
 				<input type="text" class="form-control" name="lastname" id="lastname" value="{{ old.lastname }}" required>
 				{% if flash.errors.lastname %}
@@ -52,6 +52,26 @@
 				<input type="email" class="form-control" name="email" id="email" value="{{ old.email }}" required>
 				{% if flash.errors.email %}
 					<span class="help-block">{{ flash.errors.email }}</span>
+				{% endif %}
+			</div>
+
+{###------------------------------------------------------------------------------------------------------------------###}
+{###-------------------------------------------BIRTHDATE FIELD--------------------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
+			<div class="form-group{% if flash.errors.birthDate %} has-error {% endif %}">
+				<label for ="birthdate">Your birthdate (mm/dd/yyyy)</label>
+
+				{# Compatibility with firefox #}
+				<script src="//cdn.jsdelivr.net/webshim/1.14.5/polyfiller.js"></script>
+				<script>
+					webshims.setOptions('forms-ext', {types: 'date'});
+					webshims.polyfill('forms forms-ext');
+				</script>
+				{# --- #}
+
+				<input type="date" class="form-control" name="birthDate" id="birthDate" value="{{ old.birthDate }}" required/>
+				{% if flash.errors.birthDate %}
+					<span class="help-block">{{ flash.errors.birthDate }}</span>
 				{% endif %}
 			</div>
 

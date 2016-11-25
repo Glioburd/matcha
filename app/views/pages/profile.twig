@@ -21,9 +21,15 @@
 {###------------------------------------------------------------------------------------------------------------------###}
 
 	{% if userprofile.login != user.login %}
+		{% if canLike == true %}
 		<form action="{{ path_for('like') }}" method="post">
-			<button type="submit" name="likeButton" class="btn btn-danger btn-lg align-center">Like ♡</button>
+			<button type="submit" name="likeButton" class="btn btn-danger btn-lg align-center" value="{{userprofile.id}}">Like &lt;3</button>
 		</form>
+		{% else %}
+		<form action="{{ path_for('unlike') }}" method="post">
+			<button type="submit" name="unlikeButton" class="btn btn-danger btn-lg align-center" value="{{userprofile.id}}">Unlike &lt;/3</button>
+		</form>
+		{% endif %}
 	{% else %}
 			<button type="submit" class="btn btn-danger btn-lg disabled">Like ♡</button>
 	{% endif %}
@@ -166,7 +172,7 @@
 {###------------------------------------------------------------------------------------------------------------------###}
 {###------------------------------------------VISITORS PANNEL---------------------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
-	{% if userprofile.login == user.login %}
+	{% if userprofile.id == user.id %}
 
 	<div class="panel panel-default">
 		<div class="panel-heading">
@@ -178,7 +184,7 @@
 			{% else %}
 				{% for visit in visits %}
 					<p>
-						<strong><a href="#">{{ visit.login }}</a></strong> lurked you the {{ visit.visited_at|date("F jS \\a\\t g:ia") }}. How creepy!
+						<strong><a href="{{visit.login}}">{{ visit.login }}</a></strong> lurked you the {{ visit.visited_at|date("F jS \\a\\t g:ia") }}. How creepy!
 					</p>
 				{% endfor %}
 				

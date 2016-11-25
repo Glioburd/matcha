@@ -27,8 +27,12 @@ class PagesController extends Controller {
 			$this->render($response, 'home.twig',[
 				'user' => $user
 				]);
+			if (empty($user)) {
+				session_destroy();
+			}
 
 		Debug::debugUser($this->container, $user);
+		Debug::debugUser($this->container, $_SESSION['id']);
 
 		}
 		else
@@ -76,7 +80,7 @@ class PagesController extends Controller {
 		}
 
 		if (!Validator::nameCheck($request->getParam('lastname'))) {
-			$errors['firstname'] = 'The last name must contain only letters, no numbers or spaces allowed.';
+			$errors['lastname'] = 'The last name must contain only letters, no numbers or spaces allowed.';
 		}
 
 		if (Validator::mailCheck($request->getParam('email'), $this->container->db) === INVALID_EMAIL) {
@@ -101,6 +105,14 @@ class PagesController extends Controller {
 			}
 		}
 
+		if (Validator::birthDayCheck($request->getParam('birthDate')) === INVALID_BIRTHDATE) {
+			$errors['birthDate'] = 'Wrong date format';
+		}
+
+		elseif (Validator::birthDayCheck($request->getParam('birthDate')) === TOO_YOUNG) {
+			$errors['birthDate'] = 'You must be at least 18 years old to enter this website';
+		}
+
 		if (!Validator::passwordConfirm($request->getParam('password'), $request->getParam('passwordConfirm'))) {
 				$errors['passwordConfirm'] = 'Invalid password confirmation';
 		}		
@@ -113,6 +125,7 @@ class PagesController extends Controller {
 				'firstName' => $request->getParam('firstname'),
 				'lastName' => $request->getParam('lastname'),
 				'password' => password_hash($request->getParam('password'), PASSWORD_DEFAULT),
+				'birthDate' =>$request->getParam('birthDate')
 				]);
 
 			$UserManagerPDO = new UserManagerPDO($this->db);
@@ -270,10 +283,11 @@ class PagesController extends Controller {
 				
 				if ($user->id() != $userProfile->id()) {
 					$UserManagerPDO->addVisit($user->id(), $userProfile->id());
+					$canLike = $UserManagerPDO->canLike($user->id(), $userProfile->id());
 				}
 
 				else {
-					$visits = $UserManagerPDO->getVisits($userProfile->id());
+					$visits = $UserManagerPDO->getVisits($userProfile->id($user->id(), $userProfile->id()));
 				}
 
 				Debug::debugUsers($this->container, $user, $userProfile);
@@ -281,9 +295,9 @@ class PagesController extends Controller {
 				return $this->render($response, 'pages/profile.twig',[
 					'userprofile' => $userProfile,
 					'user' => $user,
-					'visits' => $visits
+					'visits' => $visits,
+					'canLike' => $canLike
 				]);
-
 
 			}
 
@@ -359,6 +373,7 @@ class PagesController extends Controller {
 			elseif (Validator::mailCheck($request->getParam('email'), $this->container->db) === EMAIL_ALREADY_EXISTS) {
 				$errors['email'] = 'E-mail is already used.';
 			}
+
 		}	
 
 		if (!Validator::bioLengthCheck($request->getParam('bio'))) {
@@ -484,11 +499,31 @@ class PagesController extends Controller {
 	}
 
 	public function postLike($request, $response) {
+
 		if (Validator::isConnected() && !empty($request->getParams())) {
-			$UserManagerPDO = new UserManagerPDO;
-			$id = unserialize($_SESSION['id']);
-			$user = $UserManagerPDO->getUnique($id);
-			
+			$UserManagerPDO = new UserManagerPDO($this->db);
+			$id_liker = unserialize($_SESSION['id']);
+			$id_liked = $request->getParam('likeButton');
+			$UserManagerPDO->like($id_liker, $id_liked);
+			$user = $UserManagerPDO->getLoginFromId($id_liked);
+
+			return $response->withRedirect($this->router->pathFor('user.profile', ['userprofile' => $user]));
+		}
+		else {
+			echo 'Huh?';
+		}
+	}
+
+	public function postUnlike($request, $response) {
+		
+		if (Validator::isConnected() && !empty($request->getParams())) {
+			$UserManagerPDO = new UserManagerPDO($this->db);
+			$id_unliker = unserialize($_SESSION['id']);
+			$id_unliked = $request->getParam('unlikeButton');
+			$UserManagerPDO->unlike($id_unliker, $id_unliked);
+			$user = $UserManagerPDO->getLoginFromId($id_unliked);
+
+			return $response->withRedirect($this->router->pathFor('user.profile', ['userprofile' => $user]));
 		}
 		else {
 			echo 'Huh?';

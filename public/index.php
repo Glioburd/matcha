@@ -46,11 +46,12 @@ $app->post('/edit', 'App\Controllers\PagesController:postEdit');
 
 $app->get('/settings', 'App\Controllers\PagesController:getSettings')->setName('user.settings');
 
-// $app->get('/edit', 'App\Controllers\PagesController:getEdit')->setName('user.edit');
 $app->get('/uploadpic', 'App\Controllers\PagesController:getUploadPicture')->setName('upload.picture');
 $app->post('/uploadpic', 'App\Controllers\PagesController:postUploadPicture');
 
-$app->post('/like', 'App\Controllers\PagesController:postlike')->setName('like');
+$app->post('/like', 'App\Controllers\PagesController:postLike')->setName('like');
+
+$app->post('/unlike', 'App\Controllers\PagesController:postUnlike')->setName('unlike');
 
 $app->post('/uploadpic2', 'App\Controllers\PagesController:postUploadPicture2')->setName('upload.picture2');;
 

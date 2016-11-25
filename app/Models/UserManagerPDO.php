@@ -30,15 +30,15 @@ class UserManagerPDO extends UserManager
 	protected function add(User $user)
 	{
 		$DB_REQ = $this->DB_REQ->prepare('
-			INSERT INTO users(login, email, firstName, lastName, password, created_at, updated_at)
-			VALUES(:login, :email, :firstName, :lastName, :password, NOW(), NOW())');
+			INSERT INTO users(login, email, firstName, lastName, password, birthDate, created_at, updated_at)
+			VALUES(:login, :email, :firstName, :lastName, :password, :birthDate, NOW(), NOW())');
 		
 		$DB_REQ->bindValue(':login', $user->login());
 		$DB_REQ->bindValue(':email', $user->email());
 		$DB_REQ->bindValue(':firstName', $user->firstName());
 		$DB_REQ->bindValue(':lastName', $user->lastName());
 		$DB_REQ->bindValue(':password', $user->password());
-		
+		$DB_REQ->bindValue(':birthDate', $user->birthDate());
 		$DB_REQ->execute();
 	}
 
@@ -485,24 +485,87 @@ class UserManagerPDO extends UserManager
 				INNER JOIN users
 				ON users.id = visitors.id_visitor
 				WHERE id_owner = :id_owner
+				-- UNION
+				-- SELECT 
 				ORDER BY visited_at DESC
 				LIMIT 5;
 				');
 			$DB_REQ->bindValue(':id_owner', $id_owner, PDO::PARAM_INT);
 			$DB_REQ->execute();
 			$data = $DB_REQ->fetchAll(PDO::FETCH_ASSOC);
-
 			return $data;
 		}
 
 		return NULL;
 	}
 
-	// public function like(User $user) {
-	// 		$DB_REQ = $this->DB_REQ->prepare('
-	// 			SELECT 
-	// 			');
-	// }
+	public function like($id_liker, $id_liked) {
+		$DB_REQ = $this->DB_REQ->prepare('
+			INSERT INTO likes (id_owner, id_liker) 
+			VALUES (:id_owner, :id_liker) 
+			');
+		$DB_REQ->bindValue(':id_owner', $id_liked, PDO::PARAM_INT);
+		$DB_REQ->bindValue(':id_liker', $id_liker, PDO::PARAM_INT);
+		$DB_REQ->execute();
+
+		$DB_REQ->closeCursor();
+
+		$DB_REQ = $this->DB_REQ->prepare('
+				UPDATE popularity
+				SET score = score + 2
+				WHERE id_owner = :id_owner
+				');
+		$DB_REQ->bindValue(':id_owner', $id_liked, PDO::PARAM_INT);
+		$DB_REQ->execute();
+	}
+
+	public function unlike($id_unliker, $id_unliked) {
+		$DB_REQ = $this->DB_REQ->prepare('
+			DELETE FROM likes
+			WHERE id_owner = :id_owner AND id_liker = :id_unliker 
+			');
+		$DB_REQ->bindValue(':id_owner', $id_unliked, PDO::PARAM_INT);
+		$DB_REQ->bindValue(':id_unliker', $id_unliker, PDO::PARAM_INT);
+		$DB_REQ->execute();
+
+		$DB_REQ->closeCursor();
+
+		$DB_REQ = $this->DB_REQ->prepare('
+				UPDATE popularity
+				SET score = score - 2
+				WHERE id_owner = :id_owner
+				');
+		$DB_REQ->bindValue(':id_owner', $id_unliked, PDO::PARAM_INT);
+		$DB_REQ->execute();
+	}
+
+/*
+** Has the visitor already liked the profile ? So can he like ?
+** Case no: false
+** Case yes: true
+*/
+
+	public function canLike($id_liker, $id_liked) {
+		if (!empty($id_liker) && !empty($id_liked)) {
+
+			$DB_REQ = $this->DB_REQ->prepare('SELECT id_liker
+				FROM likes
+				WHERE id_owner = :id_owner
+					AND id_liker = :id_liker
+				');
+			$DB_REQ->bindValue(':id_owner', $id_liked, PDO::PARAM_INT);
+			$DB_REQ->bindValue(':id_liker', $id_liker, PDO::PARAM_INT);	
+			$DB_REQ->execute();
+
+			$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+			$DB_REQ->closeCursor();
+
+			if($data['id_liker']) {
+				return false;
+			}
+		}
+		return true;
+	}
 
 /*
 ** DEBUG

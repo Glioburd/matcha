@@ -21,10 +21,12 @@ class User
 			$gender,
 			$sexuality,
 			$password,
+			$birthDate,
 			$created_at,
 			$updated_at,
 			$isactive,
 			$mainpicture,
+			$popularity,
 			$pictures = [],
 			$hobbies = [];
 	
@@ -198,6 +200,10 @@ class User
 		$this->updated_at = $updated_at;
 	}
 
+	public function setBirthDate($birthDate) {
+		$this->birthDate = $birthDate;
+	}
+
 	public function setisactive($isactive){
 		$this->isactive = $isactive;
 	}
@@ -274,6 +280,11 @@ class User
 	public function password()
 	{
 		return $this->password;
+	}
+
+	public function birthDate()
+	{
+		return $this->birthDate;
 	}
 	
 	public function created_at()
