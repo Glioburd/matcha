@@ -405,7 +405,8 @@ class PagesController extends Controller {
 
 		define('MB', 1048576);
 		// $user = unserialize($_SESSION['user']);
-		$user = unserialize($_SESSION['id']);
+		$UserManagerPDO = new UserManagerPDO($this->db);
+		$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
 		$errors = [];
 		// $target_dir = __DIR__ . '/../../uploads/' . $user->id() . '/';
 		$target_dir = '../../matcha/uploads/' . $user->id() . '/';
@@ -470,7 +471,7 @@ class PagesController extends Controller {
 		} else {
 			if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
 				$this->flash("The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded ☺.");
-				$UserManagerPDO = new UserManagerPDO($this->db);
+
 				$UserManagerPDO->addPicture($target_file, $user);
 				// $_SESSION['user'] = serialize($UserManagerPDO->getUnique($user->id()));
 				return $this->redirect($response, 'user.edit', 200);
@@ -485,7 +486,9 @@ class PagesController extends Controller {
 	public function postLike($request, $response) {
 		if (Validator::isConnected() && !empty($request->getParams())) {
 			$UserManagerPDO = new UserManagerPDO;
-			$user = unserialize($_SESSION['id']);
+			$id = unserialize($_SESSION['id']);
+			$user = $UserManagerPDO->getUnique($id);
+			
 		}
 		else {
 			echo 'Huh?';
