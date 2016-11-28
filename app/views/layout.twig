@@ -26,7 +26,7 @@
 				<li><a href="{{path_for('auth.login')}}"><span class="glyphicon glyphicon-log-in"></span>Login</a></li>
 			{% else %}
 
-				<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ user.login }}<span class="caret"></span></a>
+				<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ user.login|e }}<span class="caret"></span></a>
 					<ul class="dropdown-menu">
 						<li><a href="{{ path_for('user.profile', { 'userprofile': user.login }) }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
 						<li><a href="{{ path_for('user.settings') }}"><span class="glyphicon glyphicon-wrench"></span> Settings</a></li>

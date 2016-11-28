@@ -49,6 +49,8 @@ $app->get('/settings', 'App\Controllers\PagesController:getSettings')->setName('
 $app->get('/uploadpic', 'App\Controllers\PagesController:getUploadPicture')->setName('upload.picture');
 $app->post('/uploadpic', 'App\Controllers\PagesController:postUploadPicture');
 
+$app->post('/change_avatar', 'App\Controllers\PagesController:postChangeAvatar')->setName('change.picture');
+
 $app->post('/deletepic', 'App\Controllers\PagesController:postDeletePicture')->setName('delete.picture');
 
 $app->post('/like', 'App\Controllers\PagesController:postLike')->setName('like');

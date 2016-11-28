@@ -421,15 +421,16 @@ class UserManagerPDO extends UserManager
 		if (intval($result['count']) < 5) {
 
 			$DB_REQ = $this->DB_REQ->prepare('
-				SELECT ismainpic
+				SELECT COUNT(ismainpic) as count
 				FROM pictures
-				WHERE id_owner = :id_owner
+				WHERE id_owner = :id_owner AND ismainpic = 1
 				');
 
 			$DB_REQ->bindValue(':id_owner', $user->id());
 			$DB_REQ->execute();
 			$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
-			if (in_array(1, $data)) {
+
+			if ($data['count'] == 1) {
 				$ismainpic = 0;
 			} else {
 				$ismainpic = 1;
@@ -467,13 +468,39 @@ class UserManagerPDO extends UserManager
 			$DB_REQ = $this->DB_REQ->prepare('
 				SELECT id 
 				FROM pictures
-				WHERE src = :src');
+				WHERE src = :src
+				');
 			$DB_REQ->bindValue(':src', $src);
 			$DB_REQ->execute();
 			$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
 			return $data['id'];
 		}
 		return NULL;
+	}
+
+	public function setMainPicture($idPic, User $user) {
+		if ($idPic){
+			$DB_REQ = $this->DB_REQ->prepare('
+				UPDATE pictures
+				SET ismainpic = :value
+				WHERE id_owner = :id_owner
+				');
+			$DB_REQ->bindValue(':value', 0, PDO::PARAM_INT);
+			$DB_REQ->bindValue(':id_owner', $user->id());
+			$DB_REQ->execute();
+
+			$DB_REQ->closeCursor();
+
+			$DB_REQ = $this->DB_REQ->prepare('
+				UPDATE pictures
+				SET ismainpic = :value
+				WHERE id = :id
+				');
+			$DB_REQ->bindValue(':value', 1, PDO::PARAM_INT);
+			$DB_REQ->bindValue(':id', $idPic);
+			$DB_REQ->execute();
+		}
+
 	}
 
 	public function addVisit ($idVisitor, $idVisited) {

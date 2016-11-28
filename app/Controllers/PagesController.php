@@ -439,12 +439,12 @@ class PagesController extends Controller {
 
 			$check = getimagesize($_FILES["fileToUpload"]["tmp_name"]);
 			if($check !== false) {
-				$errors['image'] = "File is an image - " . $check["mime"] . ".";
+				$errors['imageupload'] = "File is an image - " . $check["mime"] . ".";
 				$uploadOk = 1;
 			}
 
 			else {
-				$errors['image'] = "File is not an image.";
+				$errors['imageupload'] = "File is not an image.";
 				$uploadOk = 0;
 			}
 		}
@@ -452,21 +452,20 @@ class PagesController extends Controller {
 
 		if (!file_exists($target_dir)) {
 			if (!mkdir($target_dir)) {
-				// $errors['image'] =  "An error occured when making your gallery folder.";
-				$errors['image'] =  $target_dir;
+				$errors['imageupload'] =  $target_dir;
 
 				$uploadOk = 0;
 			}
 		}
 
 		if (file_exists($target_file)) {
-			$errors['image'] =  "Sorry, file already exists.";
+			$errors['imageupload'] =  "Sorry, file already exists.";
 			$uploadOk = 0;
 		}
 
 		// Check file size
 		if ($_FILES["fileToUpload"]["size"] > 5 * MB) {
-			$errors['image'] =  "Sorry, your file is too large.";
+			$errors['imageupload'] =  "Sorry, your file is too large.";
 			$uploadOk = 0;
 		}
 
@@ -474,14 +473,14 @@ class PagesController extends Controller {
 
 		if($imageFileType != "jpg" && $imageFileType != "png" && $imageFileType != "jpeg"
 		&& $imageFileType != "gif" ) {
-			$errors['image'] =  "Only JPG, JPEG, PNG & GIF files are allowed.";
+			$errors['imageupload'] =  "Only JPG, JPEG, PNG & GIF files are allowed.";
 			$uploadOk = 0;
 		}
 
 		$count = $UserManagerPDO->countPictures($user);
 
 		if ($count >= 5) {
-			$errors['image'] =  "Sorry, max 5 pictures allowed";
+			$errors['imageupload'] =  "Sorry, max 5 pictures allowed";
 			$uploadOk = 0;
 		}
 
@@ -503,7 +502,7 @@ class PagesController extends Controller {
 				$UserManagerPDO->addPicture($target_file, $user);
 				return $this->redirect($response, 'user.edit', 200);
 			} else {
-				$errors['image'] =  "Sorry, there was an error uploading your file.";
+				$errors['imageupload'] =  "Sorry, there was an error uploading your file.";
 				$this->flash($errors, 'errors');
 				return $this->redirect($response, 'user.edit', 302);
 			}
@@ -518,6 +517,7 @@ class PagesController extends Controller {
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
 			$imgSrc = $request->getParam('deletePicture');
+
 			$basenameSrc = basename($imgSrc);
 			$target_dir = getcwd() . '/../uploads/' . $user->id();
 			
@@ -539,11 +539,24 @@ class PagesController extends Controller {
 			$idPic = $UserManagerPDO->getIdFromPicSrc($imgSrc);
 
 			$UserManagerPDO->deletePicture($idPic, $user);
-			return $this->redirect($response, 'user.edit', 302);
+			return $this->redirect($response, 'user.edit', 200);
 		}
 
 		else
 			echo 'huh?';
+	}
+
+	public function postChangeAvatar($request, $response) {
+		if (Validator::isConnected() && !empty($request->getParams())) {
+			$errors = [];
+			$UserManagerPDO = new UserManagerPDO($this->db);
+			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
+			$imgSrc = $request->getParam('changePicture');
+			$idPic = $UserManagerPDO->getIdFromPicSrc($imgSrc);
+			$UserManagerPDO->setMainPicture($idPic, $user);
+			return $this->redirect($response, 'user.edit', 200);
+
+		}
 	}
 					
 	public function postLike($request, $response) {

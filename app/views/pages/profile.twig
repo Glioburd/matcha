@@ -46,10 +46,10 @@
 
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<h3 class="panel-title">Who is {{isShe}}?</h3>
+			<h3 class="panel-title">Who is {{isShe|e}}?</h3>
 		</div>
 		<div class="panel-body">
-			{{userprofile.name}} is a <strong>{{age}}</strong> years old <strong>{{gender}}</strong>. Say {{himHer}} hi!
+			{{userprofile.name|e}} is a <strong>{{age|e}}</strong> years old <strong>{{gender|e}}</strong>. Say {{himHer|e}} hi!
 		</div>
 	</div>
 
@@ -135,7 +135,7 @@
 			<h3 class="panel-title">Biography:</h3>
 		</div>
 		<div class="panel-body">
-			{{userprofile.bio}}
+			{{userprofile.bio|e}}
 		</div>
 	</div>
 
@@ -164,7 +164,7 @@
 		</div>
 		<div class="panel-body">
 			{% for hobbies in userprofile.hobbies %}
-			#{{ hobbies }}
+			#{{ hobbies|e }}
 		{% endfor %}
 		</div>
 	</div>
