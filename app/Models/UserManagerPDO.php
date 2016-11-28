@@ -395,33 +395,85 @@ class UserManagerPDO extends UserManager
 		$user->setDateUpdate($date);
 	}
 
-	public function addPicture($src, User $user) {
+	public function countPictures(User $user) {
 		$DB_REQ = $this->DB_REQ->prepare('
-			SELECT ismainpic
+			SELECT COUNT(*) as count
 			FROM pictures
 			WHERE id_owner = :id_owner
 			');
-
 		$DB_REQ->bindValue(':id_owner', $user->id());
 		$DB_REQ->execute();
-		$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
-		if (in_array(1, $data)) {
-			$ismainpic = 0;
-		} else {
-			$ismainpic = 1;
-		}
+		$result = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+		return intval($result['count']);
+	}
+
+	public function addPicture($src, User $user) {
+
 		$DB_REQ = $this->DB_REQ->prepare('
-
-			INSERT INTO pictures (id_owner, src, ismainpic)
-			VALUES (:id_owner, :src, :ismainpic)
+			SELECT COUNT(*) as count
+			FROM pictures
+			WHERE id_owner = :id_owner
 			');
-
 		$DB_REQ->bindValue(':id_owner', $user->id());
-		$DB_REQ->bindValue(':src', $src);
-		$DB_REQ->bindValue(':ismainpic', $ismainpic);
 		$DB_REQ->execute();
+		$result = $DB_REQ->fetch(PDO::FETCH_ASSOC);
 
-		// $user->addPicture($src);
+		if (intval($result['count']) < 5) {
+
+			$DB_REQ = $this->DB_REQ->prepare('
+				SELECT ismainpic
+				FROM pictures
+				WHERE id_owner = :id_owner
+				');
+
+			$DB_REQ->bindValue(':id_owner', $user->id());
+			$DB_REQ->execute();
+			$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+			if (in_array(1, $data)) {
+				$ismainpic = 0;
+			} else {
+				$ismainpic = 1;
+			}
+			$DB_REQ = $this->DB_REQ->prepare('
+
+				INSERT INTO pictures (id_owner, src, ismainpic)
+				VALUES (:id_owner, :src, :ismainpic)
+				');
+
+			$DB_REQ->bindValue(':id_owner', $user->id());
+			$DB_REQ->bindValue(':src', $src);
+			$DB_REQ->bindValue(':ismainpic', $ismainpic);
+			$DB_REQ->execute();
+
+		}
+
+		return NULL;
+	}
+
+	public function deletePicture($idPic, User $user) {
+			$DB_REQ = $this->DB_REQ->prepare('
+				DELETE
+				FROM pictures
+				WHERE id = :id AND id_owner = :id_owner
+				');
+
+			$DB_REQ->bindValue(':id_owner', $user->id());
+			$DB_REQ->bindValue(':id', $idPic);
+			$DB_REQ->execute();
+	}
+
+	public function getIdFromPicSrc($src) {
+		if ($src) {
+			$DB_REQ = $this->DB_REQ->prepare('
+				SELECT id 
+				FROM pictures
+				WHERE src = :src');
+			$DB_REQ->bindValue(':src', $src);
+			$DB_REQ->execute();
+			$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+			return $data['id'];
+		}
+		return NULL;
 	}
 
 	public function addVisit ($idVisitor, $idVisited) {

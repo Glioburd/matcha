@@ -49,6 +49,8 @@ $app->get('/settings', 'App\Controllers\PagesController:getSettings')->setName('
 $app->get('/uploadpic', 'App\Controllers\PagesController:getUploadPicture')->setName('upload.picture');
 $app->post('/uploadpic', 'App\Controllers\PagesController:postUploadPicture');
 
+$app->post('/deletepic', 'App\Controllers\PagesController:postDeletePicture')->setName('delete.picture');
+
 $app->post('/like', 'App\Controllers\PagesController:postLike')->setName('like');
 
 $app->post('/unlike', 'App\Controllers\PagesController:postUnlike')->setName('unlike');

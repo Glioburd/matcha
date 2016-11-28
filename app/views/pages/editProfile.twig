@@ -7,34 +7,67 @@
 <div class="container">
 
 {###------------------------------------------------------------------------------------------------------------------###}
-{###------------------------------------------EDIT GALERY*********----------------------------------------------------###}
+{###------------------------------------------EDIT GALERY-------------------------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
 
 <h2>Pictures:</h2>
 {{flash.errors.image }}
 <div class="panel panel-default{% if flash.errors.image %} has-error {% endif %}">
 
-			<div class="panel-heading">
-				<h3 class="panel-title">Edit your gallery:</h3>
-			</div>
+	<div class="panel-heading">
+		<h3 class="panel-title">Edit your gallery:</h3>
+	</div>
 
-			<div class="panel-body">
-				<div class="row">
-					<div class="col-lg-6">
-						<form action="{{ path_for('upload.picture') }}" method="post" enctype="multipart/form-data">
-							Select image to upload:							
-							<input type="file" name="fileToUpload" id="fileToUpload">
-							<div class="form-group">
-								<input type="submit" class="btn btn-primary" value="Upload Image" name="submit">
-								{% if flash.errors.image %}
-									<span class="help-block">{{ flash.errors.image }}</span>
-								{% endif %}
-							</div>
-						</form>
+	<div class="panel-body">
+		<div class="row">
+			<div class="col-lg-6">
+				<form action="{{ path_for('upload.picture') }}" method="post" enctype="multipart/form-data">
+					Add a new image:							
+					<input type="file" name="fileToUpload" id="fileToUpload">
+					<div class="form-group">
+						<input type="submit" class="btn btn-primary" value="Upload Image" name="submit">
+						{% if flash.errors.image %}
+							<span class="help-block">{{ flash.errors.image }}</span>
+						{% endif %}
 					</div>
+				</form>
+				{% if user.pictures[i] %}
+					Delete or select main image:
+				{% endif %}
+				{% if user.mainpicture %}
+				<div class="row">
+					{% set src = user.mainpicture %}
+						<div class="col-sm-6 col-md-4">
+							<div class="caption">
+								<a class="thumbnail">
+									<img src="{{src}}" alt="profile picture">
+								</a>
+								<form action="{{ path_for('delete.picture') }}" method="post">
+								<button type="submit" name="deletePicture" class="btn btn-danger align-center" value="{{user.mainpicture}}">Delete</button></form>
+							</div>
+						</div>
+				{% endif %}
+
+					{% for i in 0..3 %}
+							{% if user.pictures[i] %}
+								{% set src = user.pictures[i] %}		
+									
+								<div class="col-sm-6 col-md-4">
+									<div class="caption">
+										<a class="thumbnail">
+											<img src="{{src}}" alt="profile picture">
+										</a>
+										<p><a href="#" class="btn btn-success" role="button">Set main</a> <a href="#" class="btn btn-danger" role="button">Delete</a></p>
+										</div>
+
+									</div>	
+							{% endif %}
+					{% endfor %}
 				</div>
 			</div>
 		</div>
+	</div>
+</div>
 <hr>
 
 {###------------------------------------------------------------------------------------------------------------------###}

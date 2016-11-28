@@ -342,6 +342,7 @@ class PagesController extends Controller {
 			// $user = unserialize($_SESSION['user']);
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
+			Debug::debugUser($this->container, $user);
 			return $this->render($response, 'pages/editProfile.twig',[
 				'user' => $user
 			]);
@@ -423,12 +424,11 @@ class PagesController extends Controller {
 	public function postUploadPicture($request, $response) {
 
 		define('MB', 1048576);
-		// $user = unserialize($_SESSION['user']);
 		$UserManagerPDO = new UserManagerPDO($this->db);
 		$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
 		$errors = [];
-		// $target_dir = __DIR__ . '/../../uploads/' . $user->id() . '/';
-		$target_dir = '../../matcha/uploads/' . $user->id() . '/';
+		// $target_dir = '../../matcha/uploads/' . $user->id() . '/';
+		$target_dir = '../uploads/' . $user->id() . '/';
 		$target_file = $target_dir . basename($_FILES["fileToUpload"]["name"]);
 		$uploadOk = 1;
 		$imageFileType = pathinfo($target_file,PATHINFO_EXTENSION);
@@ -478,6 +478,13 @@ class PagesController extends Controller {
 			$uploadOk = 0;
 		}
 
+		$count = $UserManagerPDO->countPictures($user);
+
+		if ($count >= 5) {
+			$errors['image'] =  "Sorry, max 5 pictures allowed";
+			$uploadOk = 0;
+		}
+
 		// Check if $uploadOk is set to 0 by an error
 
 		if ($uploadOk == 0) {
@@ -487,12 +494,13 @@ class PagesController extends Controller {
 
 		// if everything is ok, try to upload file
 
-		} else {
+		} 
+
+		else {
 			if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
-				$this->flash("The file ". basename( $_FILES["fileToUpload"]["name"]). " has been uploaded ☺.");
+				$this->flash("The file ". basename($_FILES["fileToUpload"]["name"]). " has been uploaded ☺.");
 
 				$UserManagerPDO->addPicture($target_file, $user);
-				// $_SESSION['user'] = serialize($UserManagerPDO->getUnique($user->id()));
 				return $this->redirect($response, 'user.edit', 200);
 			} else {
 				$errors['image'] =  "Sorry, there was an error uploading your file.";
@@ -502,6 +510,42 @@ class PagesController extends Controller {
 		}
 	}
 
+	public function postDeletePicture($request, $response) {
+
+		if (Validator::isConnected() && !empty($request->getParams())) {
+
+			$errors = [];
+			$UserManagerPDO = new UserManagerPDO($this->db);
+			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
+			$imgSrc = $request->getParam('deletePicture');
+			$basenameSrc = basename($imgSrc);
+			$target_dir = getcwd() . '/../uploads/' . $user->id();
+			
+			if (!file_exists($target_dir)){ 
+				if (!mkdir('old', 0700)) {
+					$errors['image'] = 'An error occured when trying to delete image.';
+					$this->flash($errors, 'errors');
+					return $this->redirect($response, 'user.edit', 302);				
+				}	
+			}
+
+
+			if (!rename($target_dir . '/' . $basenameSrc, $target_dir . '/old/' . $basenameSrc)) {
+				$errors['image'] = 'An error occured when trying to delete image.';
+				$this->flash($errors, 'errors');
+				return $this->redirect($response, 'user.edit', 302);
+			}
+
+			$idPic = $UserManagerPDO->getIdFromPicSrc($imgSrc);
+
+			$UserManagerPDO->deletePicture($idPic, $user);
+			return $this->redirect($response, 'user.edit', 302);
+		}
+
+		else
+			echo 'huh?';
+	}
+					
 	public function postLike($request, $response) {
 
 		if (Validator::isConnected() && !empty($request->getParams())) {
@@ -514,7 +558,7 @@ class PagesController extends Controller {
 			return $response->withRedirect($this->router->pathFor('user.profile', ['userprofile' => $user]));
 		}
 		else {
-			echo 'Huh?';
+			echo 'huh?';
 		}
 	}
 
