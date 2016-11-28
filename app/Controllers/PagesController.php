@@ -335,6 +335,62 @@ class PagesController extends Controller {
 		}
 	}
 
+	public function PostSettings($request, $response) {
+
+		if (Validator::isConnected()) {
+			$errors = [];
+			$UserManagerPDO = new UserManagerPDO($this->db);
+			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
+
+			$oldPassword = $request->getParam('oldPassword');
+			$newPassword = $request->getParam('newPassword');
+			$newPasswordConfirm = $request->getParam('newPasswordConfirm');
+
+			if (!empty($oldPassword) || !empty($newPassword) || !empty($newPasswordConfirm)) {
+
+				if ($user->password() != password_hash($oldPassword, PASSWORD_DEFAULT)) {
+					$errors['oldPassword'] = 'The new password doesn\'t match with your old password';
+				}
+
+				else {
+					switch (Validator::passwordCheck($newPassword)) {
+						case 1:
+							$errors['newPassword'] = 'Password too short : minimum 6 characters.';
+							break;
+						case 2:
+							$errors['newPassword'] = 'Password must contain at least 1 number.';
+							break;
+						case 3:
+							$errors['newPassword'] = 'Password must contain at least 1 letter.';
+							break;
+					}
+				}
+
+				if (!Validator::passwordConfirm($newPassword, $newPasswordConfirm)) {
+					$errors['newPasswordConfirm'] = 'Invalid password confirmation';
+				}
+			}
+		}
+
+		// debug($errors);
+		// die();
+
+		if (empty($errors)) {
+
+			// $UserManagerPDO = new UserManagerPDO($this->db);
+			// $UserManagerPDO->save($user);
+
+		}
+
+		else {
+			$this->flash('Un champ n\'a pas été rempli correctement', 'error');	
+			$this->flash($errors, 'errors');
+			return $this->redirect($response, 'user.settings', 302);
+		}
+			$this->flash('Your settings have been succesfully updated!', 'success');	
+			return $this->redirect($response, 'user.settings', 200);
+	}
+
 	public function getEdit($request, $response) {
 
 		if (Validator::isConnected()) {
