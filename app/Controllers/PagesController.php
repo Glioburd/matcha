@@ -125,7 +125,7 @@ class PagesController extends Controller {
 				'firstName' => $request->getParam('firstname'),
 				'lastName' => $request->getParam('lastname'),
 				'password' => password_hash($request->getParam('password'), PASSWORD_DEFAULT),
-				'birthDate' =>$request->getParam('birthDate')
+				'birthDate' =>$request->getParam('birthDate'),
 				]);
 
 			$UserManagerPDO = new UserManagerPDO($this->db);
@@ -280,7 +280,8 @@ class PagesController extends Controller {
 			if ($idprofile = $UserManagerPDO->getIdFromLogin($userprofilearg)) {
 
 				$userProfile = $UserManagerPDO->getUnique($idprofile);
-				
+				// $age = Validator::validateAge($userProfile->birthDate());
+
 				if ($user->id() != $userProfile->id()) {
 					$UserManagerPDO->addVisit($user->id(), $userProfile->id());
 					$canLike = $UserManagerPDO->canLike($user->id(), $userProfile->id());
@@ -290,13 +291,16 @@ class PagesController extends Controller {
 					$visits = $UserManagerPDO->getVisits($userProfile->id($user->id(), $userProfile->id()));
 				}
 
+				$age = Validator::getAge($userProfile->Birthdate());
+
 				Debug::debugUsers($this->container, $user, $userProfile);
 
 				return $this->render($response, 'pages/profile.twig',[
 					'userprofile' => $userProfile,
 					'user' => $user,
 					'visits' => $visits,
-					'canLike' => $canLike
+					'canLike' => $canLike,
+					'age' =>$age
 				]);
 
 			}

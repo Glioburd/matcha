@@ -266,7 +266,7 @@ class UserManagerPDO extends UserManager
 	{
 		if (isset($id) && !empty($id)) {
 			$DB_REQ = $this->DB_REQ->prepare('
-				SELECT id, login, email, firstName, lastName, password, gender, sexuality, bio, created_at, updated_at, isactive 
+				SELECT id, login, email, firstName, lastName, birthDate,  password, gender, sexuality, bio, created_at, updated_at, isactive 
 				FROM users 
 				WHERE id = :id
 				');

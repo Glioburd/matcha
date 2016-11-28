@@ -153,6 +153,23 @@ class Validator
 		return TRUE;
 	}
 
+	public static function convertAge($date) {
+
+		$test_arr = str_replace('-', '/', $date);
+		$test_arr = explode('-', $date);
+		$tmp[0] = $test_arr[1];
+		$tmp[1] = $test_arr[2];
+		$tmp[2] = $test_arr[0];
+		$test_arr = $tmp;
+		return $test_arr;
+	}
+
+	public static function getAge($date) {
+		$age = floor((time() - strtotime($date)) / 31556926);
+		
+		return $age;
+	}
+
 	public static function validateAge($birthday, $age = 18) {
 		// $birthday can be UNIX_TIMESTAMP or just a string-date.
 		if(is_string($birthday)) {
@@ -161,11 +178,11 @@ class Validator
 
 		// check
 		// 31536000 is the number of seconds in a 365 days year.
-		if(time() - $birthday < $age * 31536000)  {
-			echo 'FALSE';
+		if($returnage = time() - $birthday < $age * 31536000)  {
+
 			return FALSE;
 		}
-		echo 'TRUE';
+
 		return TRUE;
 	}
 
@@ -174,16 +191,9 @@ class Validator
 
 		if (isset($date)) {
 
-			$test_arr = str_replace('-', '/', $date);
-			$test_arr = explode('-', $date);
-			$tmp[0] = $test_arr[1];
-			$tmp[1] = $test_arr[2];
-			$tmp[2] = $test_arr[0];
-			$test_arr = $tmp;
-
+			$test_arr = self::convertAge($date);
 
 			if (checkdate($test_arr[0], $test_arr[1], $test_arr[2])) {
-				self::validateAge();
 				if (self::validateAge($date)) {
 					return TRUE;
 				}

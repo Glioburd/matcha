@@ -35,20 +35,21 @@
 	{% endif %}
 
 {###------------------------------------------------------------------------------------------------------------------###}
-{###---------------------------------------------GENDER PANNEL--------------------------------------------------------###}
+{###---------------------------------------------INTRO PANNEL---------------------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
 
+{% if userprofile.gender == 'f' %}
+	{% set isShe, himHer, gender = 'she', 'her', 'female' %}
+{% else %}
+	{% set isShe, himHer, gender = 'he', 'him', 'male' %}
+{% endif %}
 
 	<div class="panel panel-default">
 		<div class="panel-heading">
-			<h3 class="panel-title">Gender:</h3>
+			<h3 class="panel-title">Who is {{isShe}}?</h3>
 		</div>
 		<div class="panel-body">
-			{% if userprofile.gender == "f" %}
-				{{"Female"}}
-			{% else %}
-				{{"Male"}}
-			{% endif %}
+			{{userprofile.name}} is a <strong>{{age}}</strong> years old <strong>{{gender}}</strong>. Say {{himHer}} hi!
 		</div>
 	</div>
 
@@ -143,14 +144,14 @@
 {###------------------------------------------------------------------------------------------------------------------###}
 
 
-	<div class="panel panel-default">
+{# 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<h3 class="panel-title">Sexuality:</h3>
 		</div>
 		<div class="panel-body">
 			{{userprofile.sexuality}}
 		</div>
-	</div>
+	</div> #}
 
 
 {###------------------------------------------------------------------------------------------------------------------###}
