@@ -10,6 +10,7 @@ use App\Models\UserManagerPDO;
 use \PDO;
 
 include __DIR__ . '../../../debug.php';
+include 'mails.php';
 
 /**
 * 
@@ -24,6 +25,7 @@ class PagesController extends Controller {
 
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
+
 			$this->render($response, 'home.twig',[
 				'user' => $user
 				]);
@@ -138,7 +140,7 @@ class PagesController extends Controller {
 		}
 
 		else {
-			$this->flash('Un champ n\'a pas été rempli correctement', 'error');	
+			$this->flash('A field hasn\'t been filled correctly.', 'error');	
 			$this->flash($errors, 'errors');
 			return $this->redirect($response, 'auth.signup', 302);
 		}
@@ -232,8 +234,7 @@ class PagesController extends Controller {
 					$id = $UserManagerPDO->getIdFromLogin($login);
 
 					$user = $UserManagerPDO->getUnique($id);
-
-					$UserManagerPDO->updateLastSeen($user);					
+				
 
 					$_SESSION['id'] = serialize($id);
 					setcookie("matcha_cookie", $_SESSION['id'], time() + 36000, "/");
@@ -263,7 +264,7 @@ class PagesController extends Controller {
 	}
 
 	public function getLogOut($request, $response) {
-		unset($_SESSION['user']);
+		unset($_SESSION['id']);
 		setcookie("matcha_cookie", null, -1, "/");
 		session_destroy();
 		return $this->redirect($response, 'home', 200);
@@ -271,7 +272,7 @@ class PagesController extends Controller {
 
 	public function getProfile($request, $response, $args) {
 
-		if (Validator::isConnected()) {
+		if (Validator::isConnected() && isset($args['userprofile']) && !empty($args['userprofile'])) {
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
 			$userprofilearg = $args['userprofile'];
@@ -280,7 +281,6 @@ class PagesController extends Controller {
 			if ($idprofile = $UserManagerPDO->getIdFromLogin($userprofilearg)) {
 
 				$userProfile = $UserManagerPDO->getUnique($idprofile);
-				// $age = Validator::validateAge($userProfile->birthDate());
 
 				if ($user->id() != $userProfile->id()) {
 					$UserManagerPDO->addVisit($user->id(), $userProfile->id());
@@ -291,9 +291,6 @@ class PagesController extends Controller {
 					$visits = $UserManagerPDO->getVisits($userProfile->id());
 					$likes = $UserManagerPDO->getLikes($userProfile->id());
 					$eventsHistory = $UserManagerPDO->mergeVisitsLikes($visits, $likes);
-					// debug($eventsHistory);
-					// die();
-
 				}
 
 				$age = Validator::getAge($userProfile->Birthdate());
@@ -303,8 +300,6 @@ class PagesController extends Controller {
 				return $this->render($response, 'pages/profile.twig',[
 					'userprofile' => $userProfile,
 					'user' => $user,
-					// 'visits' => $visits,
-					// 'likes' => $likes,
 					'eventsHistory' => $eventsHistory,
 					'canLike' => $canLike,
 					'age' =>$age
@@ -314,7 +309,7 @@ class PagesController extends Controller {
 
 			else {
 
-				echo 'doesnt exists'; // a modifier + tard
+				echo 'doesnt exists'; // 404, a modifier + tard
 			}
 
 		}
@@ -328,7 +323,6 @@ class PagesController extends Controller {
 
 		if (Validator::isConnected()) {
 
-			// $user = unserialize($_SESSION['user']);
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
 			return $this->render($response, 'pages/settings.twig',[
@@ -353,6 +347,7 @@ class PagesController extends Controller {
 			$oldPassword = $request->getParam('oldPassword');
 			$newPassword = $request->getParam('newPassword');
 			$newPasswordConfirm = $request->getParam('newPasswordConfirm');
+			$newMail = $request->getParam('email');
 
 			if (!empty($oldPassword) || !empty($newPassword) || !empty($newPasswordConfirm)) {
 
@@ -378,6 +373,29 @@ class PagesController extends Controller {
 					$errors['newPasswordConfirm'] = 'Invalid password confirmation';
 				}
 			}
+
+			if ($newMail != $user->email()) {
+
+				if (Validator::mailCheck($newMail, $this->container->db) === INVALID_EMAIL) {
+					$errors['email'] = 'E-mail adress is invalid.';
+				}
+
+				elseif (Validator::mailCheck($newMail, $this->container->db) === EMAIL_ALREADY_EXISTS) {
+					$errors['email'] = 'E-mail is already used.';
+				}
+
+				$user->setHash(md5(uniqid(rand(), true)));
+				$UserManagerPDO->save($user);
+				$success = 'An email has been sent to confirm the new e-mail.';
+				$type = 'info';
+				mailResetPwd($newMail, $user->hash());
+
+			}
+
+			else {
+				$success = 'Your settings have been succesfully updated!';
+				$type = 'success';
+			}
 		}
 
 		if (!empty($errors)) {
@@ -385,10 +403,36 @@ class PagesController extends Controller {
 			$this->flash($errors, 'errors');
 			return $this->redirect($response, 'user.settings', 302);
 		}
+
+
 			$user->setPassword(password_hash($newPassword, PASSWORD_DEFAULT));
 			$UserManagerPDO->save($user);
-			$this->flash('Your settings have been succesfully updated!', 'success');	
+			$this->flash($success, $type);	
 			return $this->redirect($response, 'user.settings', 200);
+	}
+
+	public function getChangeMail($request, $response, $args) {
+
+		if (Validator::isConnected() && isset($_GET['email']) && !empty($_GET['email']) && isset($_GET['hash']) && !empty($_GET['hash'])) {
+			$UserManagerPDO = new UserManagerPDO($this->db);
+			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
+			$email = $_GET['email'];
+			$hash = $_GET['hash'];
+
+			echo 'hi';
+			if ($hash != $user->hash()) {
+				$this->flash("Your mail hasn't been updated, the link was incorrect or expired.", 'error');
+				return $this->redirect($response, 'home', 302);			
+			}
+
+			$user->setEmail($email);
+			$UserManagerPDO->save($user);
+			$this->flash('Your e-mail has been succesfully updated ☺', 'success');	
+			return $this->redirect($response, 'home', 200);
+		}
+
+			// return $this->redirect($response, 'home', 200);
+
 	}
 
 	public function getEdit($request, $response) {
@@ -423,18 +467,6 @@ class PagesController extends Controller {
 
 		if (!Validator::loginLengthCheck($request->getParam('login'))) {
 			$errors['login'] = 'Your username must contain between 2 and 32 characters.';
-		}
-
-		if ($request->getParam('email') != $user->email()) {
-
-			if (Validator::mailCheck($request->getParam('email'), $this->container->db) === INVALID_EMAIL) {
-				$errors['email'] = 'E-mail adress is invalid.';
-			}
-
-			elseif (Validator::mailCheck($request->getParam('email'), $this->container->db) === EMAIL_ALREADY_EXISTS) {
-				$errors['email'] = 'E-mail is already used.';
-			}
-
 		}	
 
 		if (!Validator::bioLengthCheck($request->getParam('bio'))) {

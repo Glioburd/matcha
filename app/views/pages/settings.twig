@@ -8,14 +8,14 @@
 
 	<form action="{{ path_for('user.settings') }}" method="post">
 {###------------------------------------------------------------------------------------------------------------------###}
-{###--------------------------------------------EDIT MAIL-------------------------------------------------------------###}
+{###--------------------------------------------EDIT PASSWORD---------------------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
 
 
 		<div class="panel panel-default">
 
 			<div class="panel-heading">
-				<h3 class="panel-title">Edit your password (leave blank if you don't want to change):</h3>
+				<h3 class="panel-title">Edit your password (leave blank if you don't want to change)</h3>
 			</div>
 
 			<div class="panel-body{% if flash.errors.password %} has-error {% endif %}">
@@ -44,6 +44,35 @@
 								<input type="password" class="form-control" name="NewPasswordConfirm" id="NewPasswordConfirm" value="{{ old.NewPasswordConfirm }}">
 								{% if flash.errors.newPasswordConfirm %}
 									<span class="help-block">{{ flash.errors.newPasswordConfirm }}</span>
+								{% endif %}
+							</div>
+
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+
+{###------------------------------------------------------------------------------------------------------------------###}
+{###--------------------------------------------EDIT MAIL-------------------------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
+
+		<div class="panel panel-default">
+
+			<div class="panel-heading">
+				<h3 class="panel-title">Edit your mail</h3>
+			</div>
+
+			<div class="panel-body{% if flash.errors.email %} has-error {% endif %}">
+				<div class="row">
+					<div class="col-lg-6">
+						<div class="input-group">
+
+							<div class="{% if flash.errors.email %} has-error {% endif %}">
+								<label for ="email">Current email:</label><br>
+								<input type="email" class="form-control" name="email" id="email" value="{{ user.email|e }}">
+								{% if flash.errors.email %}
+									<span class="help-block">{{ flash.errors.email }}</span>
 								{% endif %}
 							</div>
 

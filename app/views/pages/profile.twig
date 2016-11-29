@@ -49,7 +49,7 @@
 			<h3 class="panel-title">Who is {{isShe|e}}?</h3>
 		</div>
 		<div class="panel-body">
-			{{userprofile.name|e}} is a <strong>{{age|e}}</strong> years old <strong>{{gender|e}}</strong>. Say {{himHer|e}} hi!
+			<strong>{{userprofile.login|e}}</strong> is a <strong>{{age|e}}</strong> years old <strong>{{gender|e}}</strong>. Tell {{himHer|e}} hi or trashtalk {{himHer|e}}!
 		</div>
 	</div>
 
@@ -63,7 +63,7 @@
 		</div>
 		<div class="panel-body">
 
-			{{ userprofile.updated_at|date("F jS \\a\\t g:ia") }}
+			{{ userprofile.updated_at|date("F jS \\a\\t g:i A") }}
 
 		</div>
 	</div>
@@ -143,6 +143,7 @@
 {###------------------------------------------SEXUALITY PANNEL--------------------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
 
+{# Set in INTRO pannel #}
 
 {# 	<div class="panel panel-default">
 		<div class="panel-heading">
@@ -188,7 +189,7 @@
 					{% if event.origin == "visit" %}
 					<p><strong>👁 <a href="{{event.login}}">{{ event.login }}</a></strong> lurked you the {{ event.date|date("F jS \\a\\t g:i A") }}. How creepy!</p>
 					{% elseif event.origin == "like" %}
-						<p><strong>❤️ <a href="{{event.login}}">{{ event.login }}</a></strong> liked your profile the {{ event.date|date("F jS \\a\\t g:ia") }}!</p>
+						<p><strong>❤️ <a href="{{event.login}}">{{ event.login }}</a></strong> liked your profile the {{ event.date|date("F jS \\a\\t g:i A") }}!</p>
 					{% endif %}
 				{% endfor %}
 				

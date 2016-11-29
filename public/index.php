@@ -63,6 +63,8 @@ $app->post('/unlike', 'App\Controllers\PagesController:postUnlike')->setName('un
 $app->get('/settings', 'App\Controllers\PagesController:getSettings')->setName('user.settings');
 $app->post('/settings', 'App\Controllers\PagesController:postSettings');
 
+$app->get('/settings/changeMail', 'App\Controllers\PagesController:getChangeMail');
+
 /* Edit profile */
 $app->get('/edit', 'App\Controllers\PagesController:getEdit')->setName('user.edit');
 $app->post('/edit', 'App\Controllers\PagesController:postEdit');

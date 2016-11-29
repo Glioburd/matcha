@@ -266,7 +266,7 @@ class UserManagerPDO extends UserManager
 	{
 		if (isset($id) && !empty($id)) {
 			$DB_REQ = $this->DB_REQ->prepare('
-				SELECT id, login, email, firstName, lastName, birthDate, gender, password, sexuality, bio, created_at, updated_at, isactive 
+				SELECT id, login, email, firstName, lastName, birthDate, gender, password, hash, sexuality, bio, created_at, updated_at, isactive 
 				FROM users 
 				WHERE id = :id
 				');
@@ -323,6 +323,21 @@ class UserManagerPDO extends UserManager
 
 			$user->setMainPicture($mainpicture['src']);
 
+			$DB_REQ->closeCursor();
+
+			$DB_REQ = $this->DB_REQ->prepare('
+			UPDATE users
+			SET updated_at = NOW()
+			WHERE id = :id
+			');
+		
+			$DB_REQ->bindValue(':id', $user->id(), PDO::PARAM_INT);
+		
+			$DB_REQ->execute();
+
+			$date = new Datetime('now');
+			$user->setDateUpdate($date);
+
 			return $user;
 		}
 	}
@@ -369,6 +384,7 @@ class UserManagerPDO extends UserManager
 				lastName = :lastName,
 				birthDate = :birthDate,
 				password = :password,
+				hash = :hash,
 				email = :email,
 				gender = :gender,
 				sexuality = :sexuality,
@@ -383,7 +399,8 @@ class UserManagerPDO extends UserManager
 		$DB_REQ->bindValue(':firstName', $user->firstName());
 		$DB_REQ->bindValue(':lastName', $user->lastName());
 		$DB_REQ->bindValue(':birthDate', $user->birthDate());
-		$DB_REQ->bindValue(':password', $user->password());	
+		$DB_REQ->bindValue(':password', $user->password());
+		$DB_REQ->bindValue(':hash', $user->hash());	
 		$DB_REQ->bindValue(':email', $user->email());
 		$DB_REQ->bindValue(':gender', $user->gender());	
 		$DB_REQ->bindValue(':sexuality', $user->sexuality());
@@ -394,21 +411,21 @@ class UserManagerPDO extends UserManager
 
 	}
 
-	public function updateLastSeen(User $user) {
+	// public function updateLastSeen(User $user) {
 
-		$DB_REQ = $this->DB_REQ->prepare('
-			UPDATE users
-			SET updated_at = NOW()
-			WHERE id = :id
-			');
+	// 	$DB_REQ = $this->DB_REQ->prepare('
+	// 		UPDATE users
+	// 		SET updated_at = NOW()
+	// 		WHERE id = :id
+	// 		');
 		
-		$DB_REQ->bindValue(':id', $user->id(), PDO::PARAM_INT);
+	// 	$DB_REQ->bindValue(':id', $user->id(), PDO::PARAM_INT);
 		
-		$DB_REQ->execute();
+	// 	$DB_REQ->execute();
 
-		$date = new Datetime('now');
-		$user->setDateUpdate($date);
-	}
+	// 	$date = new Datetime('now');
+	// 	$user->setDateUpdate($date);
+	// }
 
 	public function countPictures(User $user) {
 		$DB_REQ = $this->DB_REQ->prepare('
@@ -703,7 +720,8 @@ class UserManagerPDO extends UserManager
 		$arr = array_merge($visits, $likes);
 		$merge = usort($arr, array($this, "cmp"));
 		return $arr;
-}
+	}
+
 /*
 ** DEBUG
 */

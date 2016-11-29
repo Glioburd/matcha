@@ -21,6 +21,7 @@ class User
 			$gender,
 			$sexuality,
 			$password,
+			$hash,
 			$birthDate,
 			$created_at,
 			$updated_at,
@@ -171,6 +172,18 @@ class User
 			$this->password = $password;
 		}
 	}
+
+	public function setHash($hash)
+	{
+		if (!is_string($hash) || empty($hash))
+		{
+			$this->erreurs[] = self::PASSWORD_INVALIDE;
+		}
+		else
+		{
+			$this->hash = $hash;
+		}
+	}
 	
 	public function setPictures($src) {
 
@@ -280,6 +293,11 @@ class User
 	public function password()
 	{
 		return $this->password;
+	}
+
+	public function hash()
+	{
+		return $this->hash;
 	}
 
 	public function birthDate()

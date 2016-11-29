@@ -12,6 +12,10 @@
 		<div class="alert alert-danger">
 			{{ flash.error }}
 		</div>
-
+	{% endif %}
+		{% if flash.info %}
+		<div class="alert alert-info">
+			{{ flash.info }}
+		</div>
 	{% endif %}
 </div>
