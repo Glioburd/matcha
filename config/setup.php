@@ -116,7 +116,7 @@ if (intval($result['count']) == 0) {
 $DB_REQ = $container->db->query("
 	SELECT COUNT(*) AS count
 	FROM information_schema.tables
-	WHERE table_name = 'pictures'
+	WHERE table_name = 'visitors'
 		AND TABLE_SCHEMA='matcha'
 	;");
 
