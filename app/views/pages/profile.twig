@@ -180,13 +180,16 @@
 			<h3 class="panel-title">Horny creeps:</h3>
 		</div>
 		<div class="panel-body">
-			{% if visits is empty %}
+			{% if eventsHistory is empty %}
 				Nobody lol
 			{% else %}
-				{% for visit in visits %}
-					<p>
-						<strong><a href="{{visit.login}}">{{ visit.login }}</a></strong> lurked you the {{ visit.visited_at|date("F jS \\a\\t g:ia") }}. How creepy!
-					</p>
+				{% for event in eventsHistory %}
+
+					{% if event.origin == "visit" %}
+					<p><strong>👁 <a href="{{event.login}}">{{ event.login }}</a></strong> lurked you the {{ event.date|date("F jS \\a\\t g:i A") }}. How creepy!</p>
+					{% elseif event.origin == "like" %}
+						<p><strong>❤️ <a href="{{event.login}}">{{ event.login }}</a></strong> liked your profile the {{ event.date|date("F jS \\a\\t g:ia") }}!</p>
+					{% endif %}
 				{% endfor %}
 				
 			{% endif %}

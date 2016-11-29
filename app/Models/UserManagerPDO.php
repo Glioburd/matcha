@@ -363,14 +363,29 @@ class UserManagerPDO extends UserManager
 	{
 		$DB_REQ = $this->DB_REQ->prepare('
 			UPDATE users
-			SET login = :login, email = :email, gender = :gender, sexuality = :sexuality, bio = :bio, updated_at = NOW(), isactive = :isactive
+			SET 
+				login = :login,
+				firstName = :firstName,
+				lastName = :lastName,
+				birthDate = :birthDate,
+				password = :password,
+				email = :email,
+				gender = :gender,
+				sexuality = :sexuality,
+				bio = :bio,
+				updated_at = NOW(),
+				isactive = :isactive
 			WHERE id = :id
 			');
 		
-		$DB_REQ->bindValue(':email', $user->email());
-		$DB_REQ->bindValue(':login', $user->login());
-		$DB_REQ->bindValue(':gender', $user->gender());	
 		$DB_REQ->bindValue(':id', $user->id(), PDO::PARAM_INT);
+		$DB_REQ->bindValue(':login', $user->login());
+		$DB_REQ->bindValue(':firstName', $user->firstName());
+		$DB_REQ->bindValue(':lastName', $user->lastName());
+		$DB_REQ->bindValue(':birthDate', $user->birthDate());
+		$DB_REQ->bindValue(':password', $user->password());	
+		$DB_REQ->bindValue(':email', $user->email());
+		$DB_REQ->bindValue(':gender', $user->gender());	
 		$DB_REQ->bindValue(':sexuality', $user->sexuality());
 		$DB_REQ->bindValue(':bio', $user->bio());
 		$DB_REQ->bindValue(':isactive', $user->isactive());
@@ -559,19 +574,22 @@ class UserManagerPDO extends UserManager
 		if (!empty($id_owner)) {
 
 			$DB_REQ = $this->DB_REQ->prepare('
-				SELECT id_owner, users.login, visited_at
+				SELECT id_owner, users.login, visited_at as date
 				FROM visitors
 				INNER JOIN users
 				ON users.id = visitors.id_visitor
 				WHERE id_owner = :id_owner
-				-- UNION
-				-- SELECT 
 				ORDER BY visited_at DESC
 				LIMIT 5;
-				');
+				;');
 			$DB_REQ->bindValue(':id_owner', $id_owner, PDO::PARAM_INT);
 			$DB_REQ->execute();
 			$data = $DB_REQ->fetchAll(PDO::FETCH_ASSOC);
+
+			foreach ($data as $key => $value) {
+				$data[$key] = array_merge($value, array("origin" => "visit"));
+			}
+
 			return $data;
 		}
 
@@ -580,11 +598,12 @@ class UserManagerPDO extends UserManager
 
 	public function like($id_liker, $id_liked) {
 		$DB_REQ = $this->DB_REQ->prepare('
-			INSERT INTO likes (id_owner, id_liker) 
-			VALUES (:id_owner, :id_liker) 
+			INSERT INTO likes (id_owner, id_liker, date_like) 
+			VALUES (:id_owner, :id_liker, NOW()) 
 			');
 		$DB_REQ->bindValue(':id_owner', $id_liked, PDO::PARAM_INT);
 		$DB_REQ->bindValue(':id_liker', $id_liker, PDO::PARAM_INT);
+
 		$DB_REQ->execute();
 
 		$DB_REQ->closeCursor();
@@ -618,6 +637,34 @@ class UserManagerPDO extends UserManager
 		$DB_REQ->execute();
 	}
 
+	public function getLikes($id_owner) {
+
+		if (!empty($id_owner)) {
+
+			$DB_REQ = $this->DB_REQ->prepare('
+				SELECT id_owner, users.login, date_like as date
+				FROM likes
+				INNER JOIN users
+				ON users.id = likes.id_liker
+				WHERE id_owner = :id_owner
+				ORDER BY date_like DESC
+				LIMIT 5;
+				;');
+			$DB_REQ->bindValue(':id_owner', $id_owner, PDO::PARAM_INT);
+			$DB_REQ->execute();
+			$data = $DB_REQ->fetchAll(PDO::FETCH_ASSOC);
+
+			foreach ($data as $key => $value) {
+				$data[$key] = array_merge($value, array("origin" => "like"));
+			}
+
+			return $data;
+		}
+
+		return NULL;
+
+	}
+
 /*
 ** Has the visitor already liked the profile ? So can he like ?
 ** Case no: false
@@ -646,6 +693,17 @@ class UserManagerPDO extends UserManager
 		return true;
 	}
 
+	private function cmp($a, $b){
+		$ad = strtotime($a['date']);
+		$bd = strtotime($b['date']);
+		return ($ad-$bd);
+	}
+
+	public function mergeVisitsLikes($visits, $likes) {
+		$arr = array_merge($visits, $likes);
+		$merge = usort($arr, array($this, "cmp"));
+		return $arr;
+}
 /*
 ** DEBUG
 */

@@ -288,7 +288,12 @@ class PagesController extends Controller {
 				}
 
 				else {
-					$visits = $UserManagerPDO->getVisits($userProfile->id($user->id(), $userProfile->id()));
+					$visits = $UserManagerPDO->getVisits($userProfile->id());
+					$likes = $UserManagerPDO->getLikes($userProfile->id());
+					$eventsHistory = $UserManagerPDO->mergeVisitsLikes($visits, $likes);
+					// debug($eventsHistory);
+					// die();
+
 				}
 
 				$age = Validator::getAge($userProfile->Birthdate());
@@ -298,7 +303,9 @@ class PagesController extends Controller {
 				return $this->render($response, 'pages/profile.twig',[
 					'userprofile' => $userProfile,
 					'user' => $user,
-					'visits' => $visits,
+					// 'visits' => $visits,
+					// 'likes' => $likes,
+					'eventsHistory' => $eventsHistory,
 					'canLike' => $canLike,
 					'age' =>$age
 				]);
@@ -339,6 +346,7 @@ class PagesController extends Controller {
 
 		if (Validator::isConnected()) {
 			$errors = [];
+
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
 
@@ -348,7 +356,7 @@ class PagesController extends Controller {
 
 			if (!empty($oldPassword) || !empty($newPassword) || !empty($newPasswordConfirm)) {
 
-				if ($user->password() != password_hash($oldPassword, PASSWORD_DEFAULT)) {
+				if (!password_verify($oldPassword, $user->password())) {
 					$errors['oldPassword'] = 'The new password doesn\'t match with your old password';
 				}
 
@@ -366,27 +374,19 @@ class PagesController extends Controller {
 					}
 				}
 
-				if (!Validator::passwordConfirm($newPassword, $newPasswordConfirm)) {
+				if (Validator::passwordConfirm($newPassword, $newPasswordConfirm)) {
 					$errors['newPasswordConfirm'] = 'Invalid password confirmation';
 				}
 			}
 		}
 
-		// debug($errors);
-		// die();
-
-		if (empty($errors)) {
-
-			// $UserManagerPDO = new UserManagerPDO($this->db);
-			// $UserManagerPDO->save($user);
-
-		}
-
-		else {
+		if (!empty($errors)) {
 			$this->flash('Un champ n\'a pas été rempli correctement', 'error');	
 			$this->flash($errors, 'errors');
 			return $this->redirect($response, 'user.settings', 302);
 		}
+			$user->setPassword(password_hash($newPassword, PASSWORD_DEFAULT));
+			$UserManagerPDO->save($user);
 			$this->flash('Your settings have been succesfully updated!', 'success');	
 			return $this->redirect($response, 'user.settings', 200);
 	}

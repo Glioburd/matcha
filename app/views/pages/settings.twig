@@ -12,34 +12,40 @@
 {###------------------------------------------------------------------------------------------------------------------###}
 
 
-		<div class="panel panel-default{% if flash.errors.password %} has-error {% endif %}">
+		<div class="panel panel-default">
 
 			<div class="panel-heading">
 				<h3 class="panel-title">Edit your password (leave blank if you don't want to change):</h3>
 			</div>
 
-			<div class="panel-body">
+			<div class="panel-body{% if flash.errors.password %} has-error {% endif %}">
 				<div class="row">
 					<div class="col-lg-6">
 						<div class="input-group">
 
-							<label for ="oldPassword">Current password:</label><br>
-							<input type="password" class="form-control" name="oldPassword" id="OldPassword" value="{{ old.oldPassword }}">
-							{% if flash.errors.oldPassword %}
-								<span class="help-block">{{ flash.errors.oldPassword }}</span>
-							{% endif %}
+							<div class="{% if flash.errors.oldPassword %} has-error {% endif %}">
+								<label for ="oldPassword">Current password:</label><br>
+								<input type="password" class="form-control" name="oldPassword" id="OldPassword" value="{{ old.oldPassword }}">
+								{% if flash.errors.oldPassword %}
+									<span class="help-block">{{ flash.errors.oldPassword }}</span>
+								{% endif %}
+							</div>
 
-							<label for ="newPassword">New password:</label><br>
-							<input type="password" class="form-control" name="newPassword" id="newPassword" value="{{ old.newPassword }}">
-							{% if flash.errors.newPassword %}
-								<span class="help-block">{{ flash.errors.newPassword }}</span>
-							{% endif %}
+							<div class="{% if flash.errors.newPassword %} has-error {% endif %}">
+								<label for ="newPassword">New password:</label><br>
+								<input type="password" class="form-control" name="newPassword" id="newPassword" value="{{ old.newPassword }}">
+								{% if flash.errors.newPassword %}
+									<span class="help-block">{{ flash.errors.newPassword }}</span>
+								{% endif %}
+							</div>
 
-							<label for ="NewPasswordConfirm">Confirm newpassword:</label><br>
-							<input type="password" class="form-control" name="NewPasswordConfirm" id="NewPasswordConfirm" value="{{ old.NewPasswordConfirm }}">
-							{% if flash.errors.newPasswordConfirm %}
-								<span class="help-block">{{ flash.errors.newPasswordConfirm }}</span>
-							{% endif %}
+							<div class="{% if flash.errors.newPasswordConfirm %} has-error {% endif %}">
+								<label for ="NewPasswordConfirm">Confirm newpassword:</label><br>
+								<input type="password" class="form-control" name="NewPasswordConfirm" id="NewPasswordConfirm" value="{{ old.NewPasswordConfirm }}">
+								{% if flash.errors.newPasswordConfirm %}
+									<span class="help-block">{{ flash.errors.newPasswordConfirm }}</span>
+								{% endif %}
+							</div>
 
 						</div>
 					</div>

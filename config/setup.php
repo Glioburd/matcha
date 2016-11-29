@@ -197,7 +197,8 @@ if (intval($result['count']) == 0) {
 		CREATE TABLE likes (
 			`id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
 			`id_owner` int(11) NOT NULL,
-			`id_liker` int(11) NOT NULL
+			`id_liker` int(11) NOT NULL,
+			`date_like` datetime NOT NULL
 		);");
 
 	$DB_REQ->execute();
