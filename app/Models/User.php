@@ -224,6 +224,10 @@ class User
 	public function setGender($gender){
 		$this->gender = $gender;
 	}
+
+	public function setPopularity($score){
+		$this->popularity = $score;
+	}
 	
 	// GETTERS //
 	
@@ -249,10 +253,9 @@ class User
 		return $this->mainpicture;
 	}
 
+	public function popularity() {
 
-	public function sayhi()
-	{
-		echo 'Hi';
+		return $this->popularity;
 	}
 
 	public function login()

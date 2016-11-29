@@ -295,8 +295,8 @@ class UserManagerPDO extends UserManager
 
 				SELECT src FROM pictures
 				WHERE id_owner = :id_owner
-					AND ismainpic = :ismainpic'
-					);
+					AND ismainpic = :ismainpic
+				');
 
 			$DB_REQ->bindValue(':id_owner', $id, PDO::PARAM_INT);
 			$DB_REQ->bindValue(':ismainpic', 0, PDO::PARAM_INT);
@@ -313,8 +313,8 @@ class UserManagerPDO extends UserManager
 
 				SELECT src FROM pictures
 				WHERE id_owner = :id_owner
-					AND ismainpic = :ismainpic'
-					);
+					AND ismainpic = :ismainpic
+			');
 
 			$DB_REQ->bindValue(':id_owner', $id, PDO::PARAM_INT);
 			$DB_REQ->bindValue(':ismainpic', 1, PDO::PARAM_INT);
@@ -326,9 +326,9 @@ class UserManagerPDO extends UserManager
 			$DB_REQ->closeCursor();
 
 			$DB_REQ = $this->DB_REQ->prepare('
-			UPDATE users
-			SET updated_at = NOW()
-			WHERE id = :id
+				UPDATE users
+				SET updated_at = NOW()
+				WHERE id = :id
 			');
 		
 			$DB_REQ->bindValue(':id', $user->id(), PDO::PARAM_INT);
@@ -337,6 +337,19 @@ class UserManagerPDO extends UserManager
 
 			$date = new Datetime('now');
 			$user->setDateUpdate($date);
+
+			$DB_REQ->closeCursor();
+
+			$DB_REQ = $this->DB_REQ->prepare('
+
+				SELECT score FROM popularity
+				WHERE id_owner = :id_owner
+			');
+			$DB_REQ->bindValue(':id_owner', $id, PDO::PARAM_INT);
+			$DB_REQ->execute();
+			$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+
+			$user->setPopularity($data['score']);
 
 			return $user;
 		}
