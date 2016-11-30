@@ -285,6 +285,7 @@ class PagesController extends Controller {
 				if ($user->id() != $userProfile->id()) {
 					$UserManagerPDO->addVisit($user->id(), $userProfile->id());
 					$canLike = $UserManagerPDO->canLike($user->id(), $userProfile->id());
+					$canBlock = $UserManagerPDO->canBlock($user->id(), $userProfile->id());
 				}
 
 				else {
@@ -302,6 +303,7 @@ class PagesController extends Controller {
 					'user' => $user,
 					'eventsHistory' => $eventsHistory,
 					'canLike' => $canLike,
+					'canBlock' => $canBlock,
 					'age' =>$age
 				]);
 
@@ -649,7 +651,7 @@ class PagesController extends Controller {
 					
 	public function postLike($request, $response) {
 
-		if (Validator::isConnected() && !empty($request->getParams())) {
+		if (Validator::isConnected() && !empty($request->getParam('likeButton'))) {
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$id_liker = unserialize($_SESSION['id']);
 			$id_liked = $request->getParam('likeButton');
@@ -677,6 +679,38 @@ class PagesController extends Controller {
 		else {
 			echo 'Huh?';
 		}
+	}
+
+	public function postBlockUser($request, $response) {
+
+	if (Validator::isConnected() && !empty($request->getParam('blockButton'))) {
+			$UserManagerPDO = new UserManagerPDO($this->db);
+			$id_blocker = unserialize($_SESSION['id']);
+			$id_blocked = $request->getParam('blockButton');
+			$UserManagerPDO->block($id_blocker, $id_blocked);
+			$user = $UserManagerPDO->getLoginFromId($id_blocked);
+
+			return $response->withRedirect($this->router->pathFor('user.profile', ['userprofile' => $user]));
+		}
+		else {
+			echo 'huh?';
+		}	
+	}
+
+	public function postUnblockUser($request, $response) {
+
+	if (Validator::isConnected() && !empty($request->getParam('unblockButton'))) {
+			$UserManagerPDO = new UserManagerPDO($this->db);
+			$id_unblocker = unserialize($_SESSION['id']);
+			$id_unblocked = $request->getParam('unblockButton');
+			$UserManagerPDO->unblock($id_unblocker, $id_unblocked);
+			$user = $UserManagerPDO->getLoginFromId($id_unblocked);
+
+			return $response->withRedirect($this->router->pathFor('user.profile', ['userprofile' => $user]));
+		}
+		else {
+			echo 'huh?';
+		}	
 	}
 
 }

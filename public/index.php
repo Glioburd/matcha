@@ -58,6 +58,10 @@ $app->post('/like', 'App\Controllers\PagesController:postLike')->setName('like')
 
 $app->post('/unlike', 'App\Controllers\PagesController:postUnlike')->setName('unlike');
 
+$app->post('/block', 'App\Controllers\PagesController:postBlockUser')->setName('block');
+
+$app->post('/unblock', 'App\Controllers\PagesController:postUnblockUser')->setName('unblock');
+
 
 /* Settings */
 $app->get('/settings', 'App\Controllers\PagesController:getSettings')->setName('user.settings');

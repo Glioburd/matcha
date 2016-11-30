@@ -35,7 +35,9 @@ if (intval($result['count']) == 0) {
 			`sexuality` char(8) DEFAULT 'bisexual',
 			`created_at` datetime NOT NULL,
 			`updated_at` datetime NOT NULL,
-			`rank` int NOT NULL DEFAULT '0'
+			`rank` int NOT NULL DEFAULT '0',
+			`longitude` decimal(9,6) DEFAULT NULL COMMENT 'Longitude',
+			`latitude` decimal(9,6) DEFAULT NULL COMMENT 'Latitude'
 			);");
 
 	$DB_REQ->execute();
@@ -215,6 +217,45 @@ if (intval($result['count']) == 0) {
 	$DB_REQ = $DB_PDO->prepare("
 		ALTER TABLE `likes`
 		ADD FOREIGN KEY (id_liker)
+		REFERENCES users(id)
+		ON DELETE CASCADE
+		;");
+
+	$DB_REQ->execute();
+}
+
+$DB_REQ = $container->db->query("
+	SELECT COUNT(*) AS count
+	FROM information_schema.tables
+	WHERE table_name = 'blocks'
+		AND TABLE_SCHEMA='matcha'
+	;");
+
+$result = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+
+if (intval($result['count']) == 0) {
+
+	$DB_REQ = $DB_PDO->prepare("
+		CREATE TABLE blocks (
+			`id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+			`id_blocked` int(11) NOT NULL,
+			`id_blocker` int(11) NOT NULL
+		);");
+
+	$DB_REQ->execute();
+
+	$DB_REQ = $DB_PDO->prepare("
+		ALTER TABLE `blocks`
+		ADD FOREIGN KEY (id_blocked)
+		REFERENCES users(id)
+		ON DELETE CASCADE
+		;");
+
+	$DB_REQ->execute();
+
+	$DB_REQ = $DB_PDO->prepare("
+		ALTER TABLE `blocks`
+		ADD FOREIGN KEY (id_blocker)
 		REFERENCES users(id)
 		ON DELETE CASCADE
 		;");

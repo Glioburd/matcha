@@ -23,15 +23,33 @@
 	{% if userprofile.login != user.login %}
 		{% if canLike == true %}
 		<form action="{{ path_for('like') }}" method="post">
-			<button type="submit" name="likeButton" class="btn btn-danger btn-lg align-center" value="{{userprofile.id}}">Like &lt;3</button>
+			<button type="submit" name="likeButton" class="btn btn-danger btn-lg align-center" value="{{userprofile.id}}">Like ♡</button>
 		</form>
 		{% else %}
 		<form action="{{ path_for('unlike') }}" method="post">
 			<button type="submit" name="unlikeButton" class="btn btn-danger btn-lg align-center" value="{{userprofile.id}}">Unlike &lt;/3</button>
 		</form>
 		{% endif %}
-	{% else %}
-			<button type="submit" class="btn btn-danger btn-lg disabled">Like ♡</button>
+	{# {% else %} #}
+			{# <button type="submit" class="btn btn-danger btn-lg disabled">Like ♡</button> #}
+	{% endif %}
+
+{###------------------------------------------------------------------------------------------------------------------###}
+{####------------------------------------------BLOCK BUTTON-----------------------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
+
+	{% if userprofile.login != user.login %}
+		{% if canBlock == true %}
+		<form action="{{ path_for('block') }}" method="post">
+			<button type="submit" name="blockButton" class="btn btn-danger btn-lg align-center" value="{{userprofile.id}}">Block</button>
+		</form>
+		{% else %}
+		<form action="{{ path_for('unblock') }}" method="post">
+			<button type="submit" name="unblockButton" class="btn btn-danger btn-lg align-center" value="{{userprofile.id}}">Unblock</button>
+		</form>
+		{% endif %}
+	{# {% else %} #}
+			{# <button type="submit" class="btn btn-danger btn-lg disabled">Block</button> #}
 	{% endif %}
 
 {###------------------------------------------------------------------------------------------------------------------###}
@@ -185,6 +203,65 @@
 		</div>
 	</div>
 	
+
+{###------------------------------------------------------------------------------------------------------------------###}
+{###----------------------------------------------MAP PANNEL----------------------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
+
+
+<div class="panel panel-default" id="map_pannel">
+	<div class="panel-heading">
+			<h3 class="panel-title">Location:</h3>
+	</div>
+
+	<div class="panel-body">
+		<div id="map" style="width:100%;height:500px"></div>
+
+	<script>
+		function initMap() {
+			var divMap = document.getElementById('map');
+			var mapPannel = document.getElementById('map_pannel')
+			var map = new google.maps.Map(divMap, {
+				center: {lat: 0, lng: 0},
+
+				zoom: 16
+			});
+			var infoWindow = new google.maps.InfoWindow({map: map});
+
+			// Try HTML5 geolocation.
+			if (navigator.geolocation) {
+				navigator.geolocation.getCurrentPosition(function(position) {
+					var pos = {
+						lat: position.coords.latitude,
+						lng: position.coords.longitude,
+					};
+
+					console.log(pos);
+
+					infoWindow.setPosition(pos);
+					infoWindow.setContent('You are here ! Amazing!');
+					map.setCenter(pos);
+				}, function() {
+					mapPannel.style.display = "none";
+					handleLocationError(true, infoWindow, map.getCenter());
+				});
+			} else {
+				// Browser doesn't support Geolocation
+				handleLocationError(false, infoWindow, map.getCenter());
+			}
+		}
+
+		function handleLocationError(browserHasGeolocation, infoWindow, pos) {
+			infoWindow.setPosition(pos);
+			infoWindow.setContent(browserHasGeolocation ?
+														'Error: The Geolocation service failed.' :
+														'Error: Your browser doesn\'t support geolocation.');
+		}
+		</script>
+		<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDD-NOwTi9bwWN-79RkmtRka187YlAcbI&callback=initMap"
+				async defer></script>
+	</div>
+</div>
 
 {###------------------------------------------------------------------------------------------------------------------###}
 {###------------------------------------------VISITORS PANNEL---------------------------------------------------------###}

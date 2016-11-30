@@ -22,6 +22,8 @@ class User
 			$sexuality,
 			$password,
 			$hash,
+			$longitude,
+			$latitude,
 			$birthDate,
 			$created_at,
 			$updated_at,
@@ -190,6 +192,11 @@ class User
 		$this->pictures = $src;
 	}
 
+	public function setCoordonates($latitude, $longitude) {
+		$this->latitude = $latitude;
+		$this->longitude = $longitude;
+	}
+
 	public function setMainPicture ($src) {
 		$this->mainpicture = $src;
 	}
@@ -296,6 +303,14 @@ class User
 	public function password()
 	{
 		return $this->password;
+	}
+
+	public function longitude() {
+		return $this->longitude;
+	}
+
+	public function latitude() {
+		return $this->latitude;
 	}
 
 	public function hash()

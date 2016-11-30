@@ -692,7 +692,27 @@ class UserManagerPDO extends UserManager
 		}
 
 		return NULL;
+	}
 
+	public function block($id_blocker, $id_blocked) {
+		$DB_REQ = $this->DB_REQ->prepare('
+			INSERT INTO blocks (id_blocked, id_blocker) 
+			VALUES (:id_blocked, :id_blocker) 
+			');
+		$DB_REQ->bindValue(':id_blocked', $id_blocked, PDO::PARAM_INT);
+		$DB_REQ->bindValue(':id_blocker', $id_blocker, PDO::PARAM_INT);
+
+		$DB_REQ->execute();
+	}
+
+	public function unblock($id_unblocker, $id_unblocked) {
+		$DB_REQ = $this->DB_REQ->prepare('
+			DELETE FROM blocks
+			WHERE id_blocked = :id_unblocked AND id_blocker = :id_unblocker 
+			');
+		$DB_REQ->bindValue(':id_unblocked', $id_unblocked, PDO::PARAM_INT);
+		$DB_REQ->bindValue(':id_unblocker', $id_unblocker, PDO::PARAM_INT);
+		$DB_REQ->execute();
 	}
 
 /*
@@ -714,13 +734,39 @@ class UserManagerPDO extends UserManager
 			$DB_REQ->execute();
 
 			$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
-			$DB_REQ->closeCursor();
 
 			if($data['id_liker']) {
 				return false;
 			}
+			else {
+				return true;
+			}
 		}
-		return true;
+		return NULL;
+	}
+
+	public function canBlock($id_blocker, $id_blocked) {
+		if (!empty($id_blocker) && !empty($id_blocked)) {
+
+			$DB_REQ = $this->DB_REQ->prepare('SELECT id_blocker
+				FROM blocks
+				WHERE id_blocked = :id_blocked
+					AND id_blocker = :id_blocker
+				');
+			$DB_REQ->bindValue(':id_blocked', $id_blocked, PDO::PARAM_INT);
+			$DB_REQ->bindValue(':id_blocker', $id_blocker, PDO::PARAM_INT);	
+			$DB_REQ->execute();
+
+			$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+
+			if($data['id_blocker']) {
+				return false;
+			}
+			else {
+				return true;
+			}
+		}
+		return NULL;
 	}
 
 	private function cmp($a, $b){
