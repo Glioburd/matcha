@@ -187,6 +187,9 @@ class PagesController extends Controller {
 
 		$errors = [];
 
+		// debug($request->getParams());
+		// die();
+
 		if (!Validator::bioLengthCheck($request->getParam('bio'))) {
 			$errors['bio'] = 'Your description must contain at least 20 characters. Don\'t be shy!';
 		}
@@ -211,17 +214,23 @@ class PagesController extends Controller {
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$user = $UserManagerPDO->getUnique((int) $id);
 
+			// An user object is set with all the params, and will be registered in database with save()
 			$user->setBio($request->getParam('bio'));
 			$user->setSexuality($request->getParam('sexuality'));
 			$user->setGender($request->getParam('gender'));
 			$user->setHobbies($hobbies);
+
+			// If user allowed geolocalisation, let's register the coordonates
+			if ($request->getParam('allowGeoloc') && $request->getParam('latitude') && $request->getParam('longitude') && $request->getParam('city')) {
+				$user->setCoordonates($request->getParam('latitude'), $request->getParam('longitude'));
+				$user->setCity($request->getParam('city'));
+			}
 
 			/* Save object user's profile to database in users table */
 			$UserManagerPDO->save($user);
 
 			/* Save object user's hobbies to database in hobbies table */
 			$UserManagerPDO->addExtras($user, $hobbies);
-
 
 		}
 

@@ -24,6 +24,7 @@ class User
 			$hash,
 			$longitude,
 			$latitude,
+			$city,
 			$birthDate,
 			$created_at,
 			$updated_at,
@@ -225,6 +226,10 @@ class User
 		$this->updated_at = $updated_at;
 	}
 
+	public function setCity($city) {
+		$this->city = $city;
+	}
+
 	public function setBirthDate($birthDate) {
 		$this->birthDate = $birthDate;
 	}
@@ -316,6 +321,10 @@ class User
 
 	public function latitude() {
 		return $this->latitude;
+	}
+
+	public function city() {
+		return $this->city;
 	}
 
 	public function hash()

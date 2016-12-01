@@ -266,7 +266,7 @@ class UserManagerPDO extends UserManager
 	{
 		if (isset($id) && !empty($id)) {
 			$DB_REQ = $this->DB_REQ->prepare('
-				SELECT id, login, email, firstName, lastName, birthDate, gender, password, hash, sexuality, bio, created_at, updated_at, isactive 
+				SELECT id, login, email, firstName, lastName, birthDate, gender, password, hash, sexuality, bio, created_at, updated_at, isactive, latitude, longitude, ville
 				FROM users 
 				WHERE id = :id
 				');
@@ -409,42 +409,32 @@ class UserManagerPDO extends UserManager
 				sexuality = :sexuality,
 				bio = :bio,
 				updated_at = NOW(),
-				isactive = :isactive
+				isactive = :isactive,
+				latitude = :latitude,
+				longitude = :longitude,
+				ville = :city
 			WHERE id = :id
 			');
 		
 		$DB_REQ->bindValue(':id', $user->id(), PDO::PARAM_INT);
-		$DB_REQ->bindValue(':login', $user->login());
-		$DB_REQ->bindValue(':firstName', $user->firstName());
-		$DB_REQ->bindValue(':lastName', $user->lastName());
+		$DB_REQ->bindValue(':login', $user->login(), PDO::PARAM_STR);
+		$DB_REQ->bindValue(':firstName', $user->firstName(), PDO::PARAM_STR);
+		$DB_REQ->bindValue(':lastName', $user->lastName(), PDO::PARAM_STR);
 		$DB_REQ->bindValue(':birthDate', $user->birthDate());
-		$DB_REQ->bindValue(':password', $user->password());
-		$DB_REQ->bindValue(':hash', $user->hash());	
-		$DB_REQ->bindValue(':email', $user->email());
+		$DB_REQ->bindValue(':password', $user->password(), PDO::PARAM_STR);
+		$DB_REQ->bindValue(':hash', $user->hash(), PDO::PARAM_STR);	
+		$DB_REQ->bindValue(':email', $user->email(), PDO::PARAM_STR);
 		$DB_REQ->bindValue(':gender', $user->gender());	
-		$DB_REQ->bindValue(':sexuality', $user->sexuality());
-		$DB_REQ->bindValue(':bio', $user->bio());
+		$DB_REQ->bindValue(':sexuality', $user->sexuality(), PDO::PARAM_STR);
+		$DB_REQ->bindValue(':bio', $user->bio(), PDO::PARAM_STR);
 		$DB_REQ->bindValue(':isactive', $user->isactive());
+		$DB_REQ->bindValue(':latitude', (float) $user->latitude());
+		$DB_REQ->bindValue(':longitude', (float) $user->longitude());
+		$DB_REQ->bindValue(':city', $user->city(), PDO::PARAM_STR);
 		
 		$DB_REQ->execute();
 
 	}
-
-	// public function updateLastSeen(User $user) {
-
-	// 	$DB_REQ = $this->DB_REQ->prepare('
-	// 		UPDATE users
-	// 		SET updated_at = NOW()
-	// 		WHERE id = :id
-	// 		');
-		
-	// 	$DB_REQ->bindValue(':id', $user->id(), PDO::PARAM_INT);
-		
-	// 	$DB_REQ->execute();
-
-	// 	$date = new Datetime('now');
-	// 	$user->setDateUpdate($date);
-	// }
 
 	public function countPictures(User $user) {
 		$DB_REQ = $this->DB_REQ->prepare('
