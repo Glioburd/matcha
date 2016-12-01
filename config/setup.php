@@ -37,7 +37,8 @@ if (intval($result['count']) == 0) {
 			`updated_at` datetime NOT NULL,
 			`rank` int NOT NULL DEFAULT '0',
 			`longitude` decimal(9,6) DEFAULT NULL COMMENT 'Longitude',
-			`latitude` decimal(9,6) DEFAULT NULL COMMENT 'Latitude'
+			`latitude` decimal(9,6) DEFAULT NULL COMMENT 'Latitude',
+			`ville` varchar(255) DEFAULT NULL
 			);");
 
 	$DB_REQ->execute();

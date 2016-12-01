@@ -287,7 +287,10 @@ class UserManagerPDO extends UserManager
 			$DB_REQ->execute();
 			$hobbies = $DB_REQ->fetch(PDO::FETCH_ASSOC);
 
-			$user->setHobbies($hobbies);
+
+			if ($hobbies) {
+				$user->setHobbies($hobbies);
+			}
 
 			$DB_REQ->closeCursor();
 
@@ -303,9 +306,10 @@ class UserManagerPDO extends UserManager
 			$DB_REQ->execute();
 			$pictures= $DB_REQ->fetchAll(PDO::FETCH_COLUMN);
 
-			$_SESSION['debug'] = $pictures;
-
-			$user->setPictures($pictures);
+			// $_SESSION['debug'] = $pictures;
+			if ($pictures) {
+				$user->setPictures($pictures);
+			}
 			
 			$DB_REQ->closeCursor();
 
@@ -321,7 +325,9 @@ class UserManagerPDO extends UserManager
 			$DB_REQ->execute();
 			$mainpicture= $DB_REQ->fetch(PDO::FETCH_ASSOC);
 
-			$user->setMainPicture($mainpicture['src']);
+			if ($mainpicture) {
+				$user->setMainPicture($mainpicture['src']);
+			}
 
 			$DB_REQ->closeCursor();
 

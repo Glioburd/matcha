@@ -90,6 +90,11 @@ class User
 	{
 		return !(empty($this->login) || empty($this->email) || empty($this->password));
 	}
+
+	public function isComplete()
+	{
+		return !(empty($this->bio) || empty($this->sexuality) || empty($this->gender) || empty($this->hobbies));
+	}
 	
 	
 	// SETTERS //

@@ -23,16 +23,25 @@ class PagesController extends Controller {
 
 		if (Validator::isConnected()) {
 
+
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
 
-			$this->render($response, 'home.twig',[
-				'user' => $user
-				]);
 			if (empty($user)) {
 				session_destroy();
 			}
 
+			if ($user->isComplete()) {
+			$this->render($response, 'home.twig',[
+				'user' => $user
+				]);
+			}
+
+			else {
+				return $this->redirect($response, 'auth.signupinfos', 200);
+			}
+
+			
 		Debug::debugUser($this->container, $user);
 		Debug::debugUser($this->container, $_SESSION['id']);
 
@@ -134,23 +143,44 @@ class PagesController extends Controller {
 			$UserManagerPDO->save($user);
 			$last_id = $this->db->lastInsertId();
 
-			$_SESSION['id'] = $last_id;
-			$_SESSION['login'] = $request->getParam('login');
+			// $_SESSION['id'] = $last_id;
+			// $_SESSION['login'] = $request->getParam('login');
 
 		}
 
 		else {
-			$this->flash('A field hasn\'t been filled correctly.', 'error');	
+			$this->flash('A field hasn\'t been filled correctly.', 'error');
 			$this->flash($errors, 'errors');
 			return $this->redirect($response, 'auth.signup', 302);
 		}
 
-			return $this->redirect($response, 'auth.signupinfos', 200);
+			$this->flash('A mail has been sent to confirm your inscription.', 'info');
+			return $this->redirect($response, 'auth.login', 200);
+			// return $this->redirect($response, 'auth.signupinfos', 200);
+
 	}
 
 	public function getSignUpInfos($request, $response) {
 
-		return $this->render($response, 'pages/signupinfos.twig');
+		if (Validator::isConnected()) {
+			$id = unserialize($_SESSION['id']);
+			$UserManagerPDO = new UserManagerPDO($this->db);
+			$user = $UserManagerPDO->getUnique($id);
+			if (!($user->isComplete())) {
+				return $this->render($response, 'pages/signupinfos.twig', [
+					'user' => $user
+					]);
+			}
+			else {
+				$this->flash('You can\'t access this page.', 'error');
+				return $response->withRedirect($this->router->pathFor('user.profile', ['userprofile' => $user->login()]));
+			}
+		}
+
+		else {
+			$this->flash('You must be loged to access this page', 'error');	
+			return $this->redirect($response, 'auth.signup', 302);
+		}
 	}
 
 	public function postSignUpInfos($request, $response) {
@@ -175,8 +205,7 @@ class PagesController extends Controller {
 
 		if (empty($errors)) {
 
-			$id = $_SESSION['id'];
-			$login = $_SESSION['login'];
+			$id = unserialize($_SESSION['id']);
 			$hobbies = $request->getParam('hobbies');
 
 			$UserManagerPDO = new UserManagerPDO($this->db);
@@ -210,6 +239,7 @@ class PagesController extends Controller {
 	public function getLogIn($request, $response) {
 
 		if (!Validator::isConnected()) {
+			$UserManagerPDO = new UserManagerPDO($this->db);
 			Debug::debugUser($this->container, $user);
 			return $this->render($response, 'pages/login.twig');
 		}
@@ -272,51 +302,71 @@ class PagesController extends Controller {
 
 	public function getProfile($request, $response, $args) {
 
+		// If user is loged in, and if there is an arg in /profile/
 		if (Validator::isConnected() && isset($args['userprofile']) && !empty($args['userprofile'])) {
+
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
-			$userprofilearg = $args['userprofile'];
-	
+			// If user profile is complete (hobbies, bio, sexuality...)
+			if ($user->isComplete()) {
 
-			if ($idprofile = $UserManagerPDO->getIdFromLogin($userprofilearg)) {
+				$userprofilearg = $args['userprofile'];
+		
+				// Check if arg profile exists
+				if ($idprofile = $UserManagerPDO->getIdFromLogin($userprofilearg)) {
 
-				$userProfile = $UserManagerPDO->getUnique($idprofile);
+					$userProfile = $UserManagerPDO->getUnique($idprofile);
 
-				if ($user->id() != $userProfile->id()) {
-					$UserManagerPDO->addVisit($user->id(), $userProfile->id());
-					$canLike = $UserManagerPDO->canLike($user->id(), $userProfile->id());
-					$canBlock = $UserManagerPDO->canBlock($user->id(), $userProfile->id());
+					// If arg profile is an other user
+					if ($user->id() != $userProfile->id()) {
+						$UserManagerPDO->addVisit($user->id(), $userProfile->id());
+						$canLike = $UserManagerPDO->canLike($user->id(), $userProfile->id());
+						$canBlock = $UserManagerPDO->canBlock($user->id(), $userProfile->id());
+					}
+
+					// If arg profile is user him/herself
+					else {
+						$visits = $UserManagerPDO->getVisits($userProfile->id());
+						$likes = $UserManagerPDO->getLikes($userProfile->id());
+						$eventsHistory = $UserManagerPDO->mergeVisitsLikes($visits, $likes);
+					}
+
+					$age = Validator::getAge($userProfile->Birthdate());
+
+					if (!$user->mainpicture()) {
+						$this->flash('
+							You don\'t have a profile picture! Please set one to be able to get matched with other people.'
+							,'warning');
+					}
+
+					Debug::debugUsers($this->container, $user, $userProfile);
+
+					return $this->render($response, 'pages/profile.twig',[
+						'userprofile' => $userProfile,
+						'user' => $user,
+						'eventsHistory' => $eventsHistory,
+						'canLike' => $canLike,
+						'canBlock' => $canBlock,
+						'age' =>$age
+					]);
+
 				}
 
 				else {
-					$visits = $UserManagerPDO->getVisits($userProfile->id());
-					$likes = $UserManagerPDO->getLikes($userProfile->id());
-					$eventsHistory = $UserManagerPDO->mergeVisitsLikes($visits, $likes);
+					//Arg profile doesn't exist
+					echo 'doesnt exists'; // 404, a modifier + tard
 				}
-
-				$age = Validator::getAge($userProfile->Birthdate());
-
-				Debug::debugUsers($this->container, $user, $userProfile);
-
-				return $this->render($response, 'pages/profile.twig',[
-					'userprofile' => $userProfile,
-					'user' => $user,
-					'eventsHistory' => $eventsHistory,
-					'canLike' => $canLike,
-					'canBlock' => $canBlock,
-					'age' =>$age
-				]);
-
 			}
 
+			// If profile is not incomplete (hobbies, bio, sexuality...)
 			else {
-
-				echo 'doesnt exists'; // 404, a modifier + tard
+				return $this->redirect($response, 'auth.signupinfos', 200);
 			}
 
 		}
 
 		else {
+			// If user is not loged in
 			return $this->redirect($response, 'auth.login', 200);	
 		}
 	}
@@ -421,7 +471,6 @@ class PagesController extends Controller {
 			$email = $_GET['email'];
 			$hash = $_GET['hash'];
 
-			echo 'hi';
 			if ($hash != $user->hash()) {
 				$this->flash("Your mail hasn't been updated, the link was incorrect or expired.", 'error');
 				return $this->redirect($response, 'home', 302);			

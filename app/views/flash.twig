@@ -8,14 +8,19 @@
 		</div>
 	{% endif %}
 
-		{% if flash.error %}
+	{% if flash.error %}
 		<div class="alert alert-danger">
 			{{ flash.error }}
 		</div>
 	{% endif %}
-		{% if flash.info %}
+	{% if flash.info %}
 		<div class="alert alert-info">
 			{{ flash.info }}
+		</div>
+	{% endif %}
+	{% if flash.warning %}
+		<div class="alert alert-warning">
+			{{ flash.warning }}
 		</div>
 	{% endif %}
 </div>
