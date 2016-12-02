@@ -17,6 +17,17 @@
 			{# {{ csrf() }} #}
 
 {###------------------------------------------------------------------------------------------------------------------###}
+{###-------------------------------------------LOCATION FIELD---------------------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
+
+			<div class="form-group">
+				<label for ="location" >Geolocalisation</label>
+				<div class="checkbox" id="allowGeolocDiv">
+					<label><input type="checkbox" name="allowGeoloc" id="allowGeoloc">Use geolocalisation datas for a better matching <strong>(recommended)</strong></label>
+				</div>
+			</div>
+
+{###------------------------------------------------------------------------------------------------------------------###}
 {###------------------------------------------GENDER FIELD------------------------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
 
@@ -142,22 +153,11 @@
 			</div>
 
 {###------------------------------------------------------------------------------------------------------------------###}
-{###-------------------------------------------LOCATION FIELD---------------------------------------------------------###}
-{###------------------------------------------------------------------------------------------------------------------###}
-
-			<div class="form-group">
-				<label for ="location" >Geolocalisation</label>
-				<div class="checkbox">
-					<label><input type="checkbox" name="allowGeoloc" id="allowGeoloc" value="true" disabled>Use geolocalisation datas for a better matching (recommended)</label>
-				</div>
-			</div>
-
-{###------------------------------------------------------------------------------------------------------------------###}
 {###------------------------------------------SUBMIT BUTTON-----------------------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
 			
 			<div class="form-group">
-				<input type="submit" class="btn btn-primary" value="Submit">
+				<input type="submit" class="btn btn-primary" value="Submit" id="submitButton">
 			</div>
 
 			
@@ -166,12 +166,24 @@
 {###------------------------------------------------------------------------------------------------------------------###}
 {###------------------------------------------COORDINATES HIDDEN FIELD -----------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
-
-		<input type="hidden" name="latitude" id="latitude" value= ""/>
-		<input type="hidden" name="longitude" id="longitude" value= ""/>
-		<input type="hidden" name="city" id="city" value= ""/>
+	<pre>FINAL
+	<input type="text" name="latitude" id="latitude"/>
+	<input type="text" name="longitude" id="longitude"/>
+	</pre>
+	<pre>MAP
+	<input type="text" name="map" id="map" value="0">
+	</pre>
 
 	</form>
+<pre>GOOGLE
+<input type="text" name="latitudeG" id="latitudeG" />
+<input type="text" name="longitudeG" id="longitudeG" />
+</pre>
+<pre>IP
+<input type="text" name="latitudeIP" id="latitudeIP" />
+<input type="text" name="longitudeIP" id="longitudeIP" />
+</pre>
+
 
 <script type="text/javascript" src="../../app/views/scripts/getlocation.js"></script>
 <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDD-NOwTi9bwWN-79RkmtRka187YlAcbI&callback=getCoordinates"

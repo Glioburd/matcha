@@ -24,6 +24,7 @@ class User
 			$hash,
 			$longitude,
 			$latitude,
+			$map,
 			$city,
 			$birthDate,
 			$created_at,
@@ -179,6 +180,10 @@ class User
 		{
 			$this->password = $password;
 		}
+	}
+
+	public function setMap($map) {
+		$this->map = $map;
 	}
 
 	public function setHash($hash)
@@ -340,6 +345,10 @@ class User
 	public function created_at()
 	{
 		return $this->created_at;
+	}
+
+	public function map() {
+		return $this->map;
 	}
 
 	public function updated_at()

@@ -208,43 +208,44 @@
 {###----------------------------------------------MAP PANNEL----------------------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
 
+	{% if user.map == 1 %}
+		<div class="panel panel-default" id="map_pannel">
+			<div class="panel-heading">
+					<h3 class="panel-title">Location:</h3>
+			</div>
 
-	<div class="panel panel-default" id="map_pannel">
-		<div class="panel-heading">
-				<h3 class="panel-title">Location:</h3>
+			<div class="panel-body">
+				<div id="map" style="width:100%;height:500px"></div>
+				<input type="hidden" name="latitude" id="latitude" value = "{{userprofile.latitude}}" />
+				<input type="hidden" name="longitude" id="longitude" value = "{{userprofile.longitude}}"/>
+				<script>
+					function initMap() {
+
+						var divMap = document.getElementById('map');
+
+						var lat = parseFloat(document.getElementById('latitude').value);
+						var lng = parseFloat(document.getElementById('longitude').value);
+						var myCenter = new google.maps.LatLng(lat,lng); 
+
+						var map = new google.maps.Map(divMap, {
+							center: {lat: lat, lng: lng},
+
+							zoom: 6
+						});
+
+						var marker = new google.maps.Marker({
+							position: myCenter,
+							animation: google.maps.Animation.BOUNCE
+						});
+						marker.setMap(map);
+						var infoWindow = new google.maps.InfoWindow({map: map});
+					}
+					</script>
+					<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDD-NOwTi9bwWN-79RkmtRka187YlAcbI&callback=initMap"
+							async defer></script>
+			</div>
 		</div>
-
-		<div class="panel-body">
-			<div id="map" style="width:100%;height:500px"></div>
-			<input type="hidden" name="latitude" id="latitude" value = "{{userprofile.latitude}}" />
-			<input type="hidden" name="longitude" id="longitude" value = "{{userprofile.longitude}}"/>
-			<script>
-				function initMap() {
-
-					var divMap = document.getElementById('map');
-
-					var lat = parseFloat(document.getElementById('latitude').value);
-					var lng = parseFloat(document.getElementById('longitude').value);
-					var myCenter = new google.maps.LatLng(lat,lng); 
-
-					var map = new google.maps.Map(divMap, {
-						center: {lat: lat, lng: lng},
-
-						zoom: 16
-					});
-
-					var marker = new google.maps.Marker({
-						position: myCenter,
-						animation: google.maps.Animation.BOUNCE
-					});
-					marker.setMap(map);
-					var infoWindow = new google.maps.InfoWindow({map: map});
-				}
-				</script>
-				<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDD-NOwTi9bwWN-79RkmtRka187YlAcbI&callback=initMap"
-						async defer></script>
-		</div>
-	</div>
+	{% endif %}
 
 {###------------------------------------------------------------------------------------------------------------------###}
 {###------------------------------------------VISITORS PANNEL---------------------------------------------------------###}

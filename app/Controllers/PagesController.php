@@ -221,9 +221,16 @@ class PagesController extends Controller {
 			$user->setHobbies($hobbies);
 
 			// If user allowed geolocalisation, let's register the coordonates
-			if ($request->getParam('allowGeoloc') && $request->getParam('latitude') && $request->getParam('longitude') && $request->getParam('city')) {
-				$user->setCoordonates($request->getParam('latitude'), $request->getParam('longitude'));
-				$user->setCity($request->getParam('city'));
+			if ($request->getParam('latitude') && $request->getParam('longitude')) {
+				$latitude = floatval($request->getParam('latitude'));
+				$longitude = floatval($request->getParam('longitude'));
+				// debug($latitude);
+				// debug($longitude);
+				// die();
+
+				$user->setCoordonates($latitude, $longitude);
+				$user->setMap($request->getParam('map'));
+				// $user->setCity($request->getParam('city'));
 			}
 
 			/* Save object user's profile to database in users table */
@@ -240,8 +247,7 @@ class PagesController extends Controller {
 			return $this->redirect($response, 'auth.signupinfos', 302);
 		}
 
-		unset($_SESSION['id']);
-		unset($_SESSION['login']);
+		// unset($_SESSION['id']);
 		return $this->redirect($response, 'home', 200);
 	}
 

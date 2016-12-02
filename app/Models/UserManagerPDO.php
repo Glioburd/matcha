@@ -266,7 +266,7 @@ class UserManagerPDO extends UserManager
 	{
 		if (isset($id) && !empty($id)) {
 			$DB_REQ = $this->DB_REQ->prepare('
-				SELECT id, login, email, firstName, lastName, birthDate, gender, password, hash, sexuality, bio, created_at, updated_at, isactive, latitude, longitude, ville
+				SELECT id, login, email, firstName, lastName, birthDate, gender, password, hash, sexuality, bio, created_at, updated_at, isactive, latitude, longitude, map, ville
 				FROM users 
 				WHERE id = :id
 				');
@@ -412,6 +412,7 @@ class UserManagerPDO extends UserManager
 				isactive = :isactive,
 				latitude = :latitude,
 				longitude = :longitude,
+				map = :map,
 				ville = :city
 			WHERE id = :id
 			');
@@ -430,6 +431,7 @@ class UserManagerPDO extends UserManager
 		$DB_REQ->bindValue(':isactive', $user->isactive());
 		$DB_REQ->bindValue(':latitude', (float) $user->latitude());
 		$DB_REQ->bindValue(':longitude', (float) $user->longitude());
+		$DB_REQ->bindValue(':map', $user->map());
 		$DB_REQ->bindValue(':city', $user->city(), PDO::PARAM_STR);
 		
 		$DB_REQ->execute();

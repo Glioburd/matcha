@@ -44,26 +44,88 @@ function getCity(lat, lng) {
 	});
 }
 
+function getCoordinatesByIp() {
+	$.get("http://ipinfo.io", function (response) {
+		var coord = response['loc'].split(",", 2);
+		var lat = parseFloat(coord[0]);
+		var lng = parseFloat(coord[1]);
+		$('#latitudeIP').val(lat);
+		$('#longitudeIP').val(lng);
+		$('#latitude').val(lat);
+		$('#longitude').val(lng);
+	}, "jsonp");
+}
+
+function ForceCoordinatesByIp() {
+	$('#allowGeolocDiv').hide();
+	$('#submitButton').prop("disabled", false);
+	$.get("http://ipinfo.io", function (response) {
+		var coord = response['loc'].split(",", 2);
+		var lat = parseFloat(coord[0]);
+		var lng = parseFloat(coord[1]);
+		$('#latitudeG').val(lat);
+		$('#longitudeG').val(lng);
+		$('#latitudeIP').val(lat);
+		$('#longitudeIP').val(lng);
+		$('#latitude').val(lat);
+		$('#longitude').val(lng);
+		$('#map').val('0')
+	}, "jsonp");
+}
+
+
 function getCoordinates() {
 
 	if (navigator.geolocation) {
+		$('#submitButton').prop("disabled", true);
 		navigator.geolocation.getCurrentPosition(function(position) {
+			// If geolocate with google API
+			getCoordinatesByIp();
 			var pos = {
 				lat: position.coords.latitude,
 				lng: position.coords.longitude,
 			};
-			document.getElementById("allowGeoloc").disabled = false;
-			document.getElementById("allowGeoloc").checked = true;
-			latitude = document.getElementById("latitude").value = pos['lat'];
-			longitude = document.getElementById("longitude").value = pos['lng'];
-			getCity(pos['lat'], pos['lng']);
+			latitude = document.getElementById("latitudeG").value = pos['lat'];
+			longitude = document.getElementById("longitudeG").value = pos['lng'];
+			$('#submitButton').prop("disabled", false);
 
 		}, function() {
-			document.getElementById("allowGeoloc").disabled = true;
-			document.getElementById("allowGeoloc").checked = false;
+			ForceCoordinatesByIp();
 		});
 	} else {
 		alert("Browser doesn't support Geolocation");
 	}
 }
 
+// document.getElementById("allowGeoloc").addEventListener("click", function(){
+// 	getCoordinates();
+// });
+
+document.getElementById("allowGeoloc").addEventListener("change", function() {
+	// console.log(typeof(document.getElementById("latitude").value));
+	// console.log(typeof(document.getElementById("longitude").value));
+
+	if (document.getElementById("allowGeoloc").checked) {
+		latitudeG = document.getElementById("latitudeG").value;
+		longitudeG = document.getElementById("longitudeG").value;
+		$('#latitude').val(latitudeG);
+		$('#longitude').val(longitudeG);
+		$('#map').val('1');
+		// $('#latitude').val("Lat google");
+		// $('#longitude').val("Long google");
+	}
+	else if (document.getElementById("allowGeoloc").checked == false) {
+		latitudeIP = document.getElementById("latitudeIP").value;
+		longitudeIP = document.getElementById("longitudeIP").value;
+		$('#latitude').val(latitudeIP);
+		$('#longitude').val(longitudeIP);
+		$('#map').val('0')
+	}
+});
+
+if (document.getElementById("allowGeoloc").checked) {
+		latitudeG = document.getElementById("latitudeG").value;
+		longitudeG = document.getElementById("longitudeG").value;
+		$('#latitude').val(latitudeG);
+		$('#longitude').val(longitudeG);
+}

@@ -10,76 +10,76 @@
 {###------------------------------------------EDIT GALERY-------------------------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
 
-<h2>Pictures:</h2>
-{{flash.errors.image }}
-<div class="panel panel-default{% if flash.errors.image %} has-error {% endif %}">
+	<h2>Pictures:</h2>
+	{{flash.errors.image }}
+	<div class="panel panel-default{% if flash.errors.image %} has-error {% endif %}">
 
-	<div class="panel-heading">
-		<h3 class="panel-title">Edit your gallery:</h3>
-	</div>
+		<div class="panel-heading">
+			<h3 class="panel-title">Edit your gallery:</h3>
+		</div>
 
-	<div class="panel-body">
-		<div class="row">
-			<div class="col-lg-6">
-				<form action="{{ path_for('upload.picture') }}" method="post" enctype="multipart/form-data">
-					Add a new image:							
-					<input type="file" name="fileToUpload" id="fileToUpload">
-					<div class="form-group{% if flash.errors.imageupload %} has-error {% endif %}">
-						<input type="submit" class="btn btn-primary" value="Upload Image" name="submit">
-						{% if flash.errors.imageupload %}
-							<span class="help-block">{{ flash.errors.imageupload }}</span>
+		<div class="panel-body">
+			<div class="row">
+				<div class="col-lg-6">
+					<form action="{{ path_for('upload.picture') }}" method="post" enctype="multipart/form-data">
+						Add a new image:							
+						<input type="file" name="fileToUpload" id="fileToUpload">
+						<div class="form-group{% if flash.errors.imageupload %} has-error {% endif %}">
+							<input type="submit" class="btn btn-primary" value="Upload Image" name="submit">
+							{% if flash.errors.imageupload %}
+								<span class="help-block">{{ flash.errors.imageupload }}</span>
+							{% endif %}
+						</div>
+					</form>
+					{% if user.pictures[i] %}
+						Delete or select main image:
+					{% endif %}
+					{% if user.mainpicture %}
+					<div class="row">
+						{% set src = user.mainpicture %}
+							<div class="col-sm-6 col-md-4">
+								<div class="caption">
+									<a class="thumbnail">
+										<img src="{{src}}" alt="profile picture">
+									</a>
+									<form action="{{ path_for('delete.picture') }}" method="post">
+										<button type="submit" name="deletePicture" class="btn btn-danger align-center" value="{{user.mainpicture}}">Delete</button>
+									</form>
+								</div>
+							</div>
+					{% endif %}
+
+						{% for i in 0..3 %}
+								{% if user.pictures[i] %}
+									{% set src = user.pictures[i] %}		
+										
+									<div class="col-sm-6 col-md-4">
+										<div class="caption">
+											<a class="thumbnail">
+												<img src="{{src}}" alt="gallery">
+											</a>
+											<form action="{{ path_for('change.picture') }}" method="post">
+												<button type="submit" name="changePicture" class="btn btn-success align-center" value="{{user.pictures[i]}}">Set main</button>
+											</form>
+											<form action="{{ path_for('delete.picture') }}" method="post">
+												<button type="submit" name="deletePicture" class="btn btn-danger align-center" value="{{user.pictures[i]}}">Delete</button>
+											</form>
+										</div>
+									</div>	
+								{% endif %}
+						{% endfor %}
+						{% if flash.errors.image %}
+							<span class="help-block">{{ flash.errors.image }}</span>
 						{% endif %}
 					</div>
-				</form>
-				{% if user.pictures[i] %}
-					Delete or select main image:
-				{% endif %}
-				{% if user.mainpicture %}
-				<div class="row">
-					{% set src = user.mainpicture %}
-						<div class="col-sm-6 col-md-4">
-							<div class="caption">
-								<a class="thumbnail">
-									<img src="{{src}}" alt="profile picture">
-								</a>
-								<form action="{{ path_for('delete.picture') }}" method="post">
-									<button type="submit" name="deletePicture" class="btn btn-danger align-center" value="{{user.mainpicture}}">Delete</button>
-								</form>
-							</div>
-						</div>
-				{% endif %}
-
-					{% for i in 0..3 %}
-							{% if user.pictures[i] %}
-								{% set src = user.pictures[i] %}		
-									
-								<div class="col-sm-6 col-md-4">
-									<div class="caption">
-										<a class="thumbnail">
-											<img src="{{src}}" alt="gallery">
-										</a>
-										<form action="{{ path_for('change.picture') }}" method="post">
-											<button type="submit" name="changePicture" class="btn btn-success align-center" value="{{user.pictures[i]}}">Set main</button>
-										</form>
-										<form action="{{ path_for('delete.picture') }}" method="post">
-											<button type="submit" name="deletePicture" class="btn btn-danger align-center" value="{{user.pictures[i]}}">Delete</button>
-										</form>
-									</div>
-								</div>	
-							{% endif %}
-					{% endfor %}
-					{% if flash.errors.image %}
-						<span class="help-block">{{ flash.errors.image }}</span>
-					{% endif %}
 				</div>
 			</div>
 		</div>
 	</div>
-</div>
-<hr>
+	<hr>
 
 
-<h2>Infos:</h2>
+	<h2>Infos:</h2>
 	<form action="{{ path_for('user.edit') }}" method="post">
 {###------------------------------------------------------------------------------------------------------------------###}
 {###------------------------------------------EDIT LOGIN PANNEL-------------------------------------------------------###}
@@ -258,22 +258,21 @@
 {###-------------------------------------------EDIT BIO PANNEL--------------------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
 
-			<div class="panel panel-default">
-				<div class="panel-heading">
-					<h3 class="panel-title">Edit your bio:</h3>
-				</div>
-				<div class="panel-body">
-					<div class="row">
-						<div class="col-lg-12">
-								<textarea class="form-control" name="bio" id="bio" >{{ user.bio }}</textarea>
-								{% if flash.errors.bio %}
-									<span class="help-block">{{ flash.errors.bio }}</span>
-								{% endif %}
-						</div>
-
-					</div>
-				</div>
+		<div class="panel panel-default">
+			<div class="panel-heading">
+				<h3 class="panel-title">Edit your bio:</h3>
 			</div>
+			<div class="panel-body">
+				<div class="row">
+					<div class="col-lg-12">
+							<textarea class="form-control" name="bio" id="bio" >{{ user.bio }}</textarea>
+							{% if flash.errors.bio %}
+								<span class="help-block">{{ flash.errors.bio }}</span>
+							{% endif %}
+					</div>
+					</div>
+			</div>
+		</div>
 
 {###------------------------------------------------------------------------------------------------------------------###}
 {###------------------------------------------SUBMIT BUTTONN----------------------------------------------------------###}
@@ -282,8 +281,80 @@
 		<div class="form-group">
 			<input type="submit" class="btn btn-primary" value="Submit">
 		</div>
-	
+
+{###------------------------------------------------------------------------------------------------------------------###}
+{###------------------------------------------SUBMIT BUTTONN----------------------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
+
+		<div class="panel panel-default" id="map_pannel">
+			<div class="panel-heading">
+					<h3 class="panel-title">Edit your location:</h3>
+			</div>
+
+			<div class="panel-body">
+				<div id="map" style="width:100%;height:500px"></div>
+
+				{% if user.map == 1 %}
+					<input type="hidden" name="latitude" id="latitude" value = "{{user.latitude}}" />
+					<input type="hidden" name="longitude" id="longitude" value = "{{user.longitude}}"/>
+				{% else %}
+					<input type="hidden" name="latitude" id="latitude" value = "46.923763"/>
+					<input type="hidden" name="longitude" id="longitude" value = "2.219839"/>
+				{% endif %}
+				<script>
+
+					function placeMarker(location, marker, map) {
+						if (!marker) {
+							marker = new google.maps.Marker({
+								position: location,
+								map: map, 
+								animation: google.maps.Animation.DROP,
+							});
+						}
+						else {
+							marker.setPosition(location);
+						}
+						console.log(location['lat']());
+					}
+
+					function initMap() {
+
+						var divMap = document.getElementById('map');
+						var latitude = document.getElementById('latitude').value;
+
+						var lat = parseFloat(document.getElementById('latitude').value);
+						var lng = parseFloat(document.getElementById('longitude').value);
+
+						var myCenter = new google.maps.LatLng(lat,lng); 
+
+						var map = new google.maps.Map(divMap, {
+							center: {lat: lat, lng: lng},
+
+							zoom: 6
+						});
+						if ("{{user.map}}" == 1 ) {
+							var marker = new google.maps.Marker({
+								position: myCenter,
+								animation: google.maps.Animation.BOUNCE
+							});
+							marker.setMap(map);
+						}
+						
+						google.maps.event.addListener(map, 'click', function(event) {
+							placeMarker(event.latLng, marker, map);
+						});
+
+						// var infoWindow = new google.maps.InfoWindow({map: map});
+					}
+					</script>
+					<script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyBDD-NOwTi9bwWN-79RkmtRka187YlAcbI&callback=initMap"
+							async defer></script>
+			</div>
+		</div>
+
 	</form>
 </div>
+
+
 
 {% endblock %}

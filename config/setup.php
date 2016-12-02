@@ -38,6 +38,7 @@ if (intval($result['count']) == 0) {
 			`rank` int NOT NULL DEFAULT '0',
 			`longitude` decimal(9,6) DEFAULT NULL COMMENT 'Longitude',
 			`latitude` decimal(9,6) DEFAULT NULL COMMENT 'Latitude',
+			`map` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'If user has allowed geoloc',
 			`ville` varchar(255) DEFAULT NULL
 			);");
 
