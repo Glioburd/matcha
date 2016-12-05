@@ -746,7 +746,8 @@ class UserManagerPDO extends UserManager
 	public function canBlock($id_blocker, $id_blocked) {
 		if (!empty($id_blocker) && !empty($id_blocked)) {
 
-			$DB_REQ = $this->DB_REQ->prepare('SELECT id_blocker
+			$DB_REQ = $this->DB_REQ->prepare('
+				SELECT id_blocker
 				FROM blocks
 				WHERE id_blocked = :id_blocked
 					AND id_blocker = :id_blocker
@@ -779,6 +780,34 @@ class UserManagerPDO extends UserManager
 		return $arr;
 	}
 
+	public function stockDistance(User $user){
+		if (!empty($user)) {
+			$DB_REQ = $this->DB_REQ->prepare('
+			SELECT a.login AS from_user, b.login AS to_user, b.id AS to_user_id, pictures.src AS to_user_pic, 
+				111.1111 *
+			DEGREES(ACOS(COS(RADIANS(a.Latitude))
+				 * COS(RADIANS(b.Latitude))
+				 * COS(RADIANS(a.Longitude - b.Longitude))
+				 + SIN(RADIANS(a.Latitude))
+				 * SIN(RADIANS(b.Latitude)))) AS distance_in_km
+			FROM users AS a
+			JOIN users AS b ON a.id <> b.id
+			INNER JOIN pictures
+			ON pictures.id_owner = b.id AND ismainpic = 1
+			WHERE a.login = :from_user
+			ORDER BY distance_in_km
+			');
+			$DB_REQ->bindValue(':from_user', $user->login());
+			// $DB_REQ->bindValue(':to_user', $idother);
+			$DB_REQ->execute();
+			$data = $DB_REQ->fetchAll(PDO::FETCH_ASSOC);
+			// debug($data);
+			// die();
+			return $data;
+		}
+	}
+	// 	WHERE a.login = :from_user AND b.login = :to_user
+	//	WHERE b.login = "tassz" 
 /*
 ** DEBUG
 */

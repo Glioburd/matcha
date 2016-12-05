@@ -10,7 +10,7 @@ use App\Models\UserManagerPDO;
 use \PDO;
 
 include __DIR__ . '../../../debug.php';
-include 'mails.php';
+include 'distance.php';
 
 /**
 * 
@@ -23,7 +23,6 @@ class PagesController extends Controller {
 
 		if (Validator::isConnected()) {
 
-
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
 
@@ -31,9 +30,11 @@ class PagesController extends Controller {
 				session_destroy();
 			}
 
+			$data = $UserManagerPDO->stockDistance($user);
 			if ($user->isComplete()) {
 			$this->render($response, 'home.twig',[
-				'user' => $user
+				'user' => $user,
+				'data' => $data
 				]);
 			}
 
@@ -550,6 +551,15 @@ class PagesController extends Controller {
 		if (!Validator::hobbiesCheck($request->getParam('hobbies'))) {
 			$errors['hobbies'] = 'You must pick at least 4 hobbies';
 		}
+
+		if ($request->getParam('latitude') && $request->getParam('longitude')) {
+				$latitude = floatval($request->getParam('latitude'));
+				$longitude = floatval($request->getParam('longitude'));
+
+				$user->setCoordonates($latitude, $longitude);
+				$user->setMap(1);
+
+			}
 
 		if (empty($errors)) {
 
