@@ -82,7 +82,22 @@
 			<h3 class="panel-title">Who is {{isShe|e}}?</h3>
 		</div>
 		<div class="panel-body">
-			<strong>{{userprofile.login|e}}</strong> is a <strong>{{age|e}}</strong> years old <strong>{{gender|e}}</strong>. Tell {{himHer|e}} hi or trashtalk {{himHer|e}}!
+			{% if userprofile.sexuality == 'bi' %}
+				{% set mate = 'boys and girls' %}
+			{% elseif userprofile.sexuality == 'homo' %}
+				{% if userprofile.gender == 'f' %}
+					{% set mate = 'girls' %}
+				{% elseif userprofile.gender == 'h' %}
+					{% set mate = 'boys' %}
+				{% endif %}
+			{% elseif userprofile.sexuality == 'hetero' %}
+				{% if userprofile.gender == 'f' %}
+					{% set mate = 'boys' %}
+				{% elseif userprofile.gender == 'm' %}
+					{% set mate = 'girls' %}
+				{% endif %}
+			{% endif %}
+			<strong>{{userprofile.login|e}}</strong> is a <strong>{{age|e}}</strong> years old <strong>{{gender|e}}</strong> who likes <strong>{{mate}}</strong>. Tell {{himHer|e}} hi or trashtalk {{himHer|e}}!
 		</div>
 	</div>
 
@@ -117,7 +132,7 @@
 					{% if userprofile.mainpicture %}
 						{% set href, src = '../' ~ userprofile.mainpicture, '../' ~ userprofile.mainpicture %}
 					{% else %}
-						{% set href, src = "#", "http://hd4desktop.online/images/m/a-hydralisk-starcraft-artwork-HD-Wallpaper.jpg" %}						
+						{% set href, src = "#", "http://hd4desktop.online/images/m/a-hydralisk-starcraft-artwork-HD-Wallpaper.jpg" %}
 					{% endif %}
 
 					<div class="col-xs-6 col-md-offset-3">
@@ -146,13 +161,13 @@
 							{% if userprofile.pictures[i] %}
 								{% set href, src = '../' ~ userprofile.pictures[i], '../' ~ userprofile.pictures[i] %}
 							{% else %}
-								{% set href, src = "#", "http://hd4desktop.online/images/m/a-hydralisk-starcraft-artwork-HD-Wallpaper.jpg" %}						
+								{% set href, src = "#", "http://hd4desktop.online/images/m/a-hydralisk-starcraft-artwork-HD-Wallpaper.jpg" %}
 						{% endif %}
 						<div class="col-xs-6 col-md-3">
 							<a href="{{href}}" class="thumbnail">
 								<img src="{{src}}" alt="profile picture">
 							</a>
-						</div>	
+						</div>
 					{% endfor %}
 
 				</div>
@@ -202,7 +217,7 @@
 		{% endfor %}
 		</div>
 	</div>
-	
+
 
 {###------------------------------------------------------------------------------------------------------------------###}
 {###----------------------------------------------MAP PANNEL----------------------------------------------------------###}
@@ -225,7 +240,7 @@
 
 						var lat = parseFloat(document.getElementById('latitude').value);
 						var lng = parseFloat(document.getElementById('longitude').value);
-						var myCenter = new google.maps.LatLng(lat,lng); 
+						var myCenter = new google.maps.LatLng(lat,lng);
 
 						var map = new google.maps.Map(divMap, {
 							center: {lat: lat, lng: lng},
@@ -268,7 +283,7 @@
 						<p><strong>❤️ <a href="{{event.login}}">{{ event.login }}</a></strong> liked your profile the {{ event.date|date("F jS \\a\\t g:i A") }}!</p>
 					{% endif %}
 				{% endfor %}
-				
+
 			{% endif %}
 		</div>
 	</div>
@@ -276,4 +291,4 @@
 	{% endif %}
 
 </div>
-{% endblock %} 
+{% endblock %}
