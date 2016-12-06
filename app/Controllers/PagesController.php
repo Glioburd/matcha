@@ -392,8 +392,18 @@ class PagesController extends Controller {
 
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
+			$blockedUsers = $UserManagerPDO->getBlockedUsers($user->id());
+
+			foreach($blockedUsers as $key => $blockedUser) {
+				if ($blockedUser) {
+					$blockedUser[$key]['id_blocked'] = $UserManagerPDO->getUnique($blockedUser['id_blocked']);
+				}
+
+			}
+
 			return $this->render($response, 'pages/settings.twig',[
-				'user' => $user
+				'user' => $user,
+				'blockedUsers' => $blockedUsers
 			]);
 		}
 

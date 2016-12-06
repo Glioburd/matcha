@@ -86,6 +86,30 @@
 			<input type="submit" class="btn btn-primary" value="Submit">
 		</div>
 	</form>
+
+{###------------------------------------------------------------------------------------------------------------------###}
+{###--------------------------------------------BLOCKED USERS---------------------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
+	{{ dump(blockedUsers) }}
+	{% if blockedUsers %}
+	<div class="panel panel-default">
+		<div class="panel-heading">
+				<h3 class="panel-title">Blocked users:</h3>
+		</div>
+		<div class="panel-body">
+			<ul class="list-group">
+				{% for blocked in blockedUsers %}
+					<li class="list-group-item">
+						<span class="badge">X</span>
+						{{blocked.login}}
+					</li>
+				{% endfor %}
+			</ul>
+		</div>
+	</div>
+
+	{% endif %}
+
 </div>
 
 {% endblock %} 

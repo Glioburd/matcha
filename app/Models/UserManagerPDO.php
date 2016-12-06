@@ -795,9 +795,6 @@ class UserManagerPDO extends UserManager
 			INNER JOIN pictures
 			ON pictures.id_owner = b.id AND ismainpic = 1
 
-			-- LEFT JOIN blocks
-			-- ON blocks.id_blocker = a.id AND blocks.id_blocked = b.id
-
 			WHERE
 				a.login = :from_user
 				AND NOT EXISTS(SELECT * FROM blocks WHERE blocks.id_blocked = b.id)
@@ -812,8 +809,20 @@ class UserManagerPDO extends UserManager
 
 		}
 	}
-	// 	WHERE a.login = :from_user AND b.login = :to_user
-	//	WHERE b.login = "tassz" 
+
+	public function getBlockedUsers($id_blocker) {
+				$DB_REQ = $this->DB_REQ->prepare('
+				SELECT id_blocked
+				FROM blocks
+				WHERE id_blocker = :id_blocker
+				');
+			$DB_REQ->bindValue(':id_blocker', $id_blocker, PDO::PARAM_INT);	
+			$DB_REQ->execute();
+			$data = $DB_REQ->fetchAll(PDO::FETCH_ASSOC);
+
+			return $data;
+	}
+
 /*
 ** DEBUG
 */
