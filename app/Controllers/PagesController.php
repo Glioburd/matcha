@@ -10,7 +10,6 @@ use App\Models\UserManagerPDO;
 use \PDO;
 
 include __DIR__ . '../../../debug.php';
-include 'distance.php';
 
 /**
 * 
@@ -613,11 +612,9 @@ class PagesController extends Controller {
 			}
 		}
 
-
 		if (!file_exists($target_dir)) {
-			if (!mkdir($target_dir)) {
+			if (!mkdir($target_dir, 0777)) {
 				$errors['imageupload'] =  $target_dir;
-
 				$uploadOk = 0;
 			}
 		}
@@ -657,7 +654,7 @@ class PagesController extends Controller {
 
 		// if everything is ok, try to upload file
 
-		} 
+		}
 
 		else {
 			if (move_uploaded_file($_FILES["fileToUpload"]["tmp_name"], $target_file)) {
@@ -684,15 +681,14 @@ class PagesController extends Controller {
 
 			$basenameSrc = basename($imgSrc);
 			$target_dir = getcwd() . '/../uploads/' . $user->id();
-			
-			if (!file_exists($target_dir)){ 
-				if (!mkdir('old', 0700)) {
+
+			if (!file_exists($target_dir . '/old')){
+				if (!mkdir($target_dir . '/old', 0777)) {
 					$errors['image'] = 'An error occured when trying to delete image.';
 					$this->flash($errors, 'errors');
 					return $this->redirect($response, 'user.edit', 302);				
 				}	
 			}
-
 
 			if (!rename($target_dir . '/' . $basenameSrc, $target_dir . '/old/' . $basenameSrc)) {
 				$errors['image'] = 'An error occured when trying to delete image.';

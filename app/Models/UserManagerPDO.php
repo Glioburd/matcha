@@ -794,8 +794,10 @@ class UserManagerPDO extends UserManager
 			JOIN users AS b ON a.id <> b.id
 			INNER JOIN pictures
 			ON pictures.id_owner = b.id AND ismainpic = 1
+			-- INNER JOIN blocks
+			-- ON blocks.id_blocker = a.id AND blocks.id_blocked = b.id
 			WHERE a.login = :from_user
-			ORDER BY distance_in_km
+			ORDER BY distance_in_km	
 			');
 			$DB_REQ->bindValue(':from_user', $user->login());
 			// $DB_REQ->bindValue(':to_user', $idother);
