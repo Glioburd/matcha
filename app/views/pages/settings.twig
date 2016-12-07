@@ -117,32 +117,26 @@
 </div>
 <script type="text/javascript">
 
-// Doesn't work with jQuery 2.2, thanks to bootsrap
 
 	$("document").ready(function(){
-		// console.log('test');
 		$(".unblock").on('click', function(e){
 			var id = ($(this).prop("value"));
-			// console.log(id);
 			$.post("{{ path_for('unblockFromSettings') }}",
 			{
 				postid: id
 			},
 			function(data,status){
 				if (data && status) {
-					console.log('OK');
-					// console.log($('#li{{blockedUser.id}}').val());
 					$(e.target).closest('li').remove();
-					// $(this).closest("#li").remove();
+					if($('.list-group').children().length === 0){
+						$('.list-group').append('There is no user in your blacklist.');
+						console.log('empty');
+					}
 				}
-
-				// console.log(data);
-				// console.log(status);
 			});
 		});
 	});
 
-
-// </script>
+</script>
 
 {% endblock %} 
