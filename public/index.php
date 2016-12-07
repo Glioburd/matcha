@@ -62,12 +62,14 @@ $app->post('/block', 'App\Controllers\PagesController:postBlockUser')->setName('
 
 $app->post('/unblock', 'App\Controllers\PagesController:postUnblockUser')->setName('unblock');
 
-
 /* Settings */
 $app->get('/settings', 'App\Controllers\PagesController:getSettings')->setName('user.settings');
 $app->post('/settings', 'App\Controllers\PagesController:postSettings');
 
 $app->get('/settings/changeMail', 'App\Controllers\PagesController:getChangeMail');
+
+$app->post('/settings/unblock', 'App\Controllers\PagesController:postUnblockUserFromSettings')->setName('unblockFromSettings');
+
 
 /* Edit profile */
 $app->get('/edit', 'App\Controllers\PagesController:getEdit')->setName('user.edit');

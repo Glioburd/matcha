@@ -90,26 +90,59 @@
 {###------------------------------------------------------------------------------------------------------------------###}
 {###--------------------------------------------BLOCKED USERS---------------------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
-	{{ dump(blockedUsers) }}
-	{% if blockedUsers %}
-	<div class="panel panel-default">
+
+
+	<div class="panel panel-default" id="blockedDiv">
 		<div class="panel-heading">
 				<h3 class="panel-title">Blocked users:</h3>
 		</div>
-		<div class="panel-body">
+		<div class="panel-body" id="">
 			<ul class="list-group">
-				{% for blocked in blockedUsers %}
-					<li class="list-group-item">
-						<span class="badge">X</span>
-						{{blocked.login}}
-					</li>
-				{% endfor %}
+				{% if blockedUsers %}
+					{% for blockedUser in blockedUsers %}
+						<li class="list-group-item row" id="li{{blockedUser.id}}" value="li{{blockedUser.id}}">
+							<strong><a href="../public/profile/{{blockedUser.login}}">{{blockedUser.login}}</a></strong>
+							<button type="button " class="pull-right btn btn-danger unblock" id="{{blockedUser.id}}" value="{{blockedUser.id}}" style="line-height: 50%;">
+  								<span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+							</button>
+						</li>
+					{% endfor %}
+				{% else %}
+					There is no user in your blacklist.
+				{% endif %}
 			</ul>
 		</div>
 	</div>
 
-	{% endif %}
-
 </div>
+<script type="text/javascript">
+
+// Doesn't work with jQuery 2.2, thanks to bootsrap
+
+	$("document").ready(function(){
+		// console.log('test');
+		$(".unblock").on('click', function(e){
+			var id = ($(this).prop("value"));
+			// console.log(id);
+			$.post("{{ path_for('unblockFromSettings') }}",
+			{
+				postid: id
+			},
+			function(data,status){
+				if (data && status) {
+					console.log('OK');
+					// console.log($('#li{{blockedUser.id}}').val());
+					$(e.target).closest('li').remove();
+					// $(this).closest("#li").remove();
+				}
+
+				// console.log(data);
+				// console.log(status);
+			});
+		});
+	});
+
+
+// </script>
 
 {% endblock %} 

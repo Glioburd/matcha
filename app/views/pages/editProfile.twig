@@ -20,10 +20,10 @@
 
 		<div class="panel-body">
 			<div class="row">
-				<div class="col-lg-6">
+				<div class="container">
 					<form action="{{ path_for('upload.picture') }}" method="post" enctype="multipart/form-data">
 						Add a new image:							
-						<input type="file" name="fileToUpload" id="fileToUpload">
+						<input type="file" name="fileToUpload">
 						<div class="form-group{% if flash.errors.imageupload %} has-error {% endif %}">
 							<input type="submit" class="btn btn-primary" value="Upload Image" name="submit">
 							{% if flash.errors.imageupload %}
@@ -31,53 +31,56 @@
 							{% endif %}
 						</div>
 					</form>
-					{% if user.pictures[i] %}
-						Delete or select main image:
-					{% endif %}
-					{% if user.mainpicture %}
-					<div class="row">
-						{% set src = user.mainpicture %}
-							<div class="col-sm-6 col-md-4">
-								<div class="caption">
-									<a class="thumbnail">
-										<img src="{{src}}" alt="profile picture">
-									</a>
-									<form action="{{ path_for('delete.picture') }}" method="post">
-										<button type="submit" name="deletePicture" class="btn btn-danger align-center" value="{{user.mainpicture}}">Delete</button>
-									</form>
-								</div>
-							</div>
-					{% endif %}
-
-						{% for i in 0..3 %}
-								{% if user.pictures[i] %}
-									{% set src = user.pictures[i] %}		
-										
-									<div class="col-sm-6 col-md-4">
-										<div class="caption">
-											<a class="thumbnail">
-												<img src="{{src}}" alt="gallery">
-											</a>
-											<form action="{{ path_for('change.picture') }}" method="post">
-												<button type="submit" name="changePicture" class="btn btn-success align-center" value="{{user.pictures[i]}}">Set main</button>
-											</form>
-											<form action="{{ path_for('delete.picture') }}" method="post">
-												<button type="submit" name="deletePicture" class="btn btn-danger align-center" value="{{user.pictures[i]}}">Delete</button>
-											</form>
-										</div>
-									</div>	
-								{% endif %}
-						{% endfor %}
-						{% if flash.errors.image %}
-							<span class="help-block">{{ flash.errors.image }}</span>
-						{% endif %}
-					</div>
 				</div>
-			</div>
+				<hr>
+				{% if user.pictures[i] %}
+					Delete or select main image:
+				{% endif %}
+				{% if user.mainpicture %}
+					{# <div class="row"> #}
+						{% set src = user.mainpicture %}
+						<div class="col-md-2">
+							<div class="caption">
+								<form action="{{ path_for('delete.picture') }}" method="post">
+									<button type="submit" name="deletePicture" class="btn btn-danger align-center glyphicon glyphicon-remove" value="{{user.mainpicture}}"></button>
+								</form>
+								<a class="thumbnail">
+									<img src="{{src}}" alt="profile picture">
+								</a>
+
+							</div>
+						</div>
+				{% endif %}
+
+				{% for i in 0..3 %}
+					{% if user.pictures[i] %}
+						{% set src = user.pictures[i] %}		
+									
+						<div class="col-md-2">
+							<div class="caption">
+								{# Set delete picture button #}
+								<form action="{{ path_for('delete.picture') }}" method="post" style = "display:inline">
+									<button type="submit" name="deletePicture" class="btn btn-danger align-center glyphicon glyphicon-remove" value="{{user.pictures[i]}}"></button>
+								</form>
+								{# Set main picture button #}
+								<form action="{{ path_for('change.picture') }}" method="post" style = "display:inline">
+										<button type="submit" name="changePicture" class="btn btn-success align-center glyphicon glyphicon-user" value="{{user.pictures[i]}}"></button>
+								</form>
+								<a class="thumbnail">
+									<img src="{{src}}" alt="gallery">
+								</a>
+
+							</div>
+						</div>	
+					{% endif %}
+				{% endfor %}
+				{% if flash.errors.image %}
+					<span class="help-block">{{ flash.errors.image }}</span>
+				{% endif %}
+			</div> {# /row #}
 		</div>
 	</div>
 	<hr>
-
 
 	<h2>Infos:</h2>
 	<form action="{{ path_for('user.edit') }}" method="post">

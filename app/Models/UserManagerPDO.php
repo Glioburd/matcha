@@ -711,6 +711,10 @@ class UserManagerPDO extends UserManager
 		$DB_REQ->bindValue(':id_unblocked', $id_unblocked, PDO::PARAM_INT);
 		$DB_REQ->bindValue(':id_unblocker', $id_unblocker, PDO::PARAM_INT);
 		$DB_REQ->execute();
+		if ($DB_REQ) {
+			return TRUE;
+		}
+		return FALSE;
 	}
 
 /*

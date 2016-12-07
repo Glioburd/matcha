@@ -82,6 +82,7 @@
 			<h3 class="panel-title">Who is {{isShe|e}}?</h3>
 		</div>
 		<div class="panel-body">
+
 			{% if userprofile.sexuality == 'bi' %}
 				{% set mate = 'boys and girls' %}
 			{% elseif userprofile.sexuality == 'homo' %}
@@ -97,7 +98,7 @@
 					{% set mate = 'girls' %}
 				{% endif %}
 			{% endif %}
-			<strong>{{userprofile.login|e}}</strong> is a <strong>{{age|e}}</strong> years old <strong>{{gender|e}}</strong> who likes <strong>{{mate}}</strong>. Tell {{himHer|e}} hi or trashtalk {{himHer|e}}!
+			<strong>{{userprofile.login|e}}</strong> is a <strong>{{age|e}}</strong> years old <strong>{{gender|e}}</strong> who likes <strong>{{mate|e}}</strong>. Tell {{himHer|e}} hi or trashtalk {{himHer|e}}!
 		</div>
 	</div>
 

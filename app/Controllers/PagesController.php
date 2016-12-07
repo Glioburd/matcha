@@ -396,9 +396,8 @@ class PagesController extends Controller {
 
 			foreach($blockedUsers as $key => $blockedUser) {
 				if ($blockedUser) {
-					$blockedUser[$key]['id_blocked'] = $UserManagerPDO->getUnique($blockedUser['id_blocked']);
+					$blockedUsers[$key] = $UserManagerPDO->getUnique($blockedUser['id_blocked']);
 				}
-
 			}
 
 			return $this->render($response, 'pages/settings.twig',[
@@ -518,6 +517,11 @@ class PagesController extends Controller {
 			// $user = unserialize($_SESSION['user']);
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
+			if (!$user->mainpicture()) {
+				$this->flash('
+				You don\'t have a profile picture! Please set one to be able to get matched with other people.','warning');
+			}
+
 			Debug::debugUser($this->container, $user);
 			return $this->render($response, 'pages/editProfile.twig',[
 				'user' => $user
@@ -779,18 +783,29 @@ class PagesController extends Controller {
 
 	public function postUnblockUser($request, $response) {
 
-	if (Validator::isConnected() && !empty($request->getParam('unblockButton'))) {
+		if (Validator::isConnected() && !empty($request->getParam('unblockButton'))) {
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$id_unblocker = unserialize($_SESSION['id']);
 			$id_unblocked = $request->getParam('unblockButton');
 			$UserManagerPDO->unblock($id_unblocker, $id_unblocked);
 			$user = $UserManagerPDO->getLoginFromId($id_unblocked);
-
 			return $response->withRedirect($this->router->pathFor('user.profile', ['userprofile' => $user]));
 		}
 		else {
 			echo 'huh?';
 		}	
+	}
+
+	public function postUnblockUserFromSettings($request, $response) {
+			$UserManagerPDO = new UserManagerPDO($this->db);
+			$id_unblocker = unserialize($_SESSION['id']);
+			$id_unblocked = $_POST['postid'];
+			if ($UserManagerPDO->unblock($id_unblocker, $id_unblocked)){
+				return 'ok';
+			}
+			else {
+				return false;
+			}
 	}
 
 }
