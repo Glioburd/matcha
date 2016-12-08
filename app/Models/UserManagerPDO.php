@@ -784,31 +784,53 @@ class UserManagerPDO extends UserManager
 		return $arr;
 	}
 
-	public function stockDistance(User $user){
+	public function getMatches(User $user){
 		if (!empty($user)) {
+			$gender = $user->gender();
+			$sexuality = $user->sexuality();
+
 			$DB_REQ = $this->DB_REQ->prepare('
-			SELECT a.login AS from_user, b.login AS to_user, b.id AS to_user_id, pictures.src AS to_user_pic, 
+
+			SELECT a.login AS from_user, b.sexuality AS to_user_sexuality, b.login AS to_user, b.id AS to_user_id, pictures.src AS to_user_pic, b.sexuality AS to_user_sexuality, b.birthDate as to_user_birthdate, popularity.score AS popularity,
 				111.1111 *
 			DEGREES(ACOS(COS(RADIANS(a.Latitude))
-				 * COS(RADIANS(b.Latitude))
-				 * COS(RADIANS(a.Longitude - b.Longitude))
-				 + SIN(RADIANS(a.Latitude))
-				 * SIN(RADIANS(b.Latitude)))) AS distance_in_km
+				* COS(RADIANS(b.Latitude))
+				* COS(RADIANS(a.Longitude - b.Longitude))
+				+ SIN(RADIANS(a.Latitude))
+				* SIN(RADIANS(b.Latitude)))) AS distance_in_km
+
 			FROM users AS a
 			JOIN users AS b ON a.id <> b.id
 			INNER JOIN pictures
 			ON pictures.id_owner = b.id AND ismainpic = 1
-
+			INNER JOIN popularity
+			ON popularity.id_owner = b.id
 			WHERE
 				a.login = :from_user
-				AND NOT EXISTS(SELECT * FROM blocks WHERE blocks.id_blocked = b.id)
-			ORDER BY distance_in_km	
+				AND
+				CASE
+					WHEN a.sexuality = "hetero" AND a.gender = "m" THEN b.gender = "f" AND b.sexuality = "hetero" OR b.gender = "f" AND b.sexuality = "bi"
+					WHEN a.sexuality = "hetero" AND a.gender = "f" THEN b.gender = "m" AND b.sexuality = "hetero" OR b.gender = "m" AND b.sexuality = "bi"
+
+					WHEN a.sexuality = "homo" AND a.gender = "m" THEN b.gender = "m" AND b.sexuality = "homo" OR b.gender = "m" AND b.sexuality = "bi"
+					WHEN a.sexuality = "homo" AND a.gender = "f" THEN b.gender = "f" AND b.sexuality = "homo" OR b.gender = "f" AND b.sexuality = "bi"
+
+					WHEN a.sexuality = "bi" AND a.gender = "m" THEN (b.gender = "f" AND b.sexuality = "hetero" OR b.sexuality = "bi") OR (b.gender = "m" AND b.sexuality = "homo" OR b.sexuality = "bi")
+					WHEN a.sexuality = "bi" AND a.gender = "f" THEN (b.gender = "f" AND b.sexuality = "bi" OR b.sexuality = "homo") OR (b.gender = "m" AND b.sexuality = "hetero" OR b.sexuality = "bi")
+				END
+				AND EXISTS(SELECT * FROM pictures WHERE ismainpic = 1)
+				AND NOT EXISTS(SELECT * FROM blocks WHERE
+				blocks.id_blocked = b.id AND blocks.id_blocker = a.id
+				OR
+				blocks.id_blocked = a.id AND blocks.id_blocker = b.id
+				)
+			ORDER BY distance_in_km, popularity DESC, to_user
 			');
 			$DB_REQ->bindValue(':from_user', $user->login());
-			// $DB_REQ->bindValue(':to_user', $idother);
 			$DB_REQ->execute();
 			$data = $DB_REQ->fetchAll(PDO::FETCH_ASSOC);
-
+			// debug($data);
+			// die();
 			return $data;
 
 		}
@@ -823,8 +845,15 @@ class UserManagerPDO extends UserManager
 			$DB_REQ->bindValue(':id_blocker', $id_blocker, PDO::PARAM_INT);	
 			$DB_REQ->execute();
 			$data = $DB_REQ->fetchAll(PDO::FETCH_ASSOC);
-
 			return $data;
+	}
+
+	public function countSimilarsHobbies(User $user, User $user_to_compare) {
+		$hobbies = $user->hobbies();
+		$hobbies_to_compare = $user_to_compare->hobbies();
+
+		$count = count(array_intersect($hobbies, $hobbies_to_compare));
+		return $count;
 	}
 
 /*

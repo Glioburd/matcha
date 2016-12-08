@@ -32,7 +32,7 @@ if (intval($result['count']) == 0) {
 			`hash` varchar(128) DEFAULT NULL,
 			`isactive` tinyint(1) NOT NULL DEFAULT '1',
 			`bio` text,
-			`sexuality` char(8) DEFAULT 'bisexual',
+			`sexuality` char(8) DEFAULT 'bi',
 			`created_at` datetime NOT NULL,
 			`updated_at` datetime NOT NULL,
 			`rank` int NOT NULL DEFAULT '0',

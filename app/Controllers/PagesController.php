@@ -28,8 +28,33 @@ class PagesController extends Controller {
 			if (empty($user)) {
 				session_destroy();
 			}
+			if ($user->mainpicture()){
+				$data = $UserManagerPDO->getMatches($user);
+				// debug($data);
+				// die();
+				$i = 0;
+				foreach ($data as $key => $value) {
+					// echo('Data : ');
+					// debug($data);
+					// echo '<br>';
+					// echo('Key : ');
+					// debug($key);
+					// echo '<br>';
+					// echo('Value : ');
+					// debug($value);
+					// echo '<br>';
+					$user_to_compare = $UserManagerPDO->getUnique($value['to_user_id']);
+					$hobbiesInCommon = $UserManagerPDO->countSimilarsHobbies($user, $user_to_compare);
+					$data[$key]['hobbiesInCommon'] = $hobbiesInCommon;
+					echo ('<pre>Avec ' . $user_to_compare->login() . ' : ' . $hobbiesInCommon . '<br></pre>');
+					$i++;
+				}
+				echo $i;
+				// debug($data);
+				// die();
+			}
+			// die();
 
-			$data = $UserManagerPDO->stockDistance($user);
 			if ($user->isComplete()) {
 			$this->render($response, 'home.twig',[
 				'user' => $user,
@@ -194,10 +219,6 @@ class PagesController extends Controller {
 			$errors['bio'] = 'Your description must contain at least 20 characters. Don\'t be shy!';
 		}
 
-		if (!Validator::radioCheck($request->getParam('sexuality'))) {
-			$errors['sexuality'] = 'You must pick a sexual orientation';
-		}
-
 		if (!Validator::radioCheck($request->getParam('gender'))) {
 			$errors['gender'] = 'You must pick a gender';
 		}
@@ -216,7 +237,14 @@ class PagesController extends Controller {
 
 			// An user object is set with all the params, and will be registered in database with save()
 			$user->setBio($request->getParam('bio'));
-			$user->setSexuality($request->getParam('sexuality'));
+
+			if (!Validator::radioCheck($request->getParam('sexuality'))) {
+				$user->setSexuality('bi');
+			}
+			else {
+				$user->setSexuality($request->getParam('sexuality'));
+			}
+
 			$user->setGender($request->getParam('gender'));
 			$user->setHobbies($hobbies);
 
@@ -580,6 +608,7 @@ class PagesController extends Controller {
 			$user->setLogin($request->getParam('login'));
 			$user->setEmail($request->getParam('email'));
 			$user->setGender($request->getParam('gender'));
+			$user->setSexuality($request->getParam('sexuality'));
 			$user->updateHobbies($request->getParam('hobbies'));
 
 			$UserManagerPDO = new UserManagerPDO($this->db);
