@@ -1,31 +1,60 @@
 {% extends "app.twig" %}
 
 {% block content %}
-	<h1>Bienvenue {{user.login}}!</h1>
+	<div class="well">
+		<h1>Hello {{user.login}}!</h1>
+		<p>And welcome to matcha! Your account is finally complete and ready to get matched with other Zergs!
+		Just take a look at the match list, or do your own research by filtering some aspects.
+		Have fun!</p>
+		<p><i>The matcha team.</i> (Ok I'm alone in the team, so I could have signed <i>Glioburd</i> but it's less way classy. It's my site so I do what the f♥♥k I want ok?)</p>
+	</div>
 
 {% if data and user.mainpicture %}
 	<div class="container">
 		<div class="row">
 			<div class="col-lg-12">
-				<h1 class="page-header">You may be interested by:</h1>
+				<h2 class="page-header">You may be interested by:</h2>
 			</div>
 			{% for match in data %}
 
 				<div class="col-lg-2 col-md-4 col-xs-6 thumbnail" >
 					<fieldset>
-						<legend style="min-height:100px;height:100px;">{{match.to_user}} : {{match.distance_in_km|number_format(2)}} km
-							Popularity : {{match.popularity}}
+
+						<legend style="min-height:100px;height:200px;">{{match.to_user}} : {{match.distance_in_km|number_format(2)}} km<br>
+							Gender : {{match.gender|capitalize}} <br> Sexuality : {{match.to_user_sexuality}} <br> Popularity : {{match.popularity}}<br> Age : {{match.to_user_age}}
 						</legend>
 						
 						<a href="{{ path_for('user.profile', { 'userprofile': match.to_user }) }}">
 							<img src="{{match.to_user_pic}}" style="min-height:100px;height:100px;">
 						</a>
+
 					</fieldset>
 				</div>
 
 			{% endfor %}
 		</div>
 	</div>
+
+	<form method="get">
+		
+	</form>
+<button class="button"></button>
+
+// <script type="text/javascript">
+// $("button").click(function(){
+//     $.get("{{path_for('home')}}",
+//     {
+//     	distance : 200,
+//     	ageMin : 20,
+//     	ageMax : 26,
+//     	minPopularity : 0
+//     },
+//     function(data, status){
+//     	location.reload(data);
+//     });
+  
+// });
+// </script>
 
 {% endif %}
 

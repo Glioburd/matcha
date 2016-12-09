@@ -28,27 +28,65 @@ class PagesController extends Controller {
 			if (empty($user)) {
 				session_destroy();
 			}
+
+			// If user has a profile picture, we can display the matches!
 			if ($user->mainpicture()){
-				$data = $UserManagerPDO->getMatches($user);
-				// debug($data);
-				// die();
-				$i = 0;
-				foreach ($data as $key => $value) {
-					// echo('Data : ');
-					// debug($data);
-					// echo '<br>';
-					// echo('Key : ');
-					// debug($key);
-					// echo '<br>';
-					// echo('Value : ');
-					// debug($value);
-					// echo '<br>';
-					$user_to_compare = $UserManagerPDO->getUnique($value['to_user_id']);
-					$hobbiesInCommon = $UserManagerPDO->countSimilarsHobbies($user, $user_to_compare);
-					$data[$key]['hobbiesInCommon'] = $hobbiesInCommon;
-					echo ('<pre>Avec ' . $user_to_compare->login() . ' : ' . $hobbiesInCommon . '<br></pre>');
-					$i++;
+				
+				if(!(isset($_GET['distance'])) || empty($_GET['distance']) || $_GET['distance'] < 0)
+					$distance = 200;
+				else {
+					$distance = $_GET['distance'];
 				}
+
+				if(!(isset($_GET['ageMin'])) || empty($_GET['ageMin']) || $_GET['ageMin'] < 0)
+					$ageMin = 18;
+
+				else {
+					$ageMin = $_GET['ageMin'];
+				}
+
+				if(!(isset($_GET['ageMax'])) || empty($_GET['ageMax']) || $_GET['ageMax'] < 0)
+					$ageMax = 123;
+
+				else {
+					$ageMax = $_GET['ageMax'];
+				}
+
+				if (isset($_GET['minPopularity']) && $_GET['minPopularity'] >= 0){
+					$minPopularity = $_GET['minPopularity'];
+				}
+
+				if (isset($_GET['minCommonHobbies']) && $_GET['minCommonHobbies'] >= 0) {
+					$minCommonHobbies = $_GET['minCommonHobbies'];
+				}
+
+				$data = $UserManagerPDO->getMatches($user, $distance);
+
+				$i = 0;
+
+				foreach ($data as $key => $value) {
+
+					$user_to_compare = $UserManagerPDO->getUnique($value['to_user_id']);
+					$data[$key]['to_user_age'] = Validator::getAge($data[$key]['to_user_age']);
+
+					if (($data[$key]['to_user_age'] >= $ageMin && $data[$key]['to_user_age'] <= $ageMax) && $data[$key]['popularity'] >= $minPopularity) {
+											
+							$hobbiesInCommon = $UserManagerPDO->countSimilarsHobbies($user, $user_to_compare);
+							$data[$key]['hobbiesInCommon'] = $hobbiesInCommon;
+							$data[$key]['hobbies'] = $user_to_compare->hobbies();
+							if ($hobbiesInCommon < $minCommonHobbies) {
+								unset($data[$key]);
+							}
+							echo ('<pre>Avec ' . $user_to_compare->login() . ' : ' . $hobbiesInCommon . '<br></pre>');
+							$i++;
+						// }
+					}
+					else {
+						unset($data[$key]);
+					}
+
+				}
+
 				echo $i;
 				// debug($data);
 				// die();
