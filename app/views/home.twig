@@ -1,6 +1,7 @@
 {% extends "app.twig" %}
 
 {% block content %}
+
 	<div class="well">
 		<h1>Hello {{user.login}}!</h1>
 		<p>And welcome to matcha! Your account is finally complete and ready to get matched with other Zergs!
@@ -9,38 +10,113 @@
 		<p><i>The matcha team.</i> (Ok I'm alone in the team, so I could have signed <i>Glioburd</i> but it's less way classy. It's my site so I do what the f♥♥k I want ok?)</p>
 	</div>
 
-{% if data and user.mainpicture %}
-	<div class="container">
-		<div class="row">
-			<div class="col-lg-12">
-				<h2 class="page-header">You may be interested by:</h2>
-			</div>
-			{% for match in data %}
+	{% if user.mainpicture %}
+			{% if data %}
+				<div class="container">
+					<div class="row">
+						<div class="col-lg-12">
+							<h2 class="page-header">You may be interested by:</h2>
+						</div>
+						{% for match in data %}
 
-				<div class="col-lg-2 col-md-4 col-xs-6 thumbnail" >
-					<fieldset>
+							<div class="col-lg-2 col-md-4 col-xs-6 thumbnail" >
+								<fieldset>
 
-						<legend style="min-height:100px;height:200px;">{{match.to_user}} : {{match.distance_in_km|number_format(2)}} km<br>
-							Gender : {{match.gender|capitalize}} <br> Sexuality : {{match.to_user_sexuality}} <br> Popularity : {{match.popularity}}<br> Age : {{match.to_user_age}}
-						</legend>
-						
-						<a href="{{ path_for('user.profile', { 'userprofile': match.to_user }) }}">
-							<img src="{{match.to_user_pic}}" style="min-height:100px;height:100px;">
-						</a>
+									<legend style="min-height:100px;height:200px;">{{match.to_user}} : {{match.distance_in_km|number_format(2)}} km<br>
+										Gender : {{match.gender|capitalize}} <br> Sexuality : {{match.to_user_sexuality}} <br> Popularity : {{match.popularity}}<br> Age : {{match.to_user_age}}
+									</legend>
+									
+									<a href="{{ path_for('user.profile', { 'userprofile': match.to_user }) }}">
+										<img src="{{match.to_user_pic}}" style="min-height:100px;height:100px;">
+									</a>
 
-					</fieldset>
+								</fieldset>
+							</div>
+
+						{% endfor %}
+
+					</div>
+					
+					<div class="dropdown">
+						<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+							Sort by
+							<span class="caret"></span>
+							</button>
+							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
+							<li><a href="#">Age</a></li>
+							<li><a href="#">Location</a></li>
+							<li><a href="#">Popularity</a></li>
+							<li><a href="#">Hobbies in common</a></li>
+							</ul>
+					</div>
 				</div>
+				<hr>
+			
+			{% else %}
+				<div class="alert alert-info">
+					You don't match with anyone with those settings ☹.
+				</div>
+				{% endif %}
+		{% endif %}
 
-			{% endfor %}
+	<form method="get" role="form" class="form-horizontal well">
+		<h3>Not satisfied ? Do your custom research:</h3>
+		<div class="control-group">
+			{% if ageMin is empty %}
+				{% set ageMin = 18 %}
+			{% endif %}
+			<label for="minAge" class="control-label">Minimum age:</label> (No, you won't find anyone officially under 18)
+			<div class="controls">
+				<input type="number" min="18" max="123" step="1" name="ageMin" value="{{ageMin}}">
+			</div>
 		</div>
-	</div>
 
-	<form method="get">
-		
+		<div class="control-group">
+			<label for="maxAge" class="control-label">Maximum age:</label>
+			<div class="controls">
+					<input type="number" min="18" max="123" step="1" name="ageMax" value="{{ageMax}}">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label for="maxDistance" class="control-label">Maximum distance (in km):</label>
+			<div class="controls">
+				<input type="number" min="0" max="999" step="1" name="distance" value="{{distance}}">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label for="minPopularity" class="control-label">Minimum of popularity:</label>
+			<div class="controls">
+				<input type="number" min="0" max="100" step="1" name="minPopularity" value="{{minPopularity}}">
+			</div>
+		</div>
+
+		<div class="control-group">
+			<label for="minCommonHobbies" class="control-label">Minimum hobbies in common:</label>
+			<div class="controls">
+				<input type="number" min="0" max="14" step="1" name="minCommonHobbies" value="{{minCommonHobbies}}">
+			</div>
+		</div>
+		<br>
+		<button type="submit" class="btn btn-primary">Match!</button>
+		<button type="submit" class="btn btn-primary">Clear all fields!</button>
 	</form>
-<button class="button"></button>
-
-// <script type="text/javascript">
+<script type="text/javascript">
+// $( "p" ).click(function() {
+// 	$(document).ready(function(){
+// 		var data = {{ data|json_encode|raw }};
+// 		for (var match in data) {
+// 			$( ".thumbnail" ).append("<fieldset><legend style="min-height:100px;height:200px;">match.to_user : math.distance_in_km km<br>Gender : match.gender <br> Sexuality : match.to_user_sexuality <br> Popularity : match.popularity<br> Age : match.to_user_age</legend></fieldset>");
+// 			// $(".thumbnail").append("
+// 			// 	<fieldset>
+// 			// 	Coucou
+// 			// 	</fieldset>
+// 			// 	");
+// 			// console.log(data[i]);
+// 		}
+		
+// });
 // $("button").click(function(){
 //     $.get("{{path_for('home')}}",
 //     {
@@ -54,8 +130,5 @@
 //     });
   
 // });
-// </script>
-
-{% endif %}
-
+</script>
 {% endblock %} 

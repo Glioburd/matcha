@@ -79,7 +79,7 @@ class PagesController extends Controller {
 							}
 							echo ('<pre>Avec ' . $user_to_compare->login() . ' : ' . $hobbiesInCommon . '<br></pre>');
 							$i++;
-						// }
+
 					}
 					else {
 						unset($data[$key]);
@@ -88,15 +88,19 @@ class PagesController extends Controller {
 				}
 
 				echo $i;
-				// debug($data);
-				// die();
+
 			}
-			// die();
 
 			if ($user->isComplete()) {
 			$this->render($response, 'home.twig',[
 				'user' => $user,
-				'data' => $data
+				'data' => $data,
+				'ageMin' =>$_GET['ageMin'],
+				'ageMax' => $_GET['ageMax'],
+				'distance' => $_GET['distance'],
+				'minPopularity' => $_GET['minPopularity'],
+				'minCommonHobbies' => $_GET['minCommonHobbies']
+
 				]);
 			}
 
@@ -652,7 +656,6 @@ class PagesController extends Controller {
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$UserManagerPDO->save($user);
 			$UserManagerPDO->updateHobbies($user, $request->getParam('hobbies'));
-			// $_SESSION['user'] = serialize($user);
 		}
 
 		else {
