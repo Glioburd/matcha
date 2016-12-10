@@ -56,10 +56,10 @@
 				<div class="alert alert-info">
 					You don't match with anyone with those settings ☹.
 				</div>
-				{% endif %}
+			{% endif %}
 		{% endif %}
 
-	<form method="get" role="form" class="form-horizontal well">
+	<form method="get" role="form" class="form-horizontal well" id="customsearchForm">
 		<h3>Not satisfied ? Do your custom research:</h3>
 		<div class="control-group">
 			{% if ageMin is empty %}
@@ -67,7 +67,7 @@
 			{% endif %}
 			<label for="minAge" class="control-label">Minimum age:</label> (No, you won't find anyone officially under 18)
 			<div class="controls">
-				<input type="number" min="18" max="123" step="1" name="ageMin" value="{{ageMin}}">
+				<input type="number" min="18" max="123" step="1" name="ageMin" value="{{ageMin}}" id="ageMin">
 			</div>
 		</div>
 
@@ -100,35 +100,15 @@
 		</div>
 		<br>
 		<button type="submit" class="btn btn-primary">Match!</button>
-		<button type="submit" class="btn btn-primary">Clear all fields!</button>
+		<button type="reset" class="btn btn-primary" id="clearFields" value="reset">Clear all fields!</button>
+
 	</form>
 <script type="text/javascript">
-// $( "p" ).click(function() {
-// 	$(document).ready(function(){
-// 		var data = {{ data|json_encode|raw }};
-// 		for (var match in data) {
-// 			$( ".thumbnail" ).append("<fieldset><legend style="min-height:100px;height:200px;">match.to_user : math.distance_in_km km<br>Gender : match.gender <br> Sexuality : match.to_user_sexuality <br> Popularity : match.popularity<br> Age : match.to_user_age</legend></fieldset>");
-// 			// $(".thumbnail").append("
-// 			// 	<fieldset>
-// 			// 	Coucou
-// 			// 	</fieldset>
-// 			// 	");
-// 			// console.log(data[i]);
-// 		}
-		
-// });
-// $("button").click(function(){
-//     $.get("{{path_for('home')}}",
-//     {
-//     	distance : 200,
-//     	ageMin : 20,
-//     	ageMax : 26,
-//     	minPopularity : 0
-//     },
-//     function(data, status){
-//     	location.reload(data);
-//     });
-  
-// });
+
+$( "#clearFields" ).click(function() {
+	console.log('Button pushed');
+	$('input').attr('value', '');
+});
+
 </script>
 {% endblock %} 
