@@ -643,6 +643,7 @@ class UserManagerPDO extends UserManager
 				');
 		$DB_REQ->bindValue(':id_owner', $id_liked, PDO::PARAM_INT);
 		$DB_REQ->execute();
+
 	}
 
 	public function unlike($id_unliker, $id_unliked) {
@@ -840,8 +841,7 @@ class UserManagerPDO extends UserManager
 			$DB_REQ->bindValue(':distance', $distance, PDO::PARAM_INT);
 			$DB_REQ->execute();
 			$data = $DB_REQ->fetchAll(PDO::FETCH_ASSOC);
-			// debug($data);
-			// die();
+
 			return $data;
 
 		}

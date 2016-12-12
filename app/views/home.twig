@@ -11,98 +11,128 @@
 	</div>
 
 	{% if user.mainpicture %}
-			{% if data %}
-				<div class="container">
-					<div class="row">
-						<div class="col-lg-12">
-							<h2 class="page-header">You may be interested by:</h2>
+		{% if data %}
+			<div class="container">
+				<div class="row">
+					<div class="col-lg-12">
+						<h2 class="page-header">You may be interested by:</h2>
+					</div>
+					{% for match in data %}
+
+						<div class="col-lg-2 col-md-4 col-xs-6 thumbnail" >
+							<fieldset>
+
+								<legend style="min-height:100px;height:200px;">{{match.to_user}} : {{match.distance_in_km|number_format(2)}} km<br>
+									Gender : {{match.gender|capitalize}} <br> Sexuality : {{match.to_user_sexuality}} <br> Popularity : {{match.popularity}}<br> Age : {{match.to_user_age}}
+								</legend>
+								
+								<a href="{{ path_for('user.profile', { 'userprofile': match.to_user }) }}">
+									<img src="{{match.to_user_pic}}" style="min-height:100px;height:100px;">
+								</a>
+
+							</fieldset>
 						</div>
-						{% for match in data %}
 
-							<div class="col-lg-2 col-md-4 col-xs-6 thumbnail" >
-								<fieldset>
+					{% endfor %}
 
-									<legend style="min-height:100px;height:200px;">{{match.to_user}} : {{match.distance_in_km|number_format(2)}} km<br>
-										Gender : {{match.gender|capitalize}} <br> Sexuality : {{match.to_user_sexuality}} <br> Popularity : {{match.popularity}}<br> Age : {{match.to_user_age}}
-									</legend>
-									
-									<a href="{{ path_for('user.profile', { 'userprofile': match.to_user }) }}">
-										<img src="{{match.to_user_pic}}" style="min-height:100px;height:100px;">
-									</a>
+				</div>
 
-								</fieldset>
-							</div>
+				Sort by :
 
-						{% endfor %}
+				{% if not sortBy %}
+					{% set sortBy = 'popularity' %}
+				{% endif %}
 
-					</div>
+				<form method="get" role="form" name="">
+
+					{% if ageMin %}
+						<input type="hidden" name="ageMin" value="{{ageMin}}">
+					{% endif %}
+					{% if ageMax %}
+						<input type="hidden" name="ageMax" value="{{ageMax}}">
+					{% endif %}
+					{% if distance %}
+						<input type="hidden" name="distance" value="{{distance}}">
+					{% endif %}
+					{% if minPopularity %}
+						<input type="hidden" name="minPopularity" value="{{minPopularity}}">
+					{% endif %}
+					{% if maxPopularity %}
+						<input type="hidden" name="maxPopularity" value="{{maxPopularity}}">
+					{% endif %}
+					{% if minCommonHobbies %}
+						<input type="hidden" name="minCommonHobbies" value="{{minCommonHobbies}}">
+					{% endif %}
 					
-					<div class="dropdown">
-						<button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
-							Sort by
-							<span class="caret"></span>
-							</button>
-							<ul class="dropdown-menu" aria-labelledby="dropdownMenu1">
-							<li><a href="#">Age</a></li>
-							<li><a href="#">Location</a></li>
-							<li><a href="#">Popularity</a></li>
-							<li><a href="#">Hobbies in common</a></li>
-							</ul>
-					</div>
-				</div>
-				<hr>
-			
-			{% else %}
-				<div class="alert alert-info">
-					You don't match with anyone with those settings ☹.
-				</div>
-			{% endif %}
+					<select name="sortBy" class="selectpicker" onchange="this.form.submit()">
+						<option {% if sortBy == "age" %} selected {% endif %} value="age">Age</option>
+						<option {% if sortBy == "distance" %} selected {% endif %} value="distance">Distance</option>
+						<option {% if sortBy == "popularity" %} selected {% endif %} value="popularity">Popularity</option>
+						<option {% if sortBy == "hobbiesInCommon" %} selected {% endif %} value="hobbiesInCommon">Hobbies</option>
+					</select>
+				</form>
+			</div>
+			<hr>
+		
+		{% else %}
+			<div class="alert alert-info">
+				You don't match with anyone with those settings ☹.
+			</div>
 		{% endif %}
 
-	<form method="get" role="form" class="form-horizontal well" id="customsearchForm">
-		<h3>Not satisfied ? Do your custom research:</h3>
-		<div class="control-group">
-			{% if ageMin is empty %}
-				{% set ageMin = 18 %}
+		<form method="get" role="form" class="form-horizontal well" id="customsearchForm">
+
+			{% if sortBy %}
+				<input type="hidden" name="sortBy" value="{{sortBy}}">
 			{% endif %}
-			<label for="minAge" class="control-label">Minimum age:</label> (No, you won't find anyone officially under 18)
-			<div class="controls">
-				<input type="number" min="18" max="123" step="1" name="ageMin" value="{{ageMin}}" id="ageMin">
-			</div>
-		</div>
 
-		<div class="control-group">
-			<label for="maxAge" class="control-label">Maximum age:</label>
-			<div class="controls">
-					<input type="number" min="18" max="123" step="1" name="ageMax" value="{{ageMax}}">
+			<h3>Not satisfied ? Do your custom research:</h3>
+			<div class="control-group">
+				{% if ageMin is empty %}
+					{% set ageMin = 18 %}
+				{% endif %}
+				<label for="minAge" class="control-label">Minimum age:</label> (No, you won't find anyone officially under 18)
+				<div class="controls">
+					<input type="number" min="18" max="123" step="1" name="ageMin" value="{{ageMin}}" id="ageMin">
+				</div>
 			</div>
-		</div>
 
-		<div class="control-group">
-			<label for="maxDistance" class="control-label">Maximum distance (in km):</label>
-			<div class="controls">
-				<input type="number" min="0" max="999" step="1" name="distance" value="{{distance}}">
+			<div class="control-group">
+				<label for="maxAge" class="control-label">Maximum age:</label>
+				<div class="controls">
+						<input type="number" min="18" max="123" step="1" name="ageMax" value="{{ageMax}}">
+				</div>
 			</div>
-		</div>
 
-		<div class="control-group">
-			<label for="minPopularity" class="control-label">Minimum of popularity:</label>
-			<div class="controls">
-				<input type="number" min="0" max="100" step="1" name="minPopularity" value="{{minPopularity}}">
+			<div class="control-group">
+				<label for="maxDistance" class="control-label">Maximum distance (in km):</label>
+				<div class="controls">
+					<input type="number" min="0" max="999" step="1" name="distance" value="{{distance}}">
+				</div>
 			</div>
-		</div>
 
-		<div class="control-group">
-			<label for="minCommonHobbies" class="control-label">Minimum hobbies in common:</label>
-			<div class="controls">
-				<input type="number" min="0" max="14" step="1" name="minCommonHobbies" value="{{minCommonHobbies}}">
+			<div class="control-group">
+				<label for="minPopularity" class="control-label">Minimum of popularity:</label>
+				<div class="controls">
+					<input type="number" min="0" max="100" step="1" name="minPopularity" value="{{minPopularity}}">
+				</div>
 			</div>
-		</div>
-		<br>
-		<button type="submit" class="btn btn-primary">Match!</button>
-		<button type="reset" class="btn btn-primary" id="clearFields" value="reset">Clear all fields!</button>
 
-	</form>
+			<div class="control-group">
+				<label for="minCommonHobbies" class="control-label">Minimum hobbies in common:</label>
+				<div class="controls">
+					<input type="number" min="0" max="14" step="1" name="minCommonHobbies" value="{{minCommonHobbies}}">
+				</div>
+			</div>
+			<br>
+			<button type="submit" class="btn btn-primary">Match!</button>
+			<button type="reset" class="btn btn-primary" id="clearFields" value="reset">Clear all fields!</button>
+
+		</form>
+		
+	{% endif %}
+
+	
 <script type="text/javascript">
 
 $( "#clearFields" ).click(function() {
@@ -111,4 +141,10 @@ $( "#clearFields" ).click(function() {
 });
 
 </script>
-{% endblock %} 
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/css/bootstrap-select.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-select/1.12.1/js/bootstrap-select.min.js"></script>
+
+
+{% endblock %}
+

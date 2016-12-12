@@ -264,3 +264,46 @@ if (intval($result['count']) == 0) {
 
 	$DB_REQ->execute();
 }
+
+$DB_REQ = $container->db->query("
+	SELECT COUNT(*) AS count
+	FROM information_schema.tables
+	WHERE table_name = 'notifications'
+		AND TABLE_SCHEMA='matcha'
+	;");
+
+$result = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+
+if (intval($result['count']) == 0) {
+
+	$DB_REQ = $DB_PDO->prepare("
+		CREATE TABLE notifications (
+			`id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+			`id_owner` int(11) NOT NULL,
+			`id_sender` int(11) NOT NULL,
+			`unread` tinyint(1) NOT NULL,
+			`type` varchar(255) NOT NULL,
+			`id_reference` int(11) NOT NULL,
+			`date_notif` datetime NOT NULL
+		);");
+
+	$DB_REQ->execute();
+
+	$DB_REQ = $DB_PDO->prepare("
+		ALTER TABLE `notifications`
+		ADD FOREIGN KEY (id_owner)
+		REFERENCES users(id)
+		ON DELETE CASCADE
+		;");
+
+	$DB_REQ->execute();
+
+	$DB_REQ = $DB_PDO->prepare("
+		ALTER TABLE `notifications`
+		ADD FOREIGN KEY (id_sender)
+		REFERENCES users(id)
+		ON DELETE CASCADE
+		;");
+
+	$DB_REQ->execute();
+}

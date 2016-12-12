@@ -8,8 +8,12 @@ use App\Models\User;
 use App\Controllers\Debug;
 use App\Models\UserManagerPDO;
 use \PDO;
+use App\Models\Notification;
+use App\Models\NotificationManager;
+use App\Models\ProfileLikedNotification;
 
 include __DIR__ . '../../../debug.php';
+include "sort_array.php";
 
 /**
 * 
@@ -81,20 +85,47 @@ class PagesController extends Controller {
 							$i++;
 
 					}
+
 					else {
 						unset($data[$key]);
 					}
 
 				}
 
+				if (!empty($_GET['sortBy'])) {
+					switch ($_GET['sortBy']) {
+						case 'age':
+							$data = array_sort($data, 'to_user_age');
+							break;
+						case 'distance':
+							$data = array_sort($data, 'distance_in_km');
+							break;
+						case 'popularity':
+							$data = array_sort($data, 'popularity', SORT_DESC);
+							break;
+						case 'hobbiesInCommon':
+							$data = array_sort($data, 'hobbiesInCommon', SORT_DESC);
+						default:
+							break;
+					}
+				}
+
 				echo $i;
 
+			}
+
+			else {
+
+				$this->flash('
+					You don\'t have a profile picture! Please set one to be able to get matched with other people.'
+					,'warning');
 			}
 
 			if ($user->isComplete()) {
 			$this->render($response, 'home.twig',[
 				'user' => $user,
 				'data' => $data,
+				'sortBy' =>$_GET['sortBy'],
 				'ageMin' =>$_GET['ageMin'],
 				'ageMax' => $_GET['ageMax'],
 				'distance' => $_GET['distance'],
@@ -811,6 +842,16 @@ class PagesController extends Controller {
 			$id_liked = $request->getParam('likeButton');
 			$UserManagerPDO->like($id_liker, $id_liked);
 			$user = $UserManagerPDO->getLoginFromId($id_liked);
+
+			$notification = new ProfileLikedNotification([
+				'owner' => $id_liked,
+				'sender' => $id_liker,
+				'unread' => TRUE,
+				'type' => "like",
+				]);
+
+			$notificationManager = new NotificationManager($this->db);
+			$notificationManager->add($notification);
 
 			return $response->withRedirect($this->router->pathFor('user.profile', ['userprofile' => $user]));
 		}
