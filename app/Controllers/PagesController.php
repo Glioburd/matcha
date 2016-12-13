@@ -10,7 +10,6 @@ use App\Models\UserManagerPDO;
 use \PDO;
 use App\Models\Notification;
 use App\Models\NotificationManager;
-use App\Models\ProfileLikedNotification;
 
 include __DIR__ . '../../../debug.php';
 include "sort_array.php";
@@ -111,6 +110,14 @@ class PagesController extends Controller {
 				}
 
 				echo $i;
+				$notificationManager = new NotificationManager($this->db);
+				$notifs = $notificationManager->get($user);
+
+				// debug($notifs);
+				// die();
+				foreach ($notifs as $key => $value) {
+					echo 'caca';
+				}
 
 			}
 
@@ -130,8 +137,8 @@ class PagesController extends Controller {
 				'ageMax' => $_GET['ageMax'],
 				'distance' => $_GET['distance'],
 				'minPopularity' => $_GET['minPopularity'],
-				'minCommonHobbies' => $_GET['minCommonHobbies']
-
+				'minCommonHobbies' => $_GET['minCommonHobbies'],
+				'notifs' => $notifs
 				]);
 			}
 
@@ -142,6 +149,7 @@ class PagesController extends Controller {
 			
 		Debug::debugUser($this->container, $user);
 		Debug::debugUser($this->container, $_SESSION['id']);
+		Debug::debugNotifs($this->container, $notifs);
 
 		}
 		else
@@ -154,8 +162,11 @@ class PagesController extends Controller {
 		if (Validator::isConnected()) {
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
+			$notificationManager = new NotificationManager($this->db);
+			$notifs = $notificationManager->get($user);
 			return $this->render($response, 'pages/contact.twig', [
-				'user' => $user
+				'user' => $user,
+				'notifs' => $notifs
 				]);
 		}
 		else {
@@ -425,7 +436,8 @@ class PagesController extends Controller {
 			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
 			// If user profile is complete (hobbies, bio, sexuality...)
 			if ($user->isComplete()) {
-
+				$notificationManager = new NotificationManager($this->db);
+				$notifs = $notificationManager->get($user);
 				$userprofilearg = $args['userprofile'];
 		
 				// Check if arg profile exists
@@ -435,9 +447,23 @@ class PagesController extends Controller {
 
 					// If arg profile is an other user
 					if ($user->id() != $userProfile->id()) {
-						$UserManagerPDO->addVisit($user->id(), $userProfile->id());
+						$idLike = $UserManagerPDO->addVisit($user->id(), $userProfile->id());
 						$canLike = $UserManagerPDO->canLike($user->id(), $userProfile->id());
 						$canBlock = $UserManagerPDO->canBlock($user->id(), $userProfile->id());
+						$amINotBlocked = $UserManagerPDO->canBlock($userProfile->id(), $user->id());
+
+						if ($canBlock && $amINotBlocked) {
+							$notification = new Notification([
+								'owner' => $userProfile->id(),
+								'sender' => $user->id(),
+								'unread' => TRUE,
+								'type' => "visit",
+								'referenceId' => $idLike["LAST_INSERT_ID()"]
+								]);
+
+							$notificationManager = new NotificationManager($this->db);
+							$notificationManager->add($notification);
+						}
 					}
 
 					// If arg profile is user him/herself
@@ -463,7 +489,8 @@ class PagesController extends Controller {
 						'eventsHistory' => $eventsHistory,
 						'canLike' => $canLike,
 						'canBlock' => $canBlock,
-						'age' =>$age
+						'age' => $age,
+						'notifs' => $notifs
 					]);
 
 				}
@@ -494,6 +521,8 @@ class PagesController extends Controller {
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
 			$blockedUsers = $UserManagerPDO->getBlockedUsers($user->id());
+			$notificationManager = new NotificationManager($this->db);
+			$notifs = $notificationManager->get($user);
 
 			foreach($blockedUsers as $key => $blockedUser) {
 				if ($blockedUser) {
@@ -503,7 +532,8 @@ class PagesController extends Controller {
 
 			return $this->render($response, 'pages/settings.twig',[
 				'user' => $user,
-				'blockedUsers' => $blockedUsers
+				'blockedUsers' => $blockedUsers,
+				'notifs' => $notifs
 			]);
 		}
 
@@ -618,6 +648,8 @@ class PagesController extends Controller {
 			// $user = unserialize($_SESSION['user']);
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
+			$notificationManager = new NotificationManager($this->db);
+			$notifs = $notificationManager->get($user);
 			if (!$user->mainpicture()) {
 				$this->flash('
 				You don\'t have a profile picture! Please set one to be able to get matched with other people.','warning');
@@ -625,7 +657,8 @@ class PagesController extends Controller {
 
 			Debug::debugUser($this->container, $user);
 			return $this->render($response, 'pages/editProfile.twig',[
-				'user' => $user
+				'user' => $user,
+				'notifs' => $notifs
 			]);
 		}
 
@@ -840,20 +873,35 @@ class PagesController extends Controller {
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$id_liker = unserialize($_SESSION['id']);
 			$id_liked = $request->getParam('likeButton');
+			$user = $UserManagerPDO->getUnique($id_liker);
+			$userProfile = $UserManagerPDO->getUnique($id_liked);
+
+			$hasUserProfileHasLikedMe = $UserManagerPDO->hasLiked($user, $userProfile);
+			$canBlock = $UserManagerPDO->canBlock($user->id(), $userProfile->id());
+			$amINotBlocked = $UserManagerPDO->canBlock($userProfile->id(), $user->id());
 			$UserManagerPDO->like($id_liker, $id_liked);
-			$user = $UserManagerPDO->getLoginFromId($id_liked);
 
-			$notification = new ProfileLikedNotification([
-				'owner' => $id_liked,
-				'sender' => $id_liker,
-				'unread' => TRUE,
-				'type' => "like",
-				]);
+				if ($canBlock && $amINotBlocked) {
+					if ($hasUserProfileHasLikedMe) {
+						$type = 'likeback';
+					}
+					else {
+						$type = 'like';
+					}
 
-			$notificationManager = new NotificationManager($this->db);
-			$notificationManager->add($notification);
+				$notification = new Notification([
+					'owner' => $userProfile->id(),
+					'sender' => $user->id(),
+					'unread' => TRUE,
+					'type' => $type,
+					'referenceId' => $idLike["LAST_INSERT_ID()"]
+					]);
 
-			return $response->withRedirect($this->router->pathFor('user.profile', ['userprofile' => $user]));
+				$notificationManager = new NotificationManager($this->db);
+				$notificationManager->add($notification);
+			}
+
+			return $response->withRedirect($this->router->pathFor('user.profile', ['userprofile' => $userProfile->login()]));
 		}
 		else {
 			echo 'huh?';

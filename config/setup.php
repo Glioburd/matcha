@@ -306,4 +306,14 @@ if (intval($result['count']) == 0) {
 		;");
 
 	$DB_REQ->execute();
+
+	$DB_REQ = $DB_PDO->prepare('
+		ALTER TABLE `notifications`
+		CASE
+			WHEN notifications.type = "like" THEN ADD FOREIGN KEY (id_reference) REFERENCES likes(id)
+			WHEN notifications.type = "visit" THEN ADD FOREIGN KEY (id_reference) REFERENCES visitors(id)
+		ON DELETE CASCADE
+		;');
+
+	$DB_REQ->execute();
 }

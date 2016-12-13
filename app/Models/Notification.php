@@ -3,7 +3,7 @@
 namespace App\Models;
 use \DateTime;
 
-abstract class Notification
+class Notification
 {
 	protected $owner;
 	protected $sender;
@@ -36,8 +36,8 @@ abstract class Notification
 	/**
 	 * Message generators that have to be defined in subclasses
 	 */
-	abstract public function messageForNotification(Notification $notification) : string;
-	abstract public function messageForNotifications(array $notifications) : string;
+	// abstract public function messageForNotification(Notification $notification) : string;
+	// abstract public function messageForNotifications(array $notifications) : string;
 
 	/**
 	 * Generate message of the current notification.

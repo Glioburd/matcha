@@ -23,7 +23,7 @@ class UserManagerPDO extends UserManager
 	{
 		$this->DB_REQ = $DB_REQ;
 	}
-	
+
 	/**
 	 * @see UserManager::add()
 	 */
@@ -574,6 +574,8 @@ class UserManagerPDO extends UserManager
 				$DB_REQ->bindValue(':id_visitor', $idVisitor, PDO::PARAM_INT);
 				$DB_REQ->execute();
 
+
+
 			} else {
 
 				$DB_REQ = $this->DB_REQ->prepare('
@@ -583,6 +585,10 @@ class UserManagerPDO extends UserManager
 				$DB_REQ->bindValue(':id_owner', $idVisited, PDO::PARAM_INT);
 				$DB_REQ->bindValue(':id_visitor', $idVisitor, PDO::PARAM_INT);
 				$DB_REQ->execute();
+
+				$DB_REQ = $this->DB_REQ->query('SELECT LAST_INSERT_ID()');
+				$lastId = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+
 				$DB_REQ->closeCursor();
 
 				$DB_REQ = $this->DB_REQ->prepare('
@@ -592,6 +598,7 @@ class UserManagerPDO extends UserManager
 					');
 				$DB_REQ->bindValue(':id_owner', $idVisited, PDO::PARAM_INT);
 				$DB_REQ->execute();
+				return $lastId;
 			}
 		}
 
@@ -633,6 +640,8 @@ class UserManagerPDO extends UserManager
 		$DB_REQ->bindValue(':id_liker', $id_liker, PDO::PARAM_INT);
 
 		$DB_REQ->execute();
+		$DB_REQ = $this->DB_REQ->query('SELECT LAST_INSERT_ID()');
+		$lastId = $DB_REQ->fetch(PDO::FETCH_ASSOC);
 
 		$DB_REQ->closeCursor();
 
@@ -644,6 +653,7 @@ class UserManagerPDO extends UserManager
 		$DB_REQ->bindValue(':id_owner', $id_liked, PDO::PARAM_INT);
 		$DB_REQ->execute();
 
+		return $lastId;
 	}
 
 	public function unlike($id_unliker, $id_unliked) {
@@ -691,6 +701,23 @@ class UserManagerPDO extends UserManager
 		}
 
 		return NULL;
+	}
+
+	public function hasLiked(User $user1, User $user2) {
+		$DB_REQ = $this->DB_REQ->prepare('
+			SELECT COUNT(*) AS count
+			FROM likes
+			WHERE id_liker = :user2 AND id_owner = :user1
+			;');
+		$DB_REQ->bindValue(':user2', $user2->id());
+		$DB_REQ->bindValue(':user1', $user1->id());
+		$DB_REQ->execute();
+		$result = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+
+		if (intval($result['count']) == 0) {
+			return FALSE;
+		}
+		return TRUE;
 	}
 
 	public function block($id_blocker, $id_blocked) {

@@ -26,13 +26,57 @@
 				<li><a href="{{path_for('auth.login')}}"><span class="glyphicon glyphicon-log-in"></span>Login</a></li>
 			{% else %}
 
-				<li class="dropdown"><a class="dropdown-toggle" data-toggle="dropdown" href="#">{{ user.login|e }}<span class="caret"></span></a>
+				<li class="dropdown">
+					<a href="#" class="dropdown-toggle" data-toggle="dropdown" >{{ user.login|e }}
+						<span class="caret"></span>	
+					</a>
 					<ul class="dropdown-menu">
 						<li><a href="{{ path_for('user.profile', { 'userprofile': user.login }) }}"><span class="glyphicon glyphicon-user"></span> Profile</a></li>
 						<li><a href="{{ path_for('user.settings') }}"><span class="glyphicon glyphicon-wrench"></span> Settings</a></li>
 						<li><a href="{{ path_for('logout') }}"><span class="glyphicon glyphicon-log-out"></span> Log Out</a></li>
 					</ul>
 				</li>
+				{% set nBunread = 0 %}
+				{% for notif in notifs if notif.unread %}
+					{% set nBunread = nBunread + 1 %}
+				{% endfor %}
+				<li class="dropdown dropdown-notifications">
+					<a href="#notifications-panel" class="dropdown-toggle" data-toggle="dropdown">
+						<i data-count="{{nBunread}}" class="glyphicon glyphicon-bell {% if nBunread > 0 %}notification-icon{% endif %}"></i>
+					</a>
+					<ul class="dropdown-menu">
+						<div class="dropdown-container">
+							<div class="dropdown-toolbar">
+								<div class="dropdown-toolbar-actions">
+									<a href="#">Mark all as read</a>
+								</div>
+								<h3 class="dropdown-toolbar-title">({{nBunread}}) unread.</h3>
+							</div><!-- /dropdown-toolbar -->
+							<hr>
+							<ul class="notifications">
+								<li class="notification">
+									<div class="media">
+										<div class="media-left">
+											<div class="media-object">
+												<img data-src="holder.js/50x50?bg=cccccc" class="img-circle" alt="Name">
+											</div>
+										</div>
+										<div class="media-body">
+											<strong class="notification-title"><a href="#">Dave Lister</a> commented on <a href="#">DWARF-13 - Maintenance</a></strong>
+											<p class="notification-desc">I totally don't wanna do it. Rimmer can do it.</p>
+											<div class="notification-meta">
+												<small class="timestamp">27. 11. 2015, 15:00</small>
+											</div>
+										</div>
+									</div>
+								</li>
+							</ul>
+							<div class="dropdown-footer text-center">
+								<a href="#">View All</a>
+							</div><!-- /dropdown-footer -->
+						</div><!-- /dropdown-container -->
+					</ul>
+				</li><!-- /dropdown -->
 
 			{% endif %}
 

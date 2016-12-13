@@ -23,4 +23,11 @@ class Debug {
 			echo "</pre>";
 		}
 	}
+
+	static public function debugNotifs($container, $notifs) {
+		if ($container->debug) {
+		echo "<h2>NOTIFS:</h2>";
+		debug($notifs);
+		}
+	}
 }
