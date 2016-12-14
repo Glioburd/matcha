@@ -61,10 +61,15 @@ class NotificationManager
 		}
 	}
 
-	public function markRead(array $notifications) {
-		if ($notification->unread() === TRUE) {
-			$notification->setUnread(FALSE);
-		}
+	public function setAllNotifsAsRead($userId) {
+		$DB_REQ = $this->DB_REQ->prepare('
+			UPDATE notifications
+			SET
+				unread = 0
+			WHERE id_owner = :id_owner
+			');
+		$DB_REQ->bindValue(':id_owner', $userId);
+		$DB_REQ->execute();	
 	}
 
 	public function update(Notification $notification) {
@@ -90,10 +95,16 @@ class NotificationManager
 	public function get(User $user, $max = 20, $offset = 0) {
 
 		$DB_REQ = $this->DB_REQ->prepare('
-			SELECT * FROM notifications
-			WHERE id_owner = :id_owner
+			SELECT notifications.id, notifications.id_owner, id_sender, unread, type, date_notif, users.login AS loginSender, pictures.src AS pictureSender
+			FROM notifications
+			INNER JOIN users
+			ON users.id = id_sender
+			INNER JOIN pictures
+			ON pictures.id_owner = id_sender
+			WHERE notifications.id_owner = :id_owner
+			AND pictures.ismainpic = 1
+			ORDER BY date_notif DESC, type
 			LIMIT :max OFFSET :offset
-			-- ORDER BY date_notif DESC
 			;');
 		$DB_REQ->bindValue(':id_owner', (int) $user->id(), PDO::PARAM_INT);
 		$DB_REQ->bindValue(':max', (int) $max, PDO::PARAM_INT);
@@ -102,6 +113,13 @@ class NotificationManager
 		$DB_REQ->execute();
 
 		$data = $DB_REQ->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'App\models\Notification');
+
+		// $UserManagerPDO = new UserManagerPDO($this->DB_REQ);
+		// foreach ($data as &$value) {
+		// 	$value['id_sender'] = $UserManagerPDO->getUnique($value['id_sender']);
+		// }
+		// debug($data);
+		// die();
 		return $data;
 	}
 }

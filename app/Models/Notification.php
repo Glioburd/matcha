@@ -2,15 +2,19 @@
 
 namespace App\Models;
 use \DateTime;
+use App\Models\UserManagerPDO;
 
 class Notification
 {
-	protected $owner;
-	protected $sender;
+	protected $id;
+	protected $id_owner;
+	protected $id_sender;
+	protected $loginSender;
 	protected $unread;
 	protected $type;
 	protected $referenceId;
-	protected $created_at;
+	protected $dateNotif;
+	protected $pictureSender;
 
 	public function __construct($valeurs = [])
 	{
@@ -57,9 +61,19 @@ class Notification
 		$this->owner = (int) $owner;
 	}
 
+	public function setpictureSender($pictureSender)
+	{
+		$this->pictureSender = $pictureSender;
+	}
+
 	public function setSender($sender)
 	{
 		$this->sender = (int) $sender;
+	}
+
+	public function setloginSender($login_sender)
+	{
+		$this->login_sender = $login_sender;
 	}
 
 	public function setUnread($unread)
@@ -82,6 +96,8 @@ class Notification
 		$this->created_at = $created_at;
 	}
 
+	/* GET */
+
 	public function id() {
 		return $this->id;
 	}
@@ -94,6 +110,10 @@ class Notification
 		return $this->sender;
 	}
 
+	public function loginSender() {
+		return $this->loginSender;
+	}
+
 	public function unread() {
 		return $this->unread;
 	}
@@ -104,6 +124,10 @@ class Notification
 
 	public function referenceId() {
 		return $this->referenceId;
+	}
+
+	public function pictureSender() {
+		return $this->pictureSender;
 	}
 
 	public function createdAt() {

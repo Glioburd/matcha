@@ -21,6 +21,10 @@ $app->add(new OldMiddleware($container->view->getEnvironment()));
 // $app->add(new App\Middlewares\TwigCsrfMiddleware($container->view->getEnvironment(), $container->csrf));
 // $app->add($container->csrf);
 
+/* Ajax */
+
+$app->post('/notifreadtamere', 'App\Controllers\PagesController:postNotifsRead')->setName('notifsread');
+
 /* Home */
 $app->get('/', 'App\Controllers\PagesController:home')->setName('home');
 
@@ -75,8 +79,7 @@ $app->post('/settings/unblock', 'App\Controllers\PagesController:postUnblockUser
 $app->get('/edit', 'App\Controllers\PagesController:getEdit')->setName('user.edit');
 $app->post('/edit', 'App\Controllers\PagesController:postEdit');
 
-$app->get('/uploadpic', 'App\Controllers\PagesController:getUploadPicture')->setName('upload.picture');
-$app->post('/uploadpic', 'App\Controllers\PagesController:postUploadPicture');
+$app->post('/uploadpic', 'App\Controllers\PagesController:postUploadPicture')->setName('upload.picture');
 
 $app->post('/change_avatar', 'App\Controllers\PagesController:postChangeAvatar')->setName('change.picture');
 

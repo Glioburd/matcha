@@ -113,12 +113,6 @@ class PagesController extends Controller {
 				$notificationManager = new NotificationManager($this->db);
 				$notifs = $notificationManager->get($user);
 
-				// debug($notifs);
-				// die();
-				foreach ($notifs as $key => $value) {
-					echo 'caca';
-				}
-
 			}
 
 			else {
@@ -438,6 +432,12 @@ class PagesController extends Controller {
 			if ($user->isComplete()) {
 				$notificationManager = new NotificationManager($this->db);
 				$notifs = $notificationManager->get($user);
+
+				// We add a '../' to images src, because we are one step deeper in the tree : /profile/{name}
+				foreach ($notifs as $notif) {
+					$notif->setPictureSender('../' . $notif->pictureSender());
+				}
+
 				$userprofilearg = $args['userprofile'];
 		
 				// Check if arg profile exists
@@ -482,6 +482,7 @@ class PagesController extends Controller {
 					}
 
 					Debug::debugUsers($this->container, $user, $userProfile);
+					Debug::debugNotifs($this->container, $notifs);
 
 					return $this->render($response, 'pages/profile.twig',[
 						'userprofile' => $userProfile,
@@ -956,15 +957,21 @@ class PagesController extends Controller {
 	}
 
 	public function postUnblockUserFromSettings($request, $response) {
-			$UserManagerPDO = new UserManagerPDO($this->db);
-			$id_unblocker = unserialize($_SESSION['id']);
-			$id_unblocked = $_POST['postid'];
-			if ($UserManagerPDO->unblock($id_unblocker, $id_unblocked)){
-				return 'ok';
-			}
-			else {
-				return false;
-			}
+		$UserManagerPDO = new UserManagerPDO($this->db);
+		$id_unblocker = unserialize($_SESSION['id']);
+		$id_unblocked = $_POST['postid'];
+		if ($UserManagerPDO->unblock($id_unblocker, $id_unblocked)){
+			return 'ok';
+		}
+		else {
+			return false;
+		}
+	}
+
+	public function postNotifsRead($request, $response) {
+		$idUser = unserialize($_SESSION['id']);
+		$NotificationManager = new NotificationManager($this->db);
+		$NotificationManager->setAllNotifsAsRead($idUser);
 	}
 
 }

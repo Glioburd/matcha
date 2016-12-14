@@ -36,12 +36,18 @@
 						<li><a href="{{ path_for('logout') }}"><span class="glyphicon glyphicon-log-out"></span> Log Out</a></li>
 					</ul>
 				</li>
+
+{###------------------------------------------------------------------------------------------------------------------###}
+{###------------------------------------------NAVBAR'S RIGHT SIDE: NOTIFS MENU----------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}	
+
 				{% set nBunread = 0 %}
 				{% for notif in notifs if notif.unread %}
 					{% set nBunread = nBunread + 1 %}
 				{% endfor %}
+
 				<li class="dropdown dropdown-notifications">
-					<a href="#notifications-panel" class="dropdown-toggle" data-toggle="dropdown">
+					<a href="#notifications-panel" class="dropdown-toggle" data-toggle="dropdown" id="menuNotifs">
 						<i data-count="{{nBunread}}" class="glyphicon glyphicon-bell {% if nBunread > 0 %}notification-icon{% endif %}"></i>
 					</a>
 					<ul class="dropdown-menu">
@@ -54,22 +60,32 @@
 							</div><!-- /dropdown-toolbar -->
 							<hr>
 							<ul class="notifications">
-								<li class="notification">
-									<div class="media">
-										<div class="media-left">
-											<div class="media-object">
-												<img data-src="holder.js/50x50?bg=cccccc" class="img-circle" alt="Name">
+								{% for notif in notifs %}
+									{% if notif.type == 'like' %}
+										{% set notifMessage, notifMessageBis = 'has liked your profile!', 'How sweet!' %}
+									{% elseif notif.type == 'likeback' %}
+										{% set notifMessage, notifMessageBis = 'has liked back your profile!', 'You are now friends, you can chat!' %}
+									{% elseif notif.type == 'visit' %}
+										{% set notifMessage, notifMessageBis = 'has visited your profile!', 'That\'s creepy tbh' %}
+									{% endif %}
+									<li class="notification">
+										<div class="media">
+											<div class="media-left">
+												<div class="media-object">
+													<img src="{{notif.pictureSender}}" class="img-circle" alt="{{notif.loginSender}}" style="min-height:50px;height:50px;">
+												</div>
+											</div>
+											<div class="media-body">
+												<strong class="notification-title"><a href="{{ path_for('user.profile', { 'userprofile': notif.loginSender }) }}">{{notif.loginSender}}</a> {{notifMessage}}</strong>
+												<p class="notification-desc">{{notifMessageBis}}</p>
+												<div class="notification-meta">
+													<small class="timestamp">{{notif.date_notif}}</small>
+												</div>
 											</div>
 										</div>
-										<div class="media-body">
-											<strong class="notification-title"><a href="#">Dave Lister</a> commented on <a href="#">DWARF-13 - Maintenance</a></strong>
-											<p class="notification-desc">I totally don't wanna do it. Rimmer can do it.</p>
-											<div class="notification-meta">
-												<small class="timestamp">27. 11. 2015, 15:00</small>
-											</div>
-										</div>
-									</div>
-								</li>
+									</li>
+								{% endfor %}
+
 							</ul>
 							<div class="dropdown-footer text-center">
 								<a href="#">View All</a>
@@ -82,9 +98,21 @@
 
 		</div>
 
-
-
 	</div>
 </nav>
+
+<script type="text/javascript">
+
+// $(".img-circle").error(function () { 
+// 	$(this).hide(); 
+// });
+$("document").ready(function(){
+	$("#menuNotifs").on("click", function() {
+		$.post('{{ path_for("notifsread") }}', function(data){
+			console.log(data);
+		});
+	});
+});
+</script>
 
 {# {{ dump(user.name) }} #}
