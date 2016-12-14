@@ -55,7 +55,7 @@ class PagesController extends Controller {
 					$ageMax = $_GET['ageMax'];
 				}
 
-				if (isset($_GET['minPopularity']) && $_GET['minPopularity'] >= 0){
+				if (isset($_GET['min']) && $_GET['minPopularity'] >= 0){
 					$minPopularity = $_GET['minPopularity'];
 				}
 
@@ -972,6 +972,12 @@ class PagesController extends Controller {
 		$idUser = unserialize($_SESSION['id']);
 		$NotificationManager = new NotificationManager($this->db);
 		$NotificationManager->setAllNotifsAsRead($idUser);
+	}
+
+	public function postCheckUnread($request, $response) {
+		$idUser = unserialize($_SESSION['id']);
+		$NotificationManager = new NotificationManager($this->db);
+		$NotificationManager->checkUnread($idUser);	
 	}
 
 }

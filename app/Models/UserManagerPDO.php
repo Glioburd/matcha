@@ -859,7 +859,6 @@ class UserManagerPDO extends UserManager
 					blocks.id_blocked = a.id AND blocks.id_blocker = b.id
 				)
 			)
-
 			AS inner_table
 			WHERE distance_in_km < :distance
 			ORDER BY popularity DESC, distance_in_km, to_user

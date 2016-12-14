@@ -55,7 +55,10 @@ class NotificationManager
 			$DB_REQ->execute();
 		}
 		else {
-
+			// $DB_REQ = $this->DB_REQ->prepare('
+			// 	SELECT * FROM notifications
+			// 	WHERE id 
+			// 	')
 			$notification->setUnread(TRUE);
 			self::update($notification);
 		}
@@ -71,6 +74,8 @@ class NotificationManager
 		$DB_REQ->bindValue(':id_owner', $userId);
 		$DB_REQ->execute();	
 	}
+
+	public function postCheckUnread()
 
 	public function update(Notification $notification) {
 		$DB_REQ = $this->DB_REQ->prepare('

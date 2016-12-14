@@ -46,9 +46,9 @@
 					{% set nBunread = nBunread + 1 %}
 				{% endfor %}
 
-				<li class="dropdown dropdown-notifications">
-					<a href="#notifications-panel" class="dropdown-toggle" data-toggle="dropdown" id="menuNotifs">
-						<i data-count="{{nBunread}}" class="glyphicon glyphicon-bell {% if nBunread > 0 %}notification-icon{% endif %}"></i>
+				<li class="dropdown dropdown-notifications" id="notifsMenu">
+					<a href="#notifications-panel" class="dropdown-toggle" data-toggle="dropdown" id="cloche">
+						<i  id="clocheIcon" data-count="{{nBunread}}" class="glyphicon glyphicon-bell {% if nBunread > 0 %}notification-icon{% endif %}"></i>
 					</a>
 					<ul class="dropdown-menu">
 						<div class="dropdown-container">
@@ -107,12 +107,20 @@
 // 	$(this).hide(); 
 // });
 $("document").ready(function(){
-	$("#menuNotifs").on("click", function() {
-		$.post('{{ path_for("notifsread") }}', function(data){
-			console.log(data);
+	$("#cloche").on("click", function() {
+		$.post('{{ path_for("notifsread") }}', function() {
+			$("#clocheIcon").removeClass('notification-icon');
 		});
 	});
 });
+
+function reload()
+{
+	$(".notifications").load(location.href + " .notifications");
+}
+
+setInterval(function(){reload()}, 5000);
+
 </script>
 
 {# {{ dump(user.name) }} #}
