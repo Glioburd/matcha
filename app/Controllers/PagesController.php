@@ -951,10 +951,22 @@ class PagesController extends Controller {
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$id_unliker = unserialize($_SESSION['id']);
 			$id_unliked = $request->getParam('unlikeButton');
+			$user = $UserManagerPDO->getUnique($id_unliker);
 			$UserManagerPDO->unlike($id_unliker, $id_unliked);
-			$user = $UserManagerPDO->getLoginFromId($id_unliked);
+			$userProfile = $UserManagerPDO->getUnique($id_unliked);
 
-			return $response->withRedirect($this->router->pathFor('user.profile', ['userprofile' => $user]));
+			$notification = new Notification([
+				'owner' => $userProfile->id(),
+				'sender' => $user->id(),
+				'unread' => TRUE,
+				'type' => "unlike",
+				'referenceId' => $idLike["LAST_INSERT_ID()"]
+				]);
+
+			$notificationManager = new NotificationManager($this->db);
+			$notificationManager->add($notification);
+
+			return $response->withRedirect($this->router->pathFor('user.profile', ['userprofile' => $userProfile->login()]));
 		}
 		else {
 			echo 'Huh?';

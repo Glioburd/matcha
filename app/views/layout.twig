@@ -67,6 +67,8 @@
 										{% set notifMessage, notifMessageBis = 'has liked back your profile!', 'You are now friends, you can chat!' %}
 									{% elseif notif.type == 'visit' %}
 										{% set notifMessage, notifMessageBis = 'has visited your profile!', 'That\'s creepy tbh' %}
+									{% elseif notif.type == 'unlike' %}
+										{% set notifMessage, notifMessageBis = 'has unliked your profile!', 'Awww :(' %}
 									{% endif %}
 									<li class="notification">
 										<div class="media">
@@ -100,7 +102,7 @@
 
 	</div>
 </nav>
-NB UNREAD = {{nbUnread}}
+
 <script type="text/javascript">
 
 // $(".img-circle").error(function () { 
@@ -116,18 +118,32 @@ $("document").ready(function(){
 });
 
 function reload() {
+		// How many new notifs ?
+	function Ajax(handleData) {
+		$.post('{{ path_for("countNotifsUnread") }}', function(data){
+			handleData(data); 
+		});
+	}
 
-	$.post('{{ path_for("countNotifsUnread") }}', function(data){
-		console.log('Data = ' + data);
-		$("#notifsMenu").val(data);
-	});
+	Ajax(function(output){
+	// var pastille = $("#notifsMenu").val();
+	if (output > 0) {
+		$("#clocheIcon").addClass('notification-icon');
+		$("#notifsMenu").val(output);
+	}
+	else {
+		$("#clocheIcon").removeClass('notification-icon');
+	}
 
 	$(".notifications").load(location.href + " .notifications");
 	// $("nav").load(location.href + " nav");
-	var pastille = $("#notifsMenu").val();
-	if (pastille > 0) {
-		$("#clocheIcon").addClass('notification-icon');
-	}
+
+
+
+	});
+
+
+
 }
 
 setInterval(function(){reload()}, 5000);

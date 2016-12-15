@@ -57,16 +57,20 @@ class NotificationManager
 		else {
 			$DB_REQ = $this->DB_REQ->prepare('
 				SELECT * FROM notifications
-				WHERE date_notif IN (SELECT max(date_notif)) AND id_owner = :id_owner AND id_sender = :id_sender
+				WHERE date_notif = (SELECT max(date_notif) FROM notifications WHERE id_owner = :id_owner AND id_sender = :id_sender)
 				');
 			$DB_REQ->bindValue(':id_owner', $notification->owner());
 			$DB_REQ->bindValue(':id_sender', $notification->sender());
 
 			$DB_REQ->execute();
 			$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
-
-			if ($data['type'] != "visit" && $notification->type() != 'visit'){
-
+			// debug($notification->type());
+			// debug($data);
+			// die();
+			if ($data['type'] === "visit" && $notification->type() === 'visit'){
+				return NULL;
+			}
+			else {
 				$notification->setUnread(TRUE);
 				self::update($notification);
 			}
@@ -114,7 +118,6 @@ class NotificationManager
 		$DB_REQ->bindValue(':id_sender', $notification->sender());
 		$DB_REQ->bindValue(':type', $notification->type());
 		$DB_REQ->bindValue(':unread', 1);
-
 
 		// $DB_REQ->bindValue(':id_reference', $notification->referenceId());
 
