@@ -23,6 +23,8 @@ $app->add(new OldMiddleware($container->view->getEnvironment()));
 
 /* Ajax */
 
+$app->get('/LOL', 'App\Controllers\ChatController:getLOL');
+
 $app->post('/notifreadtamere', 'App\Controllers\PagesController:postNotifsRead')->setName('notifsread');
 $app->post('/notifcountunread', 'App\Controllers\PagesController:postCountNotifsUnread')->setName('countNotifsUnread');
 

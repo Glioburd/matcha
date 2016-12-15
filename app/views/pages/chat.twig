@@ -1,0 +1,36 @@
+{% extends "app.twig" %}
+{% block content %}
+<fieldset>
+		<legend>Un chat en jQuery</legend>
+		<div id="conversation"></div><br />
+		<form action="#" method="post">
+			<input type="text" id="nom" value="pseudo" size="6">
+			<input type="text" id="message" size="27">
+			<button type="button" id="envoyer" title="Envoyer">Send</button>
+		</form>
+</fieldset>
+
+<script type="text/javascript">
+$(function() {
+	showChat();
+
+	$('#envoyer').click(function() {
+		var nom = $('#nom').val();
+		var message = $('#message').val();
+		$.post('chat.php', {
+			'nom': nom,
+			'message': message
+			}, showChat);
+	});
+
+	function showChat() {
+		$('#conversation').load('ac.htm');
+		$('#message').val('');
+		$('#message').focus();
+	}
+
+	setInterval(showChat, 4000);
+});
+</script>
+
+{% endblock %}

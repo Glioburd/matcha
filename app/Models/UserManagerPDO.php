@@ -703,6 +703,27 @@ class UserManagerPDO extends UserManager
 		return NULL;
 	}
 
+	public function mutualFriendlist(User $user, User $userprofile) {
+		if ($user) {
+			$DB_REQ = $this->DB_REQ->prepare('
+				SELECT a.id_liker, a.id_owner
+				FROM likes AS a
+				INNER JOIN likes AS b
+				ON a.id_liker = b.id_owner AND b.id_liker = a.id_owner
+			');
+
+			$DB_REQ->bindValue(':id_liker', (int) $user->id(), PDO::PARAM_INT);
+			$DB_REQ->bindValue(':id_owner', (int) $userprofile->id(), PDO::PARAM_INT);			
+			$DB_REQ->execute();
+			$data = $DB_REQ->fetchAll(PDO::FETCH_ASSOC);
+			foreach ($data as $value) {
+				if($value['id_liker'] == $user->id() && $value['id_owner'] == $userprofile->id())
+					RETURN TRUE;
+			}
+		}
+		return FALSE;
+	}
+
 	public function hasLiked(User $user1, User $user2) {
 		$DB_REQ = $this->DB_REQ->prepare('
 			SELECT COUNT(*) AS count
@@ -829,7 +850,6 @@ class UserManagerPDO extends UserManager
 					* COS(RADIANS(a.Longitude - b.Longitude))
 					+ SIN(RADIANS(a.Latitude))
 					* SIN(RADIANS(b.Latitude)))) AS distance_in_km
-
 			FROM users AS a
 			JOIN users AS b ON a.id <> b.id
 

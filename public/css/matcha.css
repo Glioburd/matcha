@@ -6,3 +6,48 @@
 	height: 50px;
 	background-color: #f5f5f5;
 }*/
+
+.button_surrogate span { 
+	margin:0;
+	display:block;
+	height:25px;
+	text-align:center;
+	cursor:pointer;
+	.width:150px;
+	/*background:url(left_button_edge.png) left top no-repeat;*/
+	background-color: green left top no-repeat;
+}
+
+.button_surrogate span span { 
+	display:block;
+	padding:0 14px;
+	height:25px;
+	background-color: green right top no-repeat;
+	/*background-color: green;*/
+	/*background:url(right_button_edge.png) right top no-repeat;*/
+}
+
+.button_surrogate span span span { 
+	display:block;
+	overflow:hidden;
+	padding:5px 0 0 0;
+	background-color: green left top repeat;
+	/*background:url(button_connector.png) left top repeat-x;*/
+}
+
+#conversation {
+	width: 300px;
+	height: 400px;
+	border: black 1px solid;
+	background-color: #efecca;
+	overflow-x: hidden;
+	overflow-y: scroll; 
+	padding: 5px;
+	margin-left: 10px;
+}
+
+fieldset {
+	width: 330px;
+	background-color: #e6e2af;
+	border: black 1px solid;
+}

@@ -105,9 +105,6 @@
 
 <script type="text/javascript">
 
-// $(".img-circle").error(function () { 
-// 	$(this).hide(); 
-// });
 $("document").ready(function(){
 	$("#cloche").on("click", function() {
 		$.post('{{ path_for("notifsread") }}', function() {
@@ -118,7 +115,8 @@ $("document").ready(function(){
 });
 
 function reload() {
-		// How many new notifs ?
+
+	// How many new notifs ?
 	function Ajax(handleData) {
 		$.post('{{ path_for("countNotifsUnread") }}', function(data){
 			handleData(data); 
@@ -126,28 +124,18 @@ function reload() {
 	}
 
 	Ajax(function(output){
-	// var pastille = $("#notifsMenu").val();
-	if (output > 0) {
-		$("#clocheIcon").addClass('notification-icon');
-		$("#notifsMenu").val(output);
-	}
-	else {
-		$("#clocheIcon").removeClass('notification-icon');
-	}
+		if (output > 0) {
+			$("#clocheIcon").addClass('notification-icon');
+			$("#notifsMenu").val(output);
+		}
+		else {
+			$("#clocheIcon").removeClass('notification-icon');
+		}
 
-	$(".notifications").load(location.href + " .notifications");
-	// $("nav").load(location.href + " nav");
-
-
-
+		$(".notifications").load(location.href + " .notifications");
 	});
-
-
-
 }
 
 setInterval(function(){reload()}, 5000);
 
 </script>
-
-{# {{ dump(user.name) }} #}

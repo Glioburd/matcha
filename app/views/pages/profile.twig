@@ -22,13 +22,18 @@
 
 	{% if userprofile.login != user.login %}
 		{% if canLike == true %}
+
 		<form action="{{ path_for('like') }}" method="post">
 			<button type="submit" name="likeButton" class="btn btn-danger btn-lg align-center" value="{{userprofile.id}}">Like ♡</button>
 		</form>
 		{% else %}
 		<form action="{{ path_for('unlike') }}" method="post">
 			<button type="submit" name="unlikeButton" class="btn btn-danger btn-lg align-center" value="{{userprofile.id}}">Unlike &lt;/3</button>
+				{% if mutualFriend == true %}
+					<strong style="color:#FA5858;">(You are mutual friends!)</strong>
+			{% endif %}
 		</form>
+
 		{% endif %}
 	{# {% else %} #}
 			{# <button type="submit" class="btn btn-danger btn-lg disabled">Like ♡</button> #}
@@ -53,6 +58,22 @@
 	{% endif %}
 
 {###------------------------------------------------------------------------------------------------------------------###}
+{####-------------------------------------------CHAT BUTTON-----------------------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
+	{% if userprofile.gender == 'f' %}
+		{% set isShe, himHer, gender = 'she', 'her', 'female' %}
+	{% else %}
+		{% set isShe, himHer, gender = 'he', 'him', 'male' %}
+	{% endif %}
+	{% if mutualFriend == true %}
+		<a href="#">
+			<span class="button_surrogate">
+				<span><span><span>GO CHAT WITH {{himHer|upper|e}}</span></span></span>
+			</span>
+		</a>
+	{% endif %}
+
+{###------------------------------------------------------------------------------------------------------------------###}
 {###---------------------------------------------POPULARITY PANNEL----------------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
 
@@ -71,11 +92,11 @@
 {###---------------------------------------------INTRO PANNEL---------------------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
 
-{% if userprofile.gender == 'f' %}
+{# {% if userprofile.gender == 'f' %}
 	{% set isShe, himHer, gender = 'she', 'her', 'female' %}
 {% else %}
 	{% set isShe, himHer, gender = 'he', 'him', 'male' %}
-{% endif %}
+{% endif %} #}
 
 	<div class="panel panel-default">
 		<div class="panel-heading">

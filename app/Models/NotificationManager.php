@@ -64,9 +64,7 @@ class NotificationManager
 
 			$DB_REQ->execute();
 			$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
-			// debug($notification->type());
-			// debug($data);
-			// die();
+
 			if ($data['type'] === "visit" && $notification->type() === 'visit'){
 				return NULL;
 			}

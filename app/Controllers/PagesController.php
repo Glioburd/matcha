@@ -467,6 +467,10 @@ class PagesController extends Controller {
 
 					// If arg profile is an other user
 					if ($user->id() != $userProfile->id()) {
+
+						//Are we mutual friends with the user ?
+						$mutualFriend = $UserManagerPDO->mutualFriendlist($user, $userProfile);
+						
 						$idLike = $UserManagerPDO->addVisit($user->id(), $userProfile->id());
 						$canLike = $UserManagerPDO->canLike($user->id(), $userProfile->id());
 						$canBlock = $UserManagerPDO->canBlock($user->id(), $userProfile->id());
@@ -512,7 +516,8 @@ class PagesController extends Controller {
 						'canBlock' => $canBlock,
 						'age' => $age,
 						'notifs' => $notifs,
-						'nbUnread' => $nbUnread
+						'nbUnread' => $nbUnread,
+						'mutualFriend' => $mutualFriend
 					]);
 
 				}
