@@ -46,7 +46,7 @@
 					{% set nBunread = nBunread + 1 %}
 				{% endfor %}
 
-				<li class="dropdown dropdown-notifications" id="notifsMenu">
+				<li class="dropdown dropdown-notifications" id="notifsMenu" value="{{nbUnread}}">
 					<a href="#notifications-panel" class="dropdown-toggle" data-toggle="dropdown" id="cloche">
 						<i  id="clocheIcon" data-count="{{nBunread}}" class="glyphicon glyphicon-bell {% if nBunread > 0 %}notification-icon{% endif %}"></i>
 					</a>
@@ -100,7 +100,7 @@
 
 	</div>
 </nav>
-
+NB UNREAD = {{nbUnread}}
 <script type="text/javascript">
 
 // $(".img-circle").error(function () { 
@@ -110,13 +110,24 @@ $("document").ready(function(){
 	$("#cloche").on("click", function() {
 		$.post('{{ path_for("notifsread") }}', function() {
 			$("#clocheIcon").removeClass('notification-icon');
+			$("#notifsMenu").val(0);
 		});
 	});
 });
 
-function reload()
-{
+function reload() {
+
+	$.post('{{ path_for("countNotifsUnread") }}', function(data){
+		console.log('Data = ' + data);
+		$("#notifsMenu").val(data);
+	});
+
 	$(".notifications").load(location.href + " .notifications");
+	// $("nav").load(location.href + " nav");
+	var pastille = $("#notifsMenu").val();
+	if (pastille > 0) {
+		$("#clocheIcon").addClass('notification-icon');
+	}
 }
 
 setInterval(function(){reload()}, 5000);

@@ -55,13 +55,37 @@ class NotificationManager
 			$DB_REQ->execute();
 		}
 		else {
-			// $DB_REQ = $this->DB_REQ->prepare('
-			// 	SELECT * FROM notifications
-			// 	WHERE id 
-			// 	')
-			$notification->setUnread(TRUE);
-			self::update($notification);
+			$DB_REQ = $this->DB_REQ->prepare('
+				SELECT * FROM notifications
+				WHERE date_notif IN (SELECT max(date_notif)) AND id_owner = :id_owner AND id_sender = :id_sender
+				');
+			$DB_REQ->bindValue(':id_owner', $notification->owner());
+			$DB_REQ->bindValue(':id_sender', $notification->sender());
+
+			$DB_REQ->execute();
+			$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+
+			if ($data['type'] != "visit" && $notification->type() != 'visit'){
+
+				$notification->setUnread(TRUE);
+				self::update($notification);
+			}
 		}
+	}
+
+	public function countUnread($userId) {
+		$DB_REQ = $this->DB_REQ->prepare('
+			SELECT COUNT(*) AS count
+			FROM notifications
+			WHERE id_owner = :id_owner AND unread = 1
+			');
+
+		$DB_REQ->bindValue(':id_owner', $userId);
+		$DB_REQ->execute();
+
+		$result = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+
+		return(($result['count']));
 	}
 
 	public function setAllNotifsAsRead($userId) {
@@ -75,7 +99,7 @@ class NotificationManager
 		$DB_REQ->execute();	
 	}
 
-	public function postCheckUnread()
+	// public function postCheckUnread()
 
 	public function update(Notification $notification) {
 		$DB_REQ = $this->DB_REQ->prepare('
@@ -118,13 +142,8 @@ class NotificationManager
 		$DB_REQ->execute();
 
 		$data = $DB_REQ->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'App\models\Notification');
+		$i = 0;
 
-		// $UserManagerPDO = new UserManagerPDO($this->DB_REQ);
-		// foreach ($data as &$value) {
-		// 	$value['id_sender'] = $UserManagerPDO->getUnique($value['id_sender']);
-		// }
-		// debug($data);
-		// die();
 		return $data;
 	}
 }

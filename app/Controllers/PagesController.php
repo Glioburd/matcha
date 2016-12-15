@@ -110,8 +110,16 @@ class PagesController extends Controller {
 				}
 
 				echo $i;
+
 				$notificationManager = new NotificationManager($this->db);
 				$notifs = $notificationManager->get($user);
+
+				$i = 0;
+				foreach ($notifs as $notif) {
+					if ($notif->unread() == 1)
+						$i++;
+				}
+				$nbUnread = $i;
 
 			}
 
@@ -132,7 +140,8 @@ class PagesController extends Controller {
 				'distance' => $_GET['distance'],
 				'minPopularity' => $_GET['minPopularity'],
 				'minCommonHobbies' => $_GET['minCommonHobbies'],
-				'notifs' => $notifs
+				'notifs' => $notifs,
+				'nbUnread' => $nbUnread
 				]);
 			}
 
@@ -158,9 +167,17 @@ class PagesController extends Controller {
 			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
 			$notificationManager = new NotificationManager($this->db);
 			$notifs = $notificationManager->get($user);
+
+			foreach ($notifs as $notif) {
+				if ($notif->unread() == 1)
+					$i++;
+			}
+			$nbUnread = $i;
+
 			return $this->render($response, 'pages/contact.twig', [
 				'user' => $user,
-				'notifs' => $notifs
+				'notifs' => $notifs,
+				'nbUnread' => $nbUnread
 				]);
 		}
 		else {
@@ -434,10 +451,13 @@ class PagesController extends Controller {
 				$notifs = $notificationManager->get($user);
 
 				// We add a '../' to images src, because we are one step deeper in the tree : /profile/{name}
+				$i = 0;
 				foreach ($notifs as $notif) {
 					$notif->setPictureSender('../' . $notif->pictureSender());
+					if ($notif->unread() == 1)
+						$i++;
 				}
-
+				$nbUnread = $i;
 				$userprofilearg = $args['userprofile'];
 		
 				// Check if arg profile exists
@@ -491,7 +511,8 @@ class PagesController extends Controller {
 						'canLike' => $canLike,
 						'canBlock' => $canBlock,
 						'age' => $age,
-						'notifs' => $notifs
+						'notifs' => $notifs,
+						'nbUnread' => $nbUnread
 					]);
 
 				}
@@ -525,6 +546,12 @@ class PagesController extends Controller {
 			$notificationManager = new NotificationManager($this->db);
 			$notifs = $notificationManager->get($user);
 
+			foreach ($notifs as $notif) {
+				if ($notif->unread() == 1)
+					$i++;
+			}
+			$nbUnread = $i;
+
 			foreach($blockedUsers as $key => $blockedUser) {
 				if ($blockedUser) {
 					$blockedUsers[$key] = $UserManagerPDO->getUnique($blockedUser['id_blocked']);
@@ -534,7 +561,8 @@ class PagesController extends Controller {
 			return $this->render($response, 'pages/settings.twig',[
 				'user' => $user,
 				'blockedUsers' => $blockedUsers,
-				'notifs' => $notifs
+				'notifs' => $notifs,
+				'nbUnread' => $nbUnread
 			]);
 		}
 
@@ -651,6 +679,13 @@ class PagesController extends Controller {
 			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
 			$notificationManager = new NotificationManager($this->db);
 			$notifs = $notificationManager->get($user);
+
+			foreach ($notifs as $notif) {
+				if ($notif->unread() == 1)
+					$i++;
+			}
+			$nbUnread = $i;
+
 			if (!$user->mainpicture()) {
 				$this->flash('
 				You don\'t have a profile picture! Please set one to be able to get matched with other people.','warning');
@@ -659,7 +694,8 @@ class PagesController extends Controller {
 			Debug::debugUser($this->container, $user);
 			return $this->render($response, 'pages/editProfile.twig',[
 				'user' => $user,
-				'notifs' => $notifs
+				'notifs' => $notifs,
+				'nbUnread' => $nbUnread
 			]);
 		}
 
@@ -974,10 +1010,12 @@ class PagesController extends Controller {
 		$NotificationManager->setAllNotifsAsRead($idUser);
 	}
 
-	public function postCheckUnread($request, $response) {
+	public function postCountNotifsUnread($request, $response) {
 		$idUser = unserialize($_SESSION['id']);
 		$NotificationManager = new NotificationManager($this->db);
-		$NotificationManager->checkUnread($idUser);	
+		return $count = $NotificationManager->countUnread($idUser);
+
+		return $count;
 	}
 
 }

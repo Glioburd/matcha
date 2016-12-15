@@ -24,6 +24,7 @@ $app->add(new OldMiddleware($container->view->getEnvironment()));
 /* Ajax */
 
 $app->post('/notifreadtamere', 'App\Controllers\PagesController:postNotifsRead')->setName('notifsread');
+$app->post('/notifcountunread', 'App\Controllers\PagesController:postCountNotifsUnread')->setName('countNotifsUnread');
 
 /* Home */
 $app->get('/', 'App\Controllers\PagesController:home')->setName('home');
