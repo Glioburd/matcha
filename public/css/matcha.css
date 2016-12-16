@@ -83,10 +83,10 @@ a {
 		padding-left : 25px;
 }
 
-#usermsg {
-	width:395px;
+#text {
+	width:80%;
 	border:1px solid #ACD8F0;
-
+	margin-left : 25px;
 }
   
 #submit { width: 60px; }

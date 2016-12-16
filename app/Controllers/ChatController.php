@@ -33,12 +33,27 @@ class ChatController extends Controller {
 
 			// Check if none of us is blocked by the interlocutor
 			$canBlock = $UserManagerPDO->canBlock($user->id(), $interlocutor->id());
+
 			$amINotBlocked = $UserManagerPDO->canBlock($interlocutor->id(), $user->id());
+
+			$notificationManager = new NotificationManager($this->db);
+			$notifs = $notificationManager->get($user);
+
+
+			$i = 0;
+			foreach ($notifs as $notif) {
+				$notif->setPictureSender('../' . $notif->pictureSender());
+				if ($notif->unread() == 1)
+					$i++;
+			}
+			$nbUnread = $i;
 
 			if ($canBlock && $amINotBlocked) {
 				$this->render($response, 'pages/chat.twig',[
 					'user' => $user,
-					'interlocutor' => $interlocutor
+					'interlocutor' => $interlocutor,
+					'notifs' => $notifs,
+					'nbUnread' => $nbUnread,
 				]);
 			}
 
@@ -62,35 +77,30 @@ class ChatController extends Controller {
 
 			$message = $_POST['message'];
 
-			debug($message);
-
-			$poster = $UserManagerPDO->getIdfromLogin($_POST['poster']);
-			$poster = $UserManagerPDO->getUnique($poster);
-
-			debug($poster);
+			$poster = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
 
 			$receptor = $UserManagerPDO->getIdfromLogin($_POST['receptor']);
 			$receptor = $UserManagerPDO->getUnique($receptor); 
 
-			debug($receptor);
+			$canBlock = $UserManagerPDO->canBlock($poster->id(), $receptor->id());
 
-			$UserManagerPDO->chatToDB($poster, $receptor, $message);
+			$amINotBlocked = $UserManagerPDO->canBlock($receptor->id(), $poster->id());
+
+			if ($canBlock && $amINotBlocked) {
+				$notification = new Notification([
+					'owner' => $receptor->id(),
+					'sender' => $poster->id(),
+					'unread' => TRUE,
+					'type' => "chat",
+					'referenceId' => 0
+					]);
+
+				$notificationManager = new NotificationManager($this->db);
+				$notificationManager->add($notification);
+				$UserManagerPDO->chatToDB($poster, $receptor, $message);
+			}
 		}
 
-		// else {
-		// 	$this->flash('You must be logged to access this page.', 'error');
-		// 	return $this->redirect($response, 'auth.login', 302);
-		// }
-		// debug($_POST);
-
-		// die();
-		// $nom = $user->login();								//On récupère le pseudo et on le stocke dans une variable
-		// $message = $request->getParam('message');
-		// $ligne = $nom.' > '.$message.'<br>';		//Le message est créé 
-		// $leFichier = file('ac.htm');				//On lit le fichier ac.htm et on stocke la réponse dans une variable (de type tableau)
-		// array_unshift($leFichier, $ligne);			//On ajoute le texte calculé dans la ligne précédente au début du tableau
-		// file_put_contents('ac.htm', $leFichier);
 		return (true);
 	}
-
 }

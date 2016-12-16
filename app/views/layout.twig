@@ -69,6 +69,8 @@
 										{% set notifMessage, notifMessageBis = 'has visited your profile!', 'That\'s creepy tbh' %}
 									{% elseif notif.type == 'unlike' %}
 										{% set notifMessage, notifMessageBis = 'has unliked your profile!', 'Awww :(' %}
+									{% elseif notif.type == 'chat' %}
+										{% set notifMessage, notifMessageBis = 'sent you a message',  'Go check it!' %}
 									{% endif %}
 									<li class="notification">
 										<div class="media">
@@ -78,7 +80,7 @@
 												</div>
 											</div>
 											<div class="media-body">
-												<strong class="notification-title"><a href="{{ path_for('user.profile', { 'userprofile': notif.loginSender }) }}">{{notif.loginSender}}</a> {{notifMessage}}</strong>
+												<strong class="notification-title"><a href="{{ path_for('user.profile', { 'userprofile': notif.loginSender }) }}">{{notif.loginSender}}</a> {{notifMessage|e}}</strong>
 												<p class="notification-desc">{{notifMessageBis}}</p>
 												<div class="notification-meta">
 													<small class="timestamp">{{notif.date_notif}}</small>
