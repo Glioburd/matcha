@@ -21,10 +21,6 @@ $app->add(new OldMiddleware($container->view->getEnvironment()));
 // $app->add(new App\Middlewares\TwigCsrfMiddleware($container->view->getEnvironment(), $container->csrf));
 // $app->add($container->csrf);
 
-/* Ajax */
-
-$app->get('/LOL', 'App\Controllers\ChatController:getLOL');
-
 $app->post('/notifreadtamere', 'App\Controllers\PagesController:postNotifsRead')->setName('notifsread');
 $app->post('/notifcountunread', 'App\Controllers\PagesController:postCountNotifsUnread')->setName('countNotifsUnread');
 
@@ -87,5 +83,11 @@ $app->post('/uploadpic', 'App\Controllers\PagesController:postUploadPicture')->s
 $app->post('/change_avatar', 'App\Controllers\PagesController:postChangeAvatar')->setName('change.picture');
 
 $app->post('/deletepic', 'App\Controllers\PagesController:postDeletePicture')->setName('delete.picture');
+
+/* Chat */
+
+$app->get('/chat/{interlocutor}', 'App\Controllers\ChatController:getChat')->setName('chat');
+
+$app->post('/chatmsg', 'App\Controllers\ChatController:postChatmsg')->setName('chatmsg');
 
 $app->run();

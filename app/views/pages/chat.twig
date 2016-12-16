@@ -1,36 +1,78 @@
 {% extends "app.twig" %}
-{% block content %}
-<fieldset>
-		<legend>Un chat en jQuery</legend>
-		<div id="conversation"></div><br />
-		<form action="#" method="post">
-			<input type="text" id="nom" value="pseudo" size="6">
-			<input type="text" id="message" size="27">
-			<button type="button" id="envoyer" title="Envoyer">Send</button>
-		</form>
-</fieldset>
 
+{% block content %}
+
+
+<div id="wrapper">
+	<div id="menu">
+		<p class="welcome">Conversation with {{interlocutor.login}} <b></b></p>
+
+		<div style="clear:both"></div>
+	</div>
+
+	<div id="chatbox"></div>
+
+	{# <form action="#" action="" id="usermsgform"> #}
+	{# <form action="{{ path_for("chatmsg")}}" method="post" id="usermsgform"> #}
+		<input name="usermsg" type="text" id="text" size="63" />
+		{# <input type="submit" name=""> #}
+		<button type="button" id="submitmsg" title="Envoyer">
+	{# </form> #}
+</div>
+
+<div class="result">
+
+</div>
 <script type="text/javascript">
-$(function() {
+
+$(window).keydown(function (event) {
+	if (!(event.ctrlKey || event.metaKey || event.altKey)) {
+	  $('#text').focus();
+	}
+	if (event.which === 13) {
+		console.log('ENTER');
+		send();
+	}
+});
+
+$('#submitmsg').click(function(event) {
+	event.preventDefault();
+	send();
+});
+
+function send() {
+	var poster = '{{ user.login }}';
+	var receptor = "{{ interlocutor.login }}";
+	var message = $('#text').val();
+
+	var req = $.post('{{ path_for("chatmsg")}}', {
+		'poster': poster,
+		'receptor': receptor,
+		'message': message
+		})
+	.done(function(data) {
+			$( ".result" ).html( 'SUCESS' );
+		})
+	.fail(function(xhr, status, error) {
+	});
+}
+
+$("document").ready(function(){
+
 	showChat();
 
-	$('#envoyer').click(function() {
-		var nom = $('#nom').val();
-		var message = $('#message').val();
-		$.post('chat.php', {
-			'nom': nom,
-			'message': message
-			}, showChat);
-	});
+
 
 	function showChat() {
-		$('#conversation').load('ac.htm');
-		$('#message').val('');
-		$('#message').focus();
+		// $('#conversation').load('ac.htm');
+		// $("#conversation").load(location.href + " #conversation");
+		// $('#message').val('');
+		// $('#message').focus();
+		// console.log('Success');
 	}
-
-	setInterval(showChat, 4000);
 });
+// 	setInterval(showChat, 4000);
+
 </script>
 
 {% endblock %}

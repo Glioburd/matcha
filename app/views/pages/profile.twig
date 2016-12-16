@@ -66,7 +66,7 @@
 		{% set isShe, himHer, gender = 'he', 'him', 'male' %}
 	{% endif %}
 	{% if mutualFriend == true %}
-		<a href="#">
+		<a href="{{ path_for('chat', { 'interlocutor': userprofile.login }) }}">
 			<span class="button_surrogate">
 				<span><span><span>GO CHAT WITH {{himHer|upper|e}}</span></span></span>
 			</span>

@@ -298,7 +298,7 @@ class PagesController extends Controller {
 		}
 
 		else {
-			$this->flash('You must be loged to access this page', 'error');	
+			$this->flash('You must be logged to access this page.', 'error');	
 			return $this->redirect($response, 'auth.signup', 302);
 		}
 	}
@@ -473,6 +473,8 @@ class PagesController extends Controller {
 						
 						$idLike = $UserManagerPDO->addVisit($user->id(), $userProfile->id());
 						$canLike = $UserManagerPDO->canLike($user->id(), $userProfile->id());
+
+						// Have I blocked the user or does the user have blocked me ?
 						$canBlock = $UserManagerPDO->canBlock($user->id(), $userProfile->id());
 						$amINotBlocked = $UserManagerPDO->canBlock($userProfile->id(), $user->id());
 
@@ -537,7 +539,8 @@ class PagesController extends Controller {
 
 		else {
 			// If user is not loged in
-			return $this->redirect($response, 'auth.login', 200);	
+			$this->flash('You must be logged to access this page.', 'error');	
+			return $this->redirect($response, 'auth.login', 302);	
 		}
 	}
 
@@ -572,8 +575,8 @@ class PagesController extends Controller {
 		}
 
 		else {
-
-			return $this->redirect($response, 'auth.login', 200);
+			$this->flash('You must be logged to access this page.', 'error');	
+			return $this->redirect($response, 'auth.login', 302);
 		}
 	}
 
@@ -671,7 +674,10 @@ class PagesController extends Controller {
 			return $this->redirect($response, 'home', 200);
 		}
 
-			// return $this->redirect($response, 'home', 200);
+		else{
+			$this->flash('You can\'t access this page like that.', 'error');	
+			return $this->redirect($response, 'home', 302);
+		}
 
 	}
 
@@ -705,8 +711,8 @@ class PagesController extends Controller {
 		}
 
 		else {
-
-			return $this->redirect($response, 'auth.login', 200);
+			$this->flash('You must be logged to access this page.', 'error');	
+			return $this->redirect($response, 'auth.login', 302);
 		}
 	}
 

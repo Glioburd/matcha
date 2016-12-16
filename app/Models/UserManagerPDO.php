@@ -796,6 +796,9 @@ class UserManagerPDO extends UserManager
 		return NULL;
 	}
 
+/*
+** Check if id_blocker has blocked id_blocked
+*/
 	public function canBlock($id_blocker, $id_blocked) {
 		if (!empty($id_blocker) && !empty($id_blocked)) {
 
@@ -863,14 +866,14 @@ class UserManagerPDO extends UserManager
 				a.login = :from_user
 				AND
 				CASE
-					WHEN a.sexuality = "hetero" AND a.gender = "m" THEN b.gender = "f" AND b.sexuality = "hetero" OR b.gender = "f" AND b.sexuality = "bi"
-					WHEN a.sexuality = "hetero" AND a.gender = "f" THEN b.gender = "m" AND b.sexuality = "hetero" OR b.gender = "m" AND b.sexuality = "bi"
+					WHEN a.sexuality = "hetero" AND a.gender = "m" THEN b.gender = "f" AND b.sexuality NOT IN ("homo")
+					WHEN a.sexuality = "hetero" AND a.gender = "f" THEN b.gender = "m" AND b.sexuality NOT IN ("homo")
 
-					WHEN a.sexuality = "homo" AND a.gender = "m" THEN b.gender = "m" AND b.sexuality = "homo" OR b.gender = "m" AND b.sexuality = "bi"
-					WHEN a.sexuality = "homo" AND a.gender = "f" THEN b.gender = "f" AND b.sexuality = "homo" OR b.gender = "f" AND b.sexuality = "bi"
+					WHEN a.sexuality = "homo" AND a.gender = "m" THEN b.gender = "m" AND b.sexuality NOT IN ("hetero")
+					WHEN a.sexuality = "homo" AND a.gender = "f" THEN b.gender = "f" AND b.sexuality  NOT IN ("hetero")
 
-					WHEN a.sexuality = "bi" AND a.gender = "m" THEN (b.gender = "f" AND b.sexuality = "hetero" OR b.sexuality = "bi") OR (b.gender = "m" AND b.sexuality = "homo" OR b.sexuality = "bi")
-					WHEN a.sexuality = "bi" AND a.gender = "f" THEN (b.gender = "f" AND b.sexuality = "bi" OR b.sexuality = "homo") OR (b.gender = "m" AND b.sexuality = "hetero" OR b.sexuality = "bi")
+					WHEN a.sexuality = "bi" AND a.gender = "m" THEN (b.gender = "f" AND b.sexuality NOT IN ("homo")) OR (b.gender = "m" AND b.sexuality NOT IN ("hetero"))
+					WHEN a.sexuality = "bi" AND a.gender = "f" THEN (b.gender = "f" AND b.sexuality NOT IN ("hetero")) OR (b.gender = "m" AND b.sexuality NOT IN ("homo"))
 				END
 				AND EXISTS(SELECT * FROM pictures WHERE ismainpic = 1)
 				AND NOT EXISTS(SELECT * FROM blocks WHERE
@@ -911,6 +914,17 @@ class UserManagerPDO extends UserManager
 
 		$count = count(array_intersect($hobbies, $hobbies_to_compare));
 		return $count;
+	}
+
+	public function chatToDB(User $poster, User $receptor, $message) {
+		$DB_REQ = $this->DB_REQ->prepare('
+			INSERT INTO chat (id_poster, id_receptor, message, msg_date)
+			VALUES (:id_poster, :id_receptor, :message, NOW())
+			');
+		$DB_REQ->bindValue(':id_poster', $poster->id());
+		$DB_REQ->bindValue(':id_receptor', $receptor->id());
+		$DB_REQ->bindValue(':message', $message);
+		$DB_REQ->execute();
 	}
 
 /*
