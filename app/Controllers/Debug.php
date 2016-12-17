@@ -19,7 +19,6 @@ class Debug {
 			debug($user);
 			echo "<pre>Difference entre user et userprofile :<br>";
 			print_r(recursive_array_diff((array)$user, (array)$userprofile));
-			debug($_SESSION['debug']);
 			echo "</pre>";
 		}
 	}

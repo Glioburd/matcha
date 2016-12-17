@@ -43,7 +43,7 @@ if (intval($result['count']) == 0) {
 			);");
 
 	$DB_REQ->execute();
-			
+
 }
 
 $DB_REQ = $container->db->query("
@@ -162,7 +162,7 @@ $DB_REQ = $container->db->query("
 	WHERE table_name = 'popularity'
 		AND TABLE_SCHEMA='matcha'
 	;");
-	
+
 $result = $DB_REQ->fetch(PDO::FETCH_ASSOC);
 
 if (intval($result['count']) == 0) {
@@ -307,13 +307,13 @@ if (intval($result['count']) == 0) {
 
 	$DB_REQ->execute();
 
-	$DB_REQ = $DB_PDO->prepare('
-		ALTER TABLE `notifications`
-		CASE
-			WHEN notifications.type = "like" THEN ADD FOREIGN KEY (id_reference) REFERENCES likes(id)
-			WHEN notifications.type = "visit" THEN ADD FOREIGN KEY (id_reference) REFERENCES visitors(id)
-		ON DELETE CASCADE
-		;');
-
-	$DB_REQ->execute();
+	// $DB_REQ = $DB_PDO->prepare('
+	// 	ALTER TABLE `notifications`
+	// 	CASE
+	// 		WHEN notifications.type = "like" THEN ADD FOREIGN KEY (id_reference) REFERENCES likes(id)
+	// 		WHEN notifications.type = "visit" THEN ADD FOREIGN KEY (id_reference) REFERENCES visitors(id)
+	// 	ON DELETE CASCADE
+	// 	;');
+	//
+	// $DB_REQ->execute();
 }

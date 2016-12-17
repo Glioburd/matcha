@@ -15,13 +15,25 @@ include __DIR__ . '../../../debug.php';
 include "sort_array.php";
 
 /**
-* 
+*
 */
 class PagesController extends Controller {
 
 	const LOGIN_DOESNT_EXISTS = 0;
 
 	public function home($request, $response) {
+
+		$user = NULL;
+		$data = '';
+		$notifs = '';
+		$nbUnread = '';
+		$_GET['sortBy'] = '';
+		$_GET['ageMin'] = '';
+		$_GET['ageMax'] = '';
+		$_GET['distance'] = '';
+		$_GET['minPopularity'] = '';
+		$_GET['minCommonHobbies'] = '';
+
 
 		if (Validator::isConnected()) {
 
@@ -34,7 +46,7 @@ class PagesController extends Controller {
 
 			// If user has a profile picture, we can display the matches!
 			if ($user->mainpicture()){
-				
+
 				if(!(isset($_GET['distance'])) || empty($_GET['distance']) || $_GET['distance'] < 0)
 					$distance = 200;
 				else {
@@ -73,7 +85,7 @@ class PagesController extends Controller {
 					$data[$key]['to_user_age'] = Validator::getAge($data[$key]['to_user_age']);
 
 					if (($data[$key]['to_user_age'] >= $ageMin && $data[$key]['to_user_age'] <= $ageMax) && $data[$key]['popularity'] >= $minPopularity) {
-											
+
 							$hobbiesInCommon = $UserManagerPDO->countSimilarsHobbies($user, $user_to_compare);
 							$data[$key]['hobbiesInCommon'] = $hobbiesInCommon;
 							$data[$key]['hobbies'] = $user_to_compare->hobbies();
@@ -149,7 +161,7 @@ class PagesController extends Controller {
 				return $this->redirect($response, 'auth.signupinfos', 200);
 			}
 
-			
+
 		Debug::debugUser($this->container, $user);
 		Debug::debugUser($this->container, $_SESSION['id']);
 		Debug::debugNotifs($this->container, $notifs);
@@ -161,6 +173,8 @@ class PagesController extends Controller {
 	}
 
 	public function getContact($request, $response) {
+
+		$i = 0;
 
 		if (Validator::isConnected()) {
 			$UserManagerPDO = new UserManagerPDO($this->db);
@@ -194,7 +208,7 @@ class PagesController extends Controller {
 			return $this->render($response, 'pages/signUp.twig');
 		}
 		else {
-			return $this->redirect($response, 'home', 200);	
+			return $this->redirect($response, 'home', 200);
 		}
 	}
 
@@ -246,7 +260,7 @@ class PagesController extends Controller {
 
 		if (!Validator::passwordConfirm($request->getParam('password'), $request->getParam('passwordConfirm'))) {
 				$errors['passwordConfirm'] = 'Invalid password confirmation';
-		}		
+		}
 
 		if (empty($errors)) {
 
@@ -298,7 +312,7 @@ class PagesController extends Controller {
 		}
 
 		else {
-			$this->flash('You must be logged to access this page.', 'error');	
+			$this->flash('You must be logged to access this page.', 'error');
 			return $this->redirect($response, 'auth.signup', 302);
 		}
 	}
@@ -365,7 +379,7 @@ class PagesController extends Controller {
 		}
 
 		else {
-			$this->flash('Un champ n\'a pas été rempli correctement', 'error');	
+			$this->flash('Un champ n\'a pas été rempli correctement', 'error');
 			$this->flash($errors, 'errors');
 			return $this->redirect($response, 'auth.signupinfos', 302);
 		}
@@ -376,13 +390,15 @@ class PagesController extends Controller {
 
 	public function getLogIn($request, $response) {
 
+		$user = '';
+
 		if (!Validator::isConnected()) {
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			Debug::debugUser($this->container, $user);
 			return $this->render($response, 'pages/login.twig');
 		}
 		else {
-			return $this->redirect($response, 'home', 200);				
+			return $this->redirect($response, 'home', 200);
 		}
 
 	}
@@ -402,7 +418,7 @@ class PagesController extends Controller {
 					$id = $UserManagerPDO->getIdFromLogin($login);
 
 					$user = $UserManagerPDO->getUnique($id);
-				
+
 
 					$_SESSION['id'] = serialize($id);
 					setcookie("matcha_cookie", $_SESSION['id'], time() + 36000, "/");
@@ -423,7 +439,7 @@ class PagesController extends Controller {
 		}
 
 		if (!empty($errors)) {
-			$this->flash('Un champ n\'a pas été rempli correctement', 'error');	
+			$this->flash('Un champ n\'a pas été rempli correctement', 'error');
 			$this->flash($errors, 'errors');
 			return $this->redirect($response, 'auth.login', 302);
 		}
@@ -439,6 +455,10 @@ class PagesController extends Controller {
 	}
 
 	public function getProfile($request, $response, $args) {
+
+		$canLike = '';
+		$canBlock = '';
+		$mutualFriend = '';
 
 		// If user is loged in, and if there is an arg in /profile/
 		if (Validator::isConnected() && isset($args['userprofile']) && !empty($args['userprofile'])) {
@@ -459,7 +479,7 @@ class PagesController extends Controller {
 				}
 				$nbUnread = $i;
 				$userprofilearg = $args['userprofile'];
-		
+
 				// Check if arg profile exists
 				if ($idprofile = $UserManagerPDO->getIdFromLogin($userprofilearg)) {
 
@@ -470,7 +490,7 @@ class PagesController extends Controller {
 
 						//Are we mutual friends with the user ?
 						$mutualFriend = $UserManagerPDO->mutualFriendlist($user, $userProfile);
-						
+
 						$idLike = $UserManagerPDO->addVisit($user->id(), $userProfile->id());
 						$canLike = $UserManagerPDO->canLike($user->id(), $userProfile->id());
 
@@ -539,8 +559,8 @@ class PagesController extends Controller {
 
 		else {
 			// If user is not loged in
-			$this->flash('You must be logged to access this page.', 'error');	
-			return $this->redirect($response, 'auth.login', 302);	
+			$this->flash('You must be logged to access this page.', 'error');
+			return $this->redirect($response, 'auth.login', 302);
 		}
 	}
 
@@ -553,6 +573,8 @@ class PagesController extends Controller {
 			$blockedUsers = $UserManagerPDO->getBlockedUsers($user->id());
 			$notificationManager = new NotificationManager($this->db);
 			$notifs = $notificationManager->get($user);
+
+			$i = 0;
 
 			foreach ($notifs as $notif) {
 				if ($notif->unread() == 1)
@@ -575,7 +597,7 @@ class PagesController extends Controller {
 		}
 
 		else {
-			$this->flash('You must be logged to access this page.', 'error');	
+			$this->flash('You must be logged to access this page.', 'error');
 			return $this->redirect($response, 'auth.login', 302);
 		}
 	}
@@ -643,7 +665,7 @@ class PagesController extends Controller {
 		}
 
 		if (!empty($errors)) {
-			$this->flash('Un champ n\'a pas été rempli correctement', 'error');	
+			$this->flash('Un champ n\'a pas été rempli correctement', 'error');
 			$this->flash($errors, 'errors');
 			return $this->redirect($response, 'user.settings', 302);
 		}
@@ -651,7 +673,7 @@ class PagesController extends Controller {
 
 			$user->setPassword(password_hash($newPassword, PASSWORD_DEFAULT));
 			$UserManagerPDO->save($user);
-			$this->flash($success, $type);	
+			$this->flash($success, $type);
 			return $this->redirect($response, 'user.settings', 200);
 	}
 
@@ -665,17 +687,17 @@ class PagesController extends Controller {
 
 			if ($hash != $user->hash()) {
 				$this->flash("Your mail hasn't been updated, the link was incorrect or expired.", 'error');
-				return $this->redirect($response, 'home', 302);			
+				return $this->redirect($response, 'home', 302);
 			}
 
 			$user->setEmail($email);
 			$UserManagerPDO->save($user);
-			$this->flash('Your e-mail has been succesfully updated ☺', 'success');	
+			$this->flash('Your e-mail has been succesfully updated ☺', 'success');
 			return $this->redirect($response, 'home', 200);
 		}
 
 		else{
-			$this->flash('You can\'t access this page like that.', 'error');	
+			$this->flash('You can\'t access this page like that.', 'error');
 			return $this->redirect($response, 'home', 302);
 		}
 
@@ -690,6 +712,8 @@ class PagesController extends Controller {
 			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
 			$notificationManager = new NotificationManager($this->db);
 			$notifs = $notificationManager->get($user);
+
+			$i = 0;
 
 			foreach ($notifs as $notif) {
 				if ($notif->unread() == 1)
@@ -711,7 +735,7 @@ class PagesController extends Controller {
 		}
 
 		else {
-			$this->flash('You must be logged to access this page.', 'error');	
+			$this->flash('You must be logged to access this page.', 'error');
 			return $this->redirect($response, 'auth.login', 302);
 		}
 	}
@@ -729,7 +753,7 @@ class PagesController extends Controller {
 
 		if (!Validator::loginLengthCheck($request->getParam('login'))) {
 			$errors['login'] = 'Your username must contain between 2 and 32 characters.';
-		}	
+		}
 
 		if (!Validator::bioLengthCheck($request->getParam('bio'))) {
 			$errors['bio'] = 'Your description must contain at least 20 characters. Don\'t be shy!';
@@ -771,12 +795,12 @@ class PagesController extends Controller {
 		}
 
 		else {
-			$this->flash('One field has not been filled correctly ☹', 'error');	
+			$this->flash('One field has not been filled correctly ☹', 'error');
 			$this->flash($errors, 'errors');
 			return $this->redirect($response, 'user.edit', 302);
 		}
 
-		$this->flash('Your informations have been succesfully updated ☺', 'success');	
+		$this->flash('Your informations have been succesfully updated ☺', 'success');
 		return $this->redirect($response, 'user.edit', 200);
 	}
 
@@ -882,8 +906,8 @@ class PagesController extends Controller {
 				if (!mkdir($target_dir . '/old', 0777)) {
 					$errors['image'] = 'An error occured when trying to delete image.';
 					$this->flash($errors, 'errors');
-					return $this->redirect($response, 'user.edit', 302);				
-				}	
+					return $this->redirect($response, 'user.edit', 302);
+				}
 			}
 
 			if (!rename($target_dir . '/' . $basenameSrc, $target_dir . '/old/' . $basenameSrc)) {
@@ -914,7 +938,7 @@ class PagesController extends Controller {
 
 		}
 	}
-					
+
 	public function postLike($request, $response) {
 
 		if (Validator::isConnected() && !empty($request->getParam('likeButton'))) {
@@ -957,7 +981,7 @@ class PagesController extends Controller {
 	}
 
 	public function postUnlike($request, $response) {
-		
+
 		if (Validator::isConnected() && !empty($request->getParams())) {
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$id_unliker = unserialize($_SESSION['id']);
@@ -997,7 +1021,7 @@ class PagesController extends Controller {
 		}
 		else {
 			echo 'huh?';
-		}	
+		}
 	}
 
 	public function postUnblockUser($request, $response) {
@@ -1012,7 +1036,7 @@ class PagesController extends Controller {
 		}
 		else {
 			echo 'huh?';
-		}	
+		}
 	}
 
 	public function postUnblockUserFromSettings($request, $response) {
