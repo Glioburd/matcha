@@ -142,7 +142,7 @@ class NotificationManager
 
 		$DB_REQ->execute();
 
-		$data = $DB_REQ->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'App\models\Notification');
+		$data = $DB_REQ->fetchAll(PDO::FETCH_CLASS | PDO::FETCH_PROPS_LATE, 'App\Models\Notification');
 		$i = 0;
 
 		return $data;

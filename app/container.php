@@ -14,8 +14,7 @@ $container['debug'] = function () {
 // };
 
 $container['db'] = function ($container) {
-
-	$db = \App\models\DBFactory::getMysqlConnexionWithPDO();
+	$db = \App\Models\DBFactory::getMysqlConnexionWithPDO();
 	return $db;
 };
 

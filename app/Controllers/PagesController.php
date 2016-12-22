@@ -48,7 +48,7 @@ class PagesController extends Controller {
 			if ($user->mainpicture()){
 
 				if(!(isset($_GET['distance'])) || empty($_GET['distance']) || $_GET['distance'] < 0)
-					$distance = 200;
+					$distance = 1000;
 				else {
 					$distance = $_GET['distance'];
 				}
@@ -301,7 +301,7 @@ class PagesController extends Controller {
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$user = $UserManagerPDO->getUnique($id);
 			if (!($user->isComplete())) {
-				return $this->render($response, 'pages/signupinfos.twig', [
+				return $this->render($response, 'pages/signUpInfos.twig', [
 					'user' => $user
 					]);
 			}
