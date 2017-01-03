@@ -918,7 +918,7 @@ class UserManagerPDO extends UserManager
 
 	public function chatToDB(User $poster, User $receptor, $message) {
 		$DB_REQ = $this->DB_REQ->prepare('
-			INSERT INTO chat (id_poster, id_receptor, message, msg_date)
+			INSERT INTO chat (id_poster, id_receptor, message, date_message)
 			VALUES (:id_poster, :id_receptor, :message, NOW())
 			');
 		$DB_REQ->bindValue(':id_poster', $poster->id());

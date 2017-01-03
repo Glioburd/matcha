@@ -316,4 +316,45 @@ if (intval($result['count']) == 0) {
 	// 	;');
 	//
 	// $DB_REQ->execute();
+
+	$DB_REQ = $container->db->query("
+	SELECT COUNT(*) AS count
+	FROM information_schema.tables
+	WHERE table_name = 'chat'
+		AND TABLE_SCHEMA='matcha'
+	;");
+
+	$result = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+
+	if (intval($result['count']) == 0) {
+
+		$DB_REQ = $DB_PDO->prepare("
+			CREATE TABLE chat (
+				`id` int(11) NOT NULL AUTO_INCREMENT PRIMARY KEY,
+				`id_poster` int(11) NOT NULL,
+				`id_receptor` int(11) NOT NULL,
+				`message` text,
+				`date_message` datetime NOT NULL
+			);");
+
+		$DB_REQ->execute();
+
+		$DB_REQ = $DB_PDO->prepare("
+			ALTER TABLE `chat`
+			ADD FOREIGN KEY (id_poster)
+			REFERENCES users(id)
+			ON DELETE CASCADE
+			;");
+
+		$DB_REQ->execute();
+
+		$DB_REQ = $DB_PDO->prepare("
+			ALTER TABLE `chat`
+			ADD FOREIGN KEY (id_receptor)
+			REFERENCES users(id)
+			ON DELETE CASCADE
+			;");
+
+		$DB_REQ->execute();
+
 }

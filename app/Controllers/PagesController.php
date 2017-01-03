@@ -31,8 +31,8 @@ class PagesController extends Controller {
 		$_GET['ageMin'] = '';
 		$_GET['ageMax'] = '';
 		$_GET['distance'] = '';
-		$_GET['minPopularity'] = '';
-		$_GET['minCommonHobbies'] = '';
+		$_GET['minPopularity'] = $minPopularity = '';
+		$_GET['minCommonHobbies'] = $minCommonHobbies = '';
 
 
 		if (Validator::isConnected()) {
