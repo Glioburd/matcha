@@ -90,4 +90,6 @@ $app->get('/chat/{interlocutor}', 'App\Controllers\ChatController:getChat')->set
 
 $app->post('/chatmsg', 'App\Controllers\ChatController:postChatmsg')->setName('chatmsg');
 
+$app->post('/getchatmsg', 'App\Controllers\ChatController:postGetChatMsg')->setName('postGetChatMsg');
+
 $app->run();

@@ -927,6 +927,21 @@ class UserManagerPDO extends UserManager
 		$DB_REQ->execute();
 	}
 
+	public function getChatMsg(User $user1, User $user2) {
+		$DB_REQ = $this->DB_REQ->prepare('
+			SELECT *
+			FROM chat
+			WHERE (id_poster = :user1 AND id_receptor = :user2)
+			OR (id_poster = :user2 AND id_receptor = :user1)
+		');
+		$DB_REQ->bindValue(':user1', $user1->id());
+		$DB_REQ->bindValue(':user2', $user2->id());
+		$DB_REQ->execute();
+		$data = $DB_REQ->fetchAll(PDO::FETCH_ASSOC);
+
+		return $data;
+	}
+
 /*
 ** DEBUG
 */

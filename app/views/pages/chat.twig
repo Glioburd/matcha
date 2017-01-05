@@ -10,8 +10,9 @@
 		<div style="clear:both"></div>
 	</div>
 
-	<div id="chatbox"></div>
+	<div id="chatbox">
 
+	</div>
 	{# <form action="#" action="" id="usermsgform"> #}
 	{# <form action="{{ path_for("chatmsg")}}" method="post" id="usermsgform"> #}
 		<input name="usermsg" type="text" id="text" size="63" />
@@ -30,7 +31,7 @@ $(window).keydown(function (event) {
 	  $('#text').focus();
 	}
 	if (event.which === 13) {
-		console.log('ENTER');
+		// console.log('ENTER');
 		send();
 	}
 });
@@ -56,23 +57,45 @@ function send() {
 	.fail(function(xhr, status, error) {
 	});
 	$('#text').val('');
-}
-
-$("document").ready(function(){
-
+	$('#chatbox').empty();
 	showChat();
 
+}
 
 
-	function showChat() {
-		// $('#conversation').load('ac.htm');
-		// $("#conversation").load(location.href + " #conversation");
-		// $('#message').val('');
-		// $('#message').focus();
-		// console.log('Success');
-	}
-});
-// 	setInterval(showChat, 4000);
+// $("document").ready(function(){
+
+function showChat() {
+
+$("#html, body").stop().animate({
+     scrollTop: $("#chatbox").offset().top
+}, 2000);
+
+	var poster = '{{ user.login }}';
+	var receptor = "{{ interlocutor.login }}";
+	var req = $.post('{{ path_for("postGetChatMsg") }}', {
+		'poster': poster,
+		'receptor': receptor
+	})
+	.done(function(data) {
+		var i = 0;
+
+		data = jQuery.parseJSON(data);
+		console.log(data);
+
+		while(data[i]){
+			$('#chatbox').append('<div class="message">' + '<p><strong>' + data[i].login_poster + '</strong> says: ' + data[i].message + '</p>' + '</div>');
+			i++;
+		}
+	})
+	.fail(function(xhr, status, error){
+	});
+}
+
+showChat();
+
+// });
+ 	// setInterval(function(){showChat()}, 2000);
 
 </script>
 

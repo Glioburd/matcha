@@ -39,7 +39,6 @@ class ChatController extends Controller {
 			$notificationManager = new NotificationManager($this->db);
 			$notifs = $notificationManager->get($user);
 
-
 			$i = 0;
 			foreach ($notifs as $notif) {
 				$notif->setPictureSender('../' . $notif->pictureSender());
@@ -48,7 +47,7 @@ class ChatController extends Controller {
 			}
 			$nbUnread = $i;
 
-			if ($canBlock && $amINotBlocked) {
+			if ($canBlock && $amINotBlocked && $mutualFriend) {
 				$this->render($response, 'pages/chat.twig',[
 					'user' => $user,
 					'interlocutor' => $interlocutor,
@@ -102,5 +101,37 @@ class ChatController extends Controller {
 		}
 
 		return (true);
+	}
+
+	public function postGetChatMsg() {
+		if (Validator::isConnected()) {
+
+			$UserManagerPDO = new UserManagerPDO($this->db);
+
+			$poster = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
+
+			$receptor = $UserManagerPDO->getIdfromLogin($_POST['receptor']);
+			$receptor = $UserManagerPDO->getUnique($receptor);
+
+			$chatMsgs = $UserManagerPDO->getChatMsg($poster, $receptor);
+			if ($chatMsgs) {
+
+				// Add login of users in the datas returned
+				foreach ($chatMsgs as $key => $value) {
+
+					$login_poster = array('login_poster' => $UserManagerPDO->getLoginFromId($chatMsgs[$key]['id_poster']));
+					$login_receptor = array('login_receptor' => $UserManagerPDO->getLoginFromId($chatMsgs[$key]['id_poster']));
+					$logins = $login_poster + $login_receptor;
+
+					$chatMsgs[$key] = array_merge($value, $logins);
+
+				}
+
+				echo(json_encode($chatMsgs));
+				return true;
+			}
+			return false;
+		}
+		return false;
 	}
 }
