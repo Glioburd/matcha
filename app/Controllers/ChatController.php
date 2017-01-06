@@ -113,7 +113,15 @@ class ChatController extends Controller {
 			$receptor = $UserManagerPDO->getIdfromLogin($_POST['receptor']);
 			$receptor = $UserManagerPDO->getUnique($receptor);
 
-			$chatMsgs = $UserManagerPDO->getChatMsg($poster, $receptor);
+			if (!empty($_POST['lastID']) && isset($_POST['lastID'])) {
+				$lastID = $_POST['lastID'];			
+			}
+
+			else {
+				$lastID = 0;
+			}
+
+			$chatMsgs = $UserManagerPDO->getChatMsg($poster, $receptor, $lastID);
 			if ($chatMsgs) {
 
 				// Add login of users in the datas returned

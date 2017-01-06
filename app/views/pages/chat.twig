@@ -5,7 +5,7 @@
 
 <div id="wrapper">
 	<div id="menu">
-		<p class="welcome">Conversation with {{interlocutor.login}} <b></b></p>
+		<p class="welcome">Conversation with <strong>{{interlocutor.login}}</strong>.<b></b></p>
 
 		<div style="clear:both"></div>
 	</div>
@@ -31,7 +31,6 @@ $(window).keydown(function (event) {
 	  $('#text').focus();
 	}
 	if (event.which === 13) {
-		// console.log('ENTER');
 		send();
 	}
 });
@@ -41,62 +40,93 @@ $('#submitmsg').click(function(event) {
 	send();
 });
 
-function send() {
-	var poster = '{{ user.login }}';
-	var receptor = "{{ interlocutor.login }}";
-	var message = $('#text').val();
+function escapeHtml(text) {
+	var map = {
+		'&': '&amp;',
+		'<': '&lt;',
+		'>': '&gt;',
+		'"': '&quot;',
+		"'": '&#039;'
+	};
 
-	var req = $.post('{{ path_for("chatmsg")}}', {
-		'poster': poster,
-		'receptor': receptor,
-		'message': message
-		})
-	.done(function(data) {
-			$( ".result" ).html( 'SUCESS' );
-		})
-	.fail(function(xhr, status, error) {
-	});
-	$('#text').val('');
-	$('#chatbox').empty();
-	showChat();
-
+	return text.replace(/[&<>"']/g, function(m) { return map[m]; });
 }
 
+function scrollDiv(){
+	chatbox = document.getElementById("chatbox");
+	chatbox.scrollTop += 50000;
+	// chatbox.scrollTop = chatbox.scrollHeight - chatbox.clientHeight;
+	// var objDiv = document.getElementById(".bottom");
+	// objDiv.scrollTop = objDiv.scrollHeight;
+}
 
-// $("document").ready(function(){
+function send() {
+	var poster = escapeHtml('{{ user.login }}');
+	var receptor = escapeHtml("{{ interlocutor.login }}");
+	var message =  escapeHtml($('#text').val());
+
+	if (message) {
+
+		var req = $.post('{{ path_for("chatmsg")}}', {
+			'poster': poster,
+			'receptor': receptor,
+			'message': message
+			})
+		.done(function(data) {
+			})
+		.fail(function(xhr, status, error) {
+		});
+		$('#text').val('');
+		// $('#chatbox').empty();
+		scrollDiv();
+		showChat();
+		// scrollDiv();
+	}
+}
 
 function showChat() {
 
-$("#html, body").stop().animate({
-     scrollTop: $("#chatbox").offset().top
-}, 2000);
+	scroll_t = $('#chatbox').scrollTop();
 
-	var poster = '{{ user.login }}';
-	var receptor = "{{ interlocutor.login }}";
+	$('#chatbox').scroll(function() {
+		if ($('#chatbox').html().length) {
+			scroll_t = $('#chatbox').scrollTop();
+		}
+	});
+
+	$('#chatbox').empty();
+	var lastID =  $('#messages .message:first').attr('id');
+	var poster = escapeHtml('{{ user.login }}');
+	var receptor = escapeHtml("{{ interlocutor.login }}");
 	var req = $.post('{{ path_for("postGetChatMsg") }}', {
 		'poster': poster,
-		'receptor': receptor
+		'receptor': receptor,
+		'lastID': lastID
 	})
 	.done(function(data) {
+
+		var size = Object.keys(data).length;
+		// console.log(data);
 		var i = 0;
 
 		data = jQuery.parseJSON(data);
-		console.log(data);
 
 		while(data[i]){
-			$('#chatbox').append('<div class="message">' + '<p><strong>' + data[i].login_poster + '</strong> says: ' + data[i].message + '</p>' + '</div>');
+			$('#chatbox').append('<div class="message" id="'+data[i].id+'">' + '<p><strong>' + data[i].login_poster + '</strong> says: ' + data[i].message + '</p>' + '</div>');
 			i++;
 		}
+  $('#chatbox').scrollTop(scroll_t);
+
 	})
 	.fail(function(xhr, status, error){
 	});
 }
 
 showChat();
-
-// });
- 	// setInterval(function(){showChat()}, 2000);
+setInterval(function(){showChat()}, 5000);
 
 </script>
+
+<div class="bottom"></div>
 
 {% endblock %}
