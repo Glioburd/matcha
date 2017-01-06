@@ -27,12 +27,7 @@ class PagesController extends Controller {
 		$data = '';
 		$notifs = '';
 		$nbUnread = '';
-		$_GET['sortBy'] = '';
-		$_GET['ageMin'] = '';
-		$_GET['ageMax'] = '';
-		$_GET['distance'] = '';
-		$_GET['minPopularity'] = $minPopularity = '';
-		$_GET['minCommonHobbies'] = $minCommonHobbies = '';
+
 
 
 		if (Validator::isConnected()) {
@@ -103,7 +98,7 @@ class PagesController extends Controller {
 
 				}
 
-				if (!empty($_GET['sortBy'])) {
+				if (!empty($_GET['sortBy']) && isset($_GET['sortBy'])) {
 					switch ($_GET['sortBy']) {
 						case 'age':
 							$data = array_sort($data, 'to_user_age');
@@ -121,7 +116,8 @@ class PagesController extends Controller {
 					}
 				}
 
-				echo $i;
+				// echo $i;
+				debug($_GET);
 
 				$notificationManager = new NotificationManager($this->db);
 				$notifs = $notificationManager->get($user);

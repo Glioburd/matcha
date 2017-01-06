@@ -7,6 +7,10 @@
 	background-color: #f5f5f5;
 }*/
 
+legend {
+	color:red;
+}
+
 .button_surrogate span { 
 	margin:0;
 	display:block;
