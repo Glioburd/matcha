@@ -1,0 +1,38 @@
+{% extends "app.twig" %}
+
+{% block content %}
+	<h1>New password:</h1>
+	<div class="container">
+		<form action="{{ path_for('newpwd') }}" method="post">
+
+{###------------------------------------------------------------------------------------------------------------------###}
+{###----------------------------------------------PASSWORD FIELD------------------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
+
+			<div class="form-group{% if flash.errors.newPassword %} has-error {% endif %}">
+				<label for ="newPassword">New password:</label>
+				<input type="password" class="form-control" name="newPassword" id="newPassword" value="{{ old.password }}" required>
+				{% if flash.errors.newPassword %}
+					<span class="help-block">{{ flash.errors.newPassword }}</span>
+				{% endif %}
+			</div>
+
+{###------------------------------------------------------------------------------------------------------------------###}
+{###----------------------------------------------CONFIRM PASSWORD FIELD----------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
+
+			<div class="form-group{% if flash.errors.newPasswordConfirm  %} has-error {% endif %}">
+				<label for ="newPasswordConfirm">Confirm your new password:</label>
+				<input type="password" class="form-control" name="newPasswordConfirm" id="newPasswordConfirm" value="{{ old.passwordConfirm }}" required>
+				{% if flash.errors.newPasswordConfirm %}
+					<span class="help-block">{{ flash.errors.newPasswordConfirm }}</span>
+				{% endif %}
+			</div>
+
+			<div class="form-group">
+				<button type="submit" class="btn btn-primary" value="Submit">Submit</button>
+			</div>
+
+		</form>
+	</div>
+{% endblock %} 

@@ -1,0 +1,22 @@
+{% extends "app.twig" %}
+
+{% block content %}
+
+{###------------------------------------------------------------------------------------------------------------------###}
+{###----------------------------------------------FORGOT PASSWORD PANNEL ---------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
+	<h1>Lost password</h1>
+	<div class="container">
+		<form action="{{ path_for('forgotpwd') }}" method="post">
+			{# {{ csrf() }} #}
+			<div class="form-group{% if flash.errors.email %} has-error {% endif %}">
+				<label for ="email">Enter your e-mail:</label>
+				<input type="email" class="form-control" name="email" id="email" value="{{ old.email }}" required>
+				{% if flash.errors.email %}
+					<span class="help-block">{{ flash.errors.email }}</span>
+				{% endif %}
+			</div>
+			<input type="submit" class="btn btn-primary" value="Submit">
+		</form>
+	</div>
+{% endblock %} 

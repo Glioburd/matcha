@@ -40,8 +40,8 @@
 							</div>
 
 							<div class="{% if flash.errors.newPasswordConfirm %} has-error {% endif %}">
-								<label for ="NewPasswordConfirm">Confirm newpassword:</label><br>
-								<input type="password" class="form-control" name="NewPasswordConfirm" id="NewPasswordConfirm" value="{{ old.NewPasswordConfirm }}">
+								<label for ="newPasswordConfirm">Confirm newpassword:</label><br>
+								<input type="password" class="form-control" name="newPasswordConfirm" id="newPasswordConfirm" value="{{ old.newPasswordConfirm }}">
 								{% if flash.errors.newPasswordConfirm %}
 									<span class="help-block">{{ flash.errors.newPasswordConfirm }}</span>
 								{% endif %}

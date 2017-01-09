@@ -47,6 +47,15 @@ $app->post('/auth/signupinfos', 'App\Controllers\PagesController:postSignUpInfos
 $app->get('/auth/login', 'App\Controllers\PagesController:getLogIn')->setName('auth.login');
 $app->post('/auth/login', 'App\Controllers\PagesController:postLogIn');
 
+/* Forgot password */
+
+$app->get('/auth/forgotpwd', 'App\Controllers\PagesController:getForgotPwd')->setName('forgotpwd');
+$app->post('/auth/forgotpwd', 'App\Controllers\PagesController:postForgotPwd');
+
+/* New password */
+
+$app->get('/auth/newpwd', 'App\Controllers\PagesController:getNewPwd')->setName('newpwd');
+$app->post('/auth/newpwd', 'App\Controllers\PagesController:postNewPwd');
 
 /* Logout */
 $app->get('/logout', 'App\Controllers\PagesController:getLogOut')->setName('logout');

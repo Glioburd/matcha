@@ -13,6 +13,7 @@ use App\Models\NotificationManager;
 
 include __DIR__ . '../../../debug.php';
 include "sort_array.php";
+include "mails.php";
 
 /**
 *
@@ -165,7 +166,6 @@ class PagesController extends Controller {
 		}
 		else
 			return $this->redirect($response, 'auth.login', 200);
-
 	}
 
 	public function getContact($request, $response) {
@@ -196,7 +196,6 @@ class PagesController extends Controller {
 	}
 
 	public function postContact($request, $response){
-
 	}
 
 	public function getSignUp($request, $response) {
@@ -287,7 +286,6 @@ class PagesController extends Controller {
 			$this->flash('A mail has been sent to confirm your inscription.', 'info');
 			return $this->redirect($response, 'auth.login', 200);
 			// return $this->redirect($response, 'auth.signupinfos', 200);
-
 	}
 
 	public function getSignUpInfos($request, $response) {
@@ -392,11 +390,9 @@ class PagesController extends Controller {
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			Debug::debugUser($this->container, $user);
 			return $this->render($response, 'pages/login.twig');
-		}
-		else {
+		} else {
 			return $this->redirect($response, 'home', 200);
 		}
-
 	}
 
 	public function postLogIn($request, $response) {
@@ -441,6 +437,122 @@ class PagesController extends Controller {
 		}
 
 		return $this->redirect($response, 'home', 200);
+	}
+
+	public function getForgotPwd($request, $response) {
+		$user = '';
+
+		if (!Validator::isConnected()) {
+			$UserManagerPDO = new UserManagerPDO($this->db);
+			Debug::debugUser($this->container, $user);
+			return $this->render($response, 'pages/forgotpwd.twig');
+		} else {
+			return $this->redirect($response, 'home', 200);
+		}			
+	}
+
+	public function postForgotPwd($request, $response) {
+		if (!Validator::isConnected()) {
+
+			$errors = [];
+			$email = $request->getParam('email');
+
+			if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+				$errors['email'] = 'E-mail adress is invalid.';
+			}
+
+			else {
+				$UserManagerPDO = new UserManagerPDO($this->db);
+				$user = $UserManagerPDO->getUserFromEmail($email);
+
+				if (!empty($user)) {
+					$user->setHash(md5(uniqid(rand(), true)));
+					$UserManagerPDO->save($user);
+					confirmResetPwd($email, $user->hash());
+				}
+			}
+		}
+
+		if (!empty($errors)) {
+			$this->flash('A field hasn\'t been filled correctly', 'error');
+			return $this->redirect($response, 'forgotpwd', 302);
+		}
+		else {
+			$this->flash('A mail has been sent to confirm the password change request.', 'info');
+			return $this->redirect($response, 'auth.login', 200);
+		}
+
+	}
+
+	public function getNewPwd($request, $response) {
+		$user = '';
+
+		if (!Validator::isConnected() && $_GET['email'] && !empty($_GET['email']) && isset($_GET['hash']) && !empty($_GET['hash'])) {
+			$UserManagerPDO = new UserManagerPDO($this->db);
+
+			$email = $_GET['email'];
+			$_SESSION['email'] = $email;
+			$hash = $_GET['hash'];
+			$_SESSION['hash'] = $hash;
+			$user = $UserManagerPDO->getUserFromEmail($email);
+
+			if ($user && $user->hash() === $_GET['hash']){
+				return $this->render($response, 'pages/newpwd.twig');
+			}
+
+			else {
+				$this->flash('Invalid link.', 'error');
+				return $this->redirect($response, 'auth.login', 302);
+			}
+		} 
+
+		else {
+			return $this->redirect($response, 'home', 200);
+		}	
+	}
+
+	public function postNewPwd($request, $response) {
+		if (!Validator::isConnected()) {
+
+			$UserManagerPDO = new UserManagerPDO($this->db);
+			$email = $_SESSION['email'];
+			$hash = $_SESSION['hash'];
+			$user = $UserManagerPDO->getUserFromEmail($email);
+			$newPassword = $request->getParam('newPassword');
+			$newPasswordConfirm = $request->getParam('newPasswordConfirm');
+			$errors = [];
+
+			if ($newPassword != $newPasswordConfirm) {
+				$errors['newPasswordConfirm'] = 'Your password doesn\'t match with the confirmation.';
+			}
+
+			switch (Validator::passwordCheck($newPassword)) {
+				case 1:
+					$errors['newPassword'] = 'Password too short : minimum 6 characters.';
+					break;
+				case 2:
+					$errors['newPassword'] = 'Password must contain at least 1 number.';
+					break;
+				case 3:
+					$errors['newPassword'] = 'Password must contain at least 1 letter.';
+					break;
+			}
+
+			if (!empty($errors)) {
+
+				$this->flash('A field hasn\'t been filled correctly.', 'error');
+				$this->flash($errors, 'errors');
+				return $response->withRedirect('newpwd' . '?' . 'email=' . $email . '&hash=' . $hash);
+			}
+
+			else {
+				$user->setPassword(password_hash($newPassword, PASSWORD_DEFAULT));
+				$UserManagerPDO->save($user);
+
+				$this->flash('Your password has been changed ☺.', 'success');
+				return $this->redirect($response, 'auth.login', 200);
+			}
+		}
 	}
 
 	public function getLogOut($request, $response) {
@@ -614,7 +726,7 @@ class PagesController extends Controller {
 			if (!empty($oldPassword) || !empty($newPassword) || !empty($newPasswordConfirm)) {
 
 				if (!password_verify($oldPassword, $user->password())) {
-					$errors['oldPassword'] = 'The new password doesn\'t match with your old password';
+					$errors['oldPassword'] = 'Wrong old password.';
 				}
 
 				else {
@@ -631,7 +743,7 @@ class PagesController extends Controller {
 					}
 				}
 
-				if (Validator::passwordConfirm($newPassword, $newPasswordConfirm)) {
+				if (!Validator::passwordConfirm($newPassword, $newPasswordConfirm)) {
 					$errors['newPasswordConfirm'] = 'Invalid password confirmation';
 				}
 			}
@@ -648,29 +760,30 @@ class PagesController extends Controller {
 
 				$user->setHash(md5(uniqid(rand(), true)));
 				$UserManagerPDO->save($user);
-				$success = 'An email has been sent to confirm the new e-mail.';
+				$success = 'An e-mail has been sent to confirm the new e-mail.';
 				$type = 'info';
 				mailResetPwd($newMail, $user->hash());
 
 			}
-
-			else {
-				$success = 'Your settings have been succesfully updated!';
-				$type = 'success';
-			}
 		}
 
 		if (!empty($errors)) {
-			$this->flash('Un champ n\'a pas été rempli correctement', 'error');
+			$this->flash('A field hasn\'t been filled correctly.', 'error');
 			$this->flash($errors, 'errors');
 			return $this->redirect($response, 'user.settings', 302);
 		}
 
-
+		if (!empty($newPassword) && empty($errors)) {
 			$user->setPassword(password_hash($newPassword, PASSWORD_DEFAULT));
-			$UserManagerPDO->save($user);
-			$this->flash($success, $type);
-			return $this->redirect($response, 'user.settings', 200);
+		}
+
+		$user->setEmail($newMail);
+		$UserManagerPDO->save($user);
+
+		$success = 'Your settings have been updated ☺';
+		$type = 'success';	
+		$this->flash($success, $type);
+		return $this->redirect($response, 'user.settings', 200);
 	}
 
 	public function getChangeMail($request, $response, $args) {
@@ -696,7 +809,6 @@ class PagesController extends Controller {
 			$this->flash('You can\'t access this page like that.', 'error');
 			return $this->redirect($response, 'home', 302);
 		}
-
 	}
 
 	public function getEdit($request, $response) {
@@ -1006,18 +1118,18 @@ class PagesController extends Controller {
 
 	public function postBlockUser($request, $response) {
 
-	if (Validator::isConnected() && !empty($request->getParam('blockButton'))) {
-			$UserManagerPDO = new UserManagerPDO($this->db);
-			$id_blocker = unserialize($_SESSION['id']);
-			$id_blocked = $request->getParam('blockButton');
-			$UserManagerPDO->block($id_blocker, $id_blocked);
-			$user = $UserManagerPDO->getLoginFromId($id_blocked);
+		if (Validator::isConnected() && !empty($request->getParam('blockButton'))) {
+				$UserManagerPDO = new UserManagerPDO($this->db);
+				$id_blocker = unserialize($_SESSION['id']);
+				$id_blocked = $request->getParam('blockButton');
+				$UserManagerPDO->block($id_blocker, $id_blocked);
+				$user = $UserManagerPDO->getLoginFromId($id_blocked);
 
-			return $response->withRedirect($this->router->pathFor('user.profile', ['userprofile' => $user]));
-		}
-		else {
-			echo 'huh?';
-		}
+				return $response->withRedirect($this->router->pathFor('user.profile', ['userprofile' => $user]));
+			}
+			else {
+				echo 'huh?';
+			}
 	}
 
 	public function postUnblockUser($request, $response) {

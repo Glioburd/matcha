@@ -389,6 +389,19 @@ class UserManagerPDO extends UserManager
 		return NULL;
 	}
 	
+	public function getUserFromEmail($email) {
+		if ($email) {
+			$DB_REQ = $this->DB_REQ->prepare('
+				SELECT id 
+				FROM users
+				WHERE email = :email');
+			$DB_REQ->bindValue(':email', $email);
+			$DB_REQ->execute();
+			$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+			return (self::getUnique($data['id']));
+		}
+		return NULL;
+	}
 
 	/**
 	 * @see UserManager::update()
