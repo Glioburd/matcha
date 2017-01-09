@@ -18,7 +18,6 @@
 						<h2 class="page-header">You may be interested by:</h2>
 					</div>
 					{% for match in data %}
-
 						<div class="col-lg-2 col-md-4 col-xs-6 thumbnail" >
 							<fieldset>
 								<a href="{{ path_for('user.profile', { 'userprofile': match.to_user }) }}">
@@ -37,7 +36,8 @@
 									Distance: {{match.distance_in_km|number_format(2)}} km<br>
 									Gender: {{match.gender|capitalize}}<br>
 									Sexuality: {{sexuality}}<br>
-									Popularity: {{match.popularity}}
+									Popularity: {{match.popularity}}<br>
+									Hobbies in common: {{match.hobbiesInCommon}}
 									<hr>
 								{# </legend> #}
 								
@@ -144,7 +144,6 @@
 		</form>
 		
 	{% endif %}
-
 	
 <script type="text/javascript">
 

@@ -897,12 +897,16 @@ class UserManagerPDO extends UserManager
 			)
 			AS inner_table
 			WHERE distance_in_km < :distance
-			ORDER BY popularity DESC, distance_in_km, to_user
+			-- ORDER BY popularity DESC, distance_in_km
+			ORDER BY distance_in_km, popularity DESC
 			');
 			$DB_REQ->bindValue(':from_user', $user->login());
 			$DB_REQ->bindValue(':distance', $distance, PDO::PARAM_INT);
 			$DB_REQ->execute();
 			$data = $DB_REQ->fetchAll(PDO::FETCH_ASSOC);
+
+			// debug($data);
+			// die();
 
 			return $data;
 

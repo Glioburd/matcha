@@ -88,9 +88,7 @@ class PagesController extends Controller {
 							if ($hobbiesInCommon < $minCommonHobbies) {
 								unset($data[$key]);
 							}
-							echo ('<pre>Avec ' . $user_to_compare->login() . ' : ' . $hobbiesInCommon . '<br></pre>');
 							$i++;
-
 					}
 
 					else {
@@ -116,9 +114,6 @@ class PagesController extends Controller {
 							break;
 					}
 				}
-
-				// echo $i;
-				debug($_GET);
 
 				$notificationManager = new NotificationManager($this->db);
 				$notifs = $notificationManager->get($user);
