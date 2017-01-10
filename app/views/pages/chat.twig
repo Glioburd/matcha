@@ -142,7 +142,6 @@ function showChat() {
 		data = jQuery.parseJSON(data);
 		console.log(data);
 		while(data[i]){
-			// $('#chatbox').append('<div class="message" id="'+data[i].id+'">' + '<p><strong>' + data[i].login_poster + '</strong> says: ' + data[i].message + '</p>' + '</div>');
 			$('#chatbox').append('<div class="talk-bubble tri-right left-in" id="'+data[i].id+'"><div class="talktext">' + '<p><strong>' + data[i].login_poster + '</strong> says: ' + data[i].message + '</p></div>' + '</div><br>');
 			i++;
 		}

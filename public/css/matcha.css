@@ -108,6 +108,7 @@ a {
   
 .msgln { margin:0 0 2px 0; }
 
+
 /* CSS talk bubble */
 .talk-bubble {
 	margin: 40px;
@@ -176,7 +177,7 @@ a {
   top: 38px;
 	bottom: auto;
 	border: 12px solid;
-	border-color: lightyellow lightyellow transparent transparent;
+	border-color: transparent blue transparent transparent;
 }
 
 /*Right triangle, placed bottom left side slightly in*/

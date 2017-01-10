@@ -14,7 +14,6 @@ use App\Models\NotificationManager;
 
 include __DIR__ . '../../../debug.php';
 
-
 /**
 * 
 */
@@ -128,7 +127,7 @@ class ChatController extends Controller {
 				foreach ($chatMsgs as $key => $value) {
 
 					$login_poster = array('login_poster' => $UserManagerPDO->getLoginFromId($chatMsgs[$key]['id_poster']));
-					$login_receptor = array('login_receptor' => $UserManagerPDO->getLoginFromId($chatMsgs[$key]['id_poster']));
+					$login_receptor = array('login_receptor' => $UserManagerPDO->getLoginFromId($chatMsgs[$key]['id_receptor']));
 					$logins = $login_poster + $login_receptor;
 
 					$chatMsgs[$key] = array_merge($value, $logins);
