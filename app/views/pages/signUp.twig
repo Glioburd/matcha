@@ -11,7 +11,7 @@
 {###-------------------------------------------LOGIN FIELD------------------------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
 
-			<div class="form-group{% if flash.errors.name %} has-error {% endif %}" >
+			<div class="form-group{% if flash.errors.login %} has-error {% endif %}" >
 				<label for ="name">Your login</label>
 				<input type="text" class="form-control" name="login" id="login" value="{{ old.login }}" required>
 				{% if flash.errors.login %}

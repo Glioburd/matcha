@@ -100,16 +100,13 @@ class PagesController extends Controller {
 				if (!empty($_GET['sortBy']) && isset($_GET['sortBy'])) {
 					switch ($_GET['sortBy']) {
 						case 'age':
-							$data = array_sort($data, 'to_user_age');
-							break;
-						case 'distance':
-							$data = array_sort($data, 'distance_in_km');
+							$data = array_orderby($data, 'to_user_age', SORT_ASC, 'distance_in_km', SORT_ASC);
 							break;
 						case 'popularity':
-							$data = array_sort($data, 'popularity', SORT_DESC);
+							$data = array_orderby($data, 'popularity', SORT_DESC, 'distance_in_km', SORT_ASC);
 							break;
 						case 'hobbiesInCommon':
-							$data = array_sort($data, 'hobbiesInCommon', SORT_DESC);
+							$data = array_orderby($data, 'hobbiesInCommon', SORT_DESC, 'distance_in_km', SORT_ASC);
 						default:
 							break;
 					}
@@ -208,6 +205,10 @@ class PagesController extends Controller {
 
 		if (!Validator::loginLengthCheck($request->getParam('login'))) {
 			$errors['login'] = 'Your username must contain between 2 and 32 characters.';
+		}
+
+		if (!Validator::loginCharsCheck($request->getParam('login'))) {
+			$errors['login'] = 'Your username must contain only letters, numbers, underscores and hyphens.';
 		}
 
 		if (!Validator::nameCheck($request->getParam('firstname'))) {

@@ -11,7 +11,11 @@
 	</div>
 
 	<div id="chatbox">
-
+{# 		<div class="talk-bubble tri-right left-in">
+			<div class="talktext">
+				<p>This talk-bubble uses .left-in class to show a triangle on the left slightly indented. Still a blocky square.</p>
+			</div>
+		</div> #}
 	</div>
 	{# <form action="#" action="" id="usermsgform"> #}
 	{# <form action="{{ path_for("chatmsg")}}" method="post" id="usermsgform"> #}
@@ -39,6 +43,34 @@ $('#submitmsg').click(function(event) {
 	event.preventDefault();
 	send();
 });
+
+// function timeSince(date) {
+
+// 	var seconds = Math.floor((new Date() - date) / 1000);
+
+// 	var interval = Math.floor(seconds / 31536000);
+
+// 	if (interval > 1) {
+// 		return interval + " years";
+// 	}
+// 	interval = Math.floor(seconds / 2592000);
+// 	if (interval > 1) {
+// 		return interval + " months";
+// 	}
+// 	interval = Math.floor(seconds / 86400);
+// 	if (interval > 1) {
+// 		return interval + " days";
+// 	}
+// 	interval = Math.floor(seconds / 3600);
+// 	if (interval > 1) {
+// 		return interval + " hours";
+// 	}
+// 	interval = Math.floor(seconds / 60);
+// 	if (interval > 1) {
+// 		return interval + " minutes";
+// 	}
+// 	return Math.floor(seconds) + " seconds";
+// }
 
 function escapeHtml(text) {
 	var map = {
@@ -106,13 +138,12 @@ function showChat() {
 	.done(function(data) {
 
 		var size = Object.keys(data).length;
-		// console.log(data);
 		var i = 0;
-
 		data = jQuery.parseJSON(data);
-
+		console.log(data);
 		while(data[i]){
-			$('#chatbox').append('<div class="message" id="'+data[i].id+'">' + '<p><strong>' + data[i].login_poster + '</strong> says: ' + data[i].message + '</p>' + '</div>');
+			// $('#chatbox').append('<div class="message" id="'+data[i].id+'">' + '<p><strong>' + data[i].login_poster + '</strong> says: ' + data[i].message + '</p>' + '</div>');
+			$('#chatbox').append('<div class="talk-bubble tri-right left-in" id="'+data[i].id+'"><div class="talktext">' + '<p><strong>' + data[i].login_poster + '</strong> says: ' + data[i].message + '</p></div>' + '</div><br>');
 			i++;
 		}
   $('#chatbox').scrollTop(scroll_t);
@@ -123,7 +154,7 @@ function showChat() {
 }
 
 showChat();
-setInterval(function(){showChat()}, 5000);
+// setInterval(function(){showChat()}, 5000);
 
 </script>
 

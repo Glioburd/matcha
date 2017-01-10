@@ -26,6 +26,14 @@ class Validator
 		return TRUE;
 	}
 
+	public static function loginCharsCheck($login) {
+
+		if (!preg_match("/^[a-z0-9_-]*$/",$login)) {
+			return FALSE;
+		}
+		return TRUE;
+	}
+
 	public function nameCheck($name) {
 
 		if (!preg_match("/^[a-zA-Z]*$/",$name)) {

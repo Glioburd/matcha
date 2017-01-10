@@ -18,12 +18,12 @@
 						<h2 class="page-header">You may be interested by:</h2>
 					</div>
 					{% for match in data %}
-						<div class="col-lg-2 col-md-4 col-xs-6 thumbnail" >
+						<div class="col-lg-2 col-md-4 col-xs-6 thumbnail"style="background-color:powderblue;" >
 							<fieldset>
 								<a href="{{ path_for('user.profile', { 'userprofile': match.to_user }) }}">
 									<img src="{{match.to_user_pic}}" style="min-height:150px;height:150px;" class="img-circle">
 								</a>
-								{# <legend style="min-height:100px;height:200px;"> #}
+
 									{% if match.to_user_sexuality == 'bi' %}
 										{% set sexuality = 'bisexual' %}
 									{% elseif match.to_user_sexuality == 'homo' %}
@@ -31,18 +31,38 @@
 									{% elseif match.to_user_sexuality == 'hetero' %}
 										{% set sexuality = 'heterosexual' %}
 									{% endif %}
-									<h3 align="center">{{match.to_user}}</h3 align="center"><br>
-									Age: {{match.to_user_age}}<br>
-									Distance: {{match.distance_in_km}} km<br>
-									Gender: {{match.gender|capitalize}}<br>
-									Sexuality: {{sexuality}}<br>
-									Popularity: {{match.popularity}}<br>
-									Hobbies in common: {{match.hobbiesInCommon}}
-									<hr>
-								{# </legend> #}
-								
 
+									<p><h3 align="center">{{match.to_user}}</h3 align="center"></p>
 
+									<p style="text-align:left;">
+										<strong>Age:</strong>
+										<span style="float:right;">{{match.to_user_age}}</span>
+									</p>
+
+									<p style="text-align:left;">
+										<strong>Distance:</strong>
+										<span style="float:right;">{{match.distance_in_km}} km</span>
+									<p>
+
+									<p style="text-align:left;">	
+										<strong>Gender:</strong>
+										<span style="float:right;">{{match.gender|capitalize}}</span>
+									<p>
+
+									<p style="text-align:left;">
+										<strong>Sexuality:</strong>
+										<span style="float:right;">{{sexuality}}</span>
+									</p>
+
+									<p style="text-align:left;">
+										<strong>Popularity:</strong>
+										<span style="float:right;">{{match.popularity}}</span>
+									</p>
+
+									<p style="text-align:left;">
+										<strong>Hobbies in common:</strong>
+										<span style="float:right;">{{match.hobbiesInCommon}}</span>
+									</p>
 							</fieldset>
 						</div>
 
@@ -74,7 +94,10 @@
 					{% endif %}
 					
 					<select name="sortBy" class="selectpicker" onchange="this.form.submit()">
-						<option {% if sortBy == "" %} selected {% endif %} value="">Default</option>
+						{% if not sortBy %}
+							{% set sortBy = "distance" %}
+						{% endif %}
+						{# <option {% if sortBy == "" %} selected {% endif %} value="">Default</option> #}
 						<option {% if sortBy == "age" %} selected {% endif %} value="age">Age</option>
 						<option {% if sortBy == "distance" %} selected {% endif %} value="distance">Distance</option>
 						<option {% if sortBy == "popularity" %} selected {% endif %} value="popularity">Popularity</option>

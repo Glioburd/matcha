@@ -895,7 +895,6 @@ class UserManagerPDO extends UserManager
 					blocks.id_blocked = a.id AND blocks.id_blocker = b.id
 				)
 				ORDER BY distance_in_km, cast(popularity AS UNSIGNED) DESC
-				-- ORDER BY distance_in_km
 			)
 			AS inner_table
 			WHERE distance_in_km < :distance
@@ -950,7 +949,6 @@ class UserManagerPDO extends UserManager
 			FROM chat
 			WHERE (id_poster = :user1 AND id_receptor = :user2)
 			OR (id_poster = :user2 AND id_receptor = :user1)
-			AND id > :id
 		');
 		$DB_REQ->bindValue(':user1', $user1->id());
 		$DB_REQ->bindValue(':user2', $user2->id());
