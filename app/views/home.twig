@@ -33,7 +33,7 @@
 									{% endif %}
 									<h3 align="center">{{match.to_user}}</h3 align="center"><br>
 									Age: {{match.to_user_age}}<br>
-									Distance: {{match.distance_in_km|number_format(2)}} km<br>
+									Distance: {{match.distance_in_km}} km<br>
 									Gender: {{match.gender|capitalize}}<br>
 									Sexuality: {{sexuality}}<br>
 									Popularity: {{match.popularity}}<br>
@@ -51,10 +51,6 @@
 				</div>
 
 				Sort by :
-
-				{% if not sortBy %}
-					{% set sortBy = 'popularity' %}
-				{% endif %}
 
 				<form method="get" role="form" name="">
 
@@ -78,6 +74,7 @@
 					{% endif %}
 					
 					<select name="sortBy" class="selectpicker" onchange="this.form.submit()">
+						<option {% if sortBy == "" %} selected {% endif %} value="">Default</option>
 						<option {% if sortBy == "age" %} selected {% endif %} value="age">Age</option>
 						<option {% if sortBy == "distance" %} selected {% endif %} value="distance">Distance</option>
 						<option {% if sortBy == "popularity" %} selected {% endif %} value="popularity">Popularity</option>
@@ -148,7 +145,7 @@
 <script type="text/javascript">
 
 $( "#clearFields" ).click(function() {
-	console.log('Button pushed');
+	// console.log('Button pushed');
 	$('input').attr('value', '');
 });
 

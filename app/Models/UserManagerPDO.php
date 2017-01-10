@@ -860,12 +860,12 @@ class UserManagerPDO extends UserManager
 			SELECT * FROM
 			(
 			SELECT a.login AS from_user, b.login AS to_user, b.id AS to_user_id, b.gender, pictures.src AS to_user_pic, b.sexuality AS to_user_sexuality, b.birthDate as to_user_age, popularity.score AS popularity,
-				111.1111 *
+				ROUND(111.1111 *
 					DEGREES(ACOS(COS(RADIANS(a.Latitude))
 					* COS(RADIANS(b.Latitude))
 					* COS(RADIANS(a.Longitude - b.Longitude))
 					+ SIN(RADIANS(a.Latitude))
-					* SIN(RADIANS(b.Latitude)))) AS distance_in_km
+					* SIN(RADIANS(b.Latitude)))), 2) AS distance_in_km
 			FROM users AS a
 			JOIN users AS b ON a.id <> b.id
 
@@ -894,11 +894,11 @@ class UserManagerPDO extends UserManager
 					OR
 					blocks.id_blocked = a.id AND blocks.id_blocker = b.id
 				)
+				ORDER BY distance_in_km, cast(popularity AS UNSIGNED) DESC
+				-- ORDER BY distance_in_km
 			)
 			AS inner_table
 			WHERE distance_in_km < :distance
-			-- ORDER BY popularity DESC, distance_in_km
-			ORDER BY distance_in_km, popularity DESC
 			');
 			$DB_REQ->bindValue(':from_user', $user->login());
 			$DB_REQ->bindValue(':distance', $distance, PDO::PARAM_INT);
