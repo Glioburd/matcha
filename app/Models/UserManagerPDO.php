@@ -332,21 +332,6 @@ class UserManagerPDO extends UserManager
 			$DB_REQ->closeCursor();
 
 			$DB_REQ = $this->DB_REQ->prepare('
-				UPDATE users
-				SET updated_at = NOW()
-				WHERE id = :id
-			');
-		
-			$DB_REQ->bindValue(':id', $user->id(), PDO::PARAM_INT);
-		
-			$DB_REQ->execute();
-
-			$date = new Datetime('now');
-			$user->setDateUpdate($date);
-
-			$DB_REQ->closeCursor();
-
-			$DB_REQ = $this->DB_REQ->prepare('
 
 				SELECT score FROM popularity
 				WHERE id_owner = :id_owner
@@ -956,6 +941,40 @@ class UserManagerPDO extends UserManager
 		$data = $DB_REQ->fetchAll(PDO::FETCH_ASSOC);
 
 		return $data;
+	}
+
+	public function updateLastSeen(User $user) {
+		$DB_REQ = $this->DB_REQ->prepare('
+			UPDATE users
+			SET updated_at = NOW()
+			WHERE id = :id
+		');
+	
+		$DB_REQ->bindValue(':id', $user->id(), PDO::PARAM_INT);
+	
+		$DB_REQ->execute();
+
+		$DB_REQ->closeCursor();
+	}
+
+	public function isOnline(User $user) {
+		$DB_REQ = $this->DB_REQ->prepare('
+			SELECT updated_at
+			FROM users
+			WHERE id = :id
+		');
+		$DB_REQ->bindValue(':id', $user->id());
+		$DB_REQ->execute();
+
+		$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
+		debug($date);
+		$date = new DateTime($data['updated_at']);
+		$now = new DateTime();
+		debug($date->diff($now)->format("%s"));
+		if ($date->diff($now)->format("%i") > 5) {
+			return FALSE;
+		}
+		return TRUE;
 	}
 
 /*

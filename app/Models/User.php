@@ -32,6 +32,7 @@ class User
 			$isactive,
 			$mainpicture,
 			$popularity,
+			$isOnline,
 			$pictures = [],
 			$hobbies = [];
 	
@@ -156,6 +157,10 @@ class User
 	public function setSexuality($sexuality) {
 
 		$this->sexuality = $sexuality;
+	}
+
+	public function setIsOnline($isOnline) {
+		$this->isOnline = $isOnline;
 	}
 
 	public function setEmail($email)
@@ -350,5 +355,9 @@ class User
 
 	public function isactive() {
 		return $this->isactive;
+	}
+
+	public function isOnline() {
+		return $this->isOnline;
 	}
 }
