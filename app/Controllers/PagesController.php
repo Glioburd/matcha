@@ -773,7 +773,7 @@ class PagesController extends Controller {
 			$user->setPassword(password_hash($newPassword, PASSWORD_DEFAULT));
 		}
 
-		$user->setEmail($newMail);
+		// $user->setEmail($newMail);
 		$UserManagerPDO->save($user);
 
 		$success = 'Your settings have been updated ☺';
@@ -1094,17 +1094,21 @@ class PagesController extends Controller {
 			$UserManagerPDO->unlike($id_unliker, $id_unliked);
 			$userProfile = $UserManagerPDO->getUnique($id_unliked);
 
-			$notification = new Notification([
-				'owner' => $userProfile->id(),
-				'sender' => $user->id(),
-				'unread' => TRUE,
-				'type' => "unlike",
-				'referenceId' => $idLike["LAST_INSERT_ID()"]
-				]);
+			if (!$canBlock && $amINotBlocked) {
+				$hasUserProfileHasLikedMe = $UserManagerPDO->hasLiked($user, $userProfile);
+				$canBlock = $UserManagerPDO->canBlock($user->id(), $userProfile->id());
 
-			$notificationManager = new NotificationManager($this->db);
-			$notificationManager->add($notification);
+				$notification = new Notification([
+					'owner' => $userProfile->id(),
+					'sender' => $user->id(),
+					'unread' => TRUE,
+					'type' => "unlike",
+					'referenceId' => $idLike["LAST_INSERT_ID()"]
+					]);
 
+				$notificationManager = new NotificationManager($this->db);
+				$notificationManager->add($notification);
+			}
 			return $response->withRedirect($this->router->pathFor('user.profile', ['userprofile' => $userProfile->login()]));
 		}
 		else {
@@ -1169,4 +1173,20 @@ class PagesController extends Controller {
 		return $count;
 	}
 
+	public function postReportProfile($request, $response, $args) {
+		if (Validator::isConnected()){
+			$UserManagerPDO = new UserManagerPDO($this->db);
+			$idUser = unserialize($_SESSION['id']);
+			$user = $UserManagerPDO->getUnique($idUser);
+			$reportedProfile = $UserManagerPDO->getUnique($request->getParam('reportedProfile'));
+			$reportReason = $request->getParam('reportReason');
+
+			reportMail($user, $reportedProfile, $reportReason);
+
+			$this->flash('This profile has been reported. Thanks for your vigilance.', 'info');
+			return $response->withRedirect($this->router->pathFor('user.profile', ['userprofile' => $reportedProfile->login()]));
+		}
+		$this->flash('You must be logged in to access this page.', 'error');
+		return $this->redirect($response, 'auth.login', 302);
+	}
 }

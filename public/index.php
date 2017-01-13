@@ -93,8 +93,10 @@ $app->post('/change_avatar', 'App\Controllers\PagesController:postChangeAvatar')
 
 $app->post('/deletepic', 'App\Controllers\PagesController:postDeletePicture')->setName('delete.picture');
 
-/* Chat */
+/* Report profile */
+$app->post('/reportprofile/{userprofile}', 'App\Controllers\PagesController:postReportProfile')->setName('reportProfile');
 
+/* Chat */
 $app->get('/chat/{interlocutor}', 'App\Controllers\ChatController:getChat')->setName('chat');
 
 $app->post('/chatmsg', 'App\Controllers\ChatController:postChatmsg')->setName('chatmsg');

@@ -57,7 +57,7 @@ class ChatController extends Controller {
 
 			else {
 				$this->flash('You must be mutual friends to chat. One of you doesn\'t have liked the other, or the user has blocked you.', 'error');
-				return $this->redirect($response, 'auth.login', 302);		
+				return $this->redirect($response, 'home', 302);		
 			}
 		}
 

@@ -94,7 +94,8 @@ CREATE TABLE `users` (
   `created_at` datetime NOT NULL,
   `updated_at` datetime NOT NULL,
   `isactive` tinyint(4) NOT NULL DEFAULT '1',
-  `rank` tinyint(4) NOT NULL DEFAULT '0'
+  `rank` tinyint(4) NOT NULL DEFAULT '0',
+  `isAlive` tinyint(4) NOT NULL DEFAULT '0'
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 --

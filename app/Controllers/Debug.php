@@ -4,10 +4,6 @@ namespace App\Controllers;
 
 class Debug {
 
-	private function filter(&$value) {
-		$value = htmlspecialchars($value, ENT_QUOTES, 'UTF-8');
-}
-
 	static public function debugUser($container, $user) {
 		if ($container->debug) {
 		echo "<pre><h2>USER:</h2>";
@@ -17,8 +13,6 @@ class Debug {
 
 	static public function debugUsers($container, $user, $userprofile) {
 		if ($container->debug) {
-			array_walk_recursive($user, $this, "filter");
-			array_walk_recursive($userprofile, $this, "filter");
 			echo "<pre><h2>USERPROFILE:" . htmlspecialchars($userprofile->login()) . "</h2></pre>";
 			debug($userprofile);
 			echo "<pre><h2>USER:" . htmlspecialchars($user->login()) . "</h2></pre>";
