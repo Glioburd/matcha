@@ -74,6 +74,8 @@ $app->post('/block', 'App\Controllers\PagesController:postBlockUser')->setName('
 
 $app->post('/unblock', 'App\Controllers\PagesController:postUnblockUser')->setName('unblock');
 
+$app->post('/isAlive', 'App\Controllers\PagesController:postIsAlive')->setName('isAlive');
+
 /* Settings */
 $app->get('/settings', 'App\Controllers\PagesController:getSettings')->setName('user.settings');
 $app->post('/settings', 'App\Controllers\PagesController:postSettings');

@@ -126,7 +126,7 @@ a {
 }
 .messenger-container p {
 	color: #3D3D3D;
-	font-size: 12px;
+	font-size: 16px;
 	margin-bottom: 6px;
 	line-height: 18px;
 	word-wrap: break-word; margin: 0;
@@ -241,4 +241,39 @@ a {
 	padding: 2px 16px;
 	background-color: transparent;
 	color: white;
+}
+
+.status {
+	position: absolute;
+	width: 30px;
+	top: 125px;
+	left: 30px;
+	z-index: 3;
+}
+
+/*  Status online-offline on matches */
+
+.parent {
+  position: relative;
+  top: 0;
+  left: 0;
+}
+.image1 {
+  position: relative;
+  top: 0;
+  left: 0;
+}
+.image2 {
+  position: absolute;
+  width: 30px;
+  top: 125px;
+  left: 15px;
+}
+
+/* Avatar on navbar */
+
+.navavatar {
+	min-height:35px;
+	height:35px;
+	margin-top: 25%;
 }

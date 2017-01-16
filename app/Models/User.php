@@ -5,9 +5,8 @@ use \DateTime;
 
 
 /**
- * Classe représentant une user, créée à l'occasion d'un TP du tutoriel « La programmation orientée objet en PHP » disponible sur http://www.openclassrooms.com/
- * @author Victor T.
- * @version 2.0
+ * @author Guilhem S.
+ * @version 1.0
  */
 class User 
 {

@@ -24,6 +24,12 @@ class ChatController extends Controller {
 
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
+
+			// We are in a fake subfolder, we change the images link.
+			if ($user->mainpicture()){
+				$user->setMainPicture('../' . $user->mainpicture());
+			}
+
 			$interlocutor = $UserManagerPDO->getIdfromLogin($args['interlocutor']);
 			$interlocutor = $UserManagerPDO->getUnique($interlocutor);
 

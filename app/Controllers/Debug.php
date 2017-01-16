@@ -4,6 +4,17 @@ namespace App\Controllers;
 
 class Debug {
 
+	function debug_to_console( $data ) {
+		ob_start();
+		if ( is_array( $data ) )
+			$output = "<script>console.log( 'Debug Objects: " . implode( ',', $data) . "' );</script>";
+		else
+			$output = "<script>console.log( 'Debug Objects: " . $data . "' );</script>";
+
+		echo $output;
+		ob_end_flush();
+	}
+
 	static public function debugUser($container, $user) {
 		if ($container->debug) {
 		echo "<pre><h2>USER:</h2>";

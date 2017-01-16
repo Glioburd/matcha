@@ -79,7 +79,7 @@ class PagesController extends Controller {
 
 					$user_to_compare = $UserManagerPDO->getUnique($value['to_user_id']);
 					$data[$key]['to_user_age'] = Validator::getAge($data[$key]['to_user_age']);
-
+					$data[$key]['isOnline'] = $UserManagerPDO->isOnline($user_to_compare);
 					if (($data[$key]['to_user_age'] >= $ageMin && $data[$key]['to_user_age'] <= $ageMax) && $data[$key]['popularity'] >= $minPopularity) {
 
 							$hobbiesInCommon = $UserManagerPDO->countSimilarsHobbies($user, $user_to_compare);
@@ -96,7 +96,7 @@ class PagesController extends Controller {
 					}
 
 				}
-
+					debug($data);
 				if (!empty($_GET['sortBy']) && isset($_GET['sortBy'])) {
 					switch ($_GET['sortBy']) {
 						case 'age':
@@ -563,12 +563,19 @@ class PagesController extends Controller {
 		$canLike = '';
 		$canBlock = '';
 		$mutualFriend = '';
+		$isOnline = '';
 
 		// If user is loged in, and if there is an arg in /profile/
 		if (Validator::isConnected() && isset($args['userprofile']) && !empty($args['userprofile'])) {
 
 			$UserManagerPDO = new UserManagerPDO($this->db);
 			$user = $UserManagerPDO->getUnique(unserialize($_SESSION['id']));
+
+			// We are in a fake subfolder, we change the images link.
+			if ($user->mainpicture()){
+				$user->setMainPicture('../' . $user->mainpicture());
+			}
+
 			// If user profile is complete (hobbies, bio, sexuality...)
 			if ($user->isComplete()) {
 				$notificationManager = new NotificationManager($this->db);
@@ -588,6 +595,16 @@ class PagesController extends Controller {
 				if ($idprofile = $UserManagerPDO->getIdFromLogin($userprofilearg)) {
 
 					$userProfile = $UserManagerPDO->getUnique($idprofile);
+
+					//Is the user online ? 
+					$isOnline = $UserManagerPDO->isOnline($userProfile);
+
+					if ($isOnline) {
+						$userProfile->setIsOnline('true');
+					}
+					else {
+						$userProfile->setIsOnline('false');
+					}
 
 					// If arg profile is an other user
 					if ($user->id() != $userProfile->id()) {
@@ -1167,10 +1184,12 @@ class PagesController extends Controller {
 
 	public function postCountNotifsUnread($request, $response) {
 		$idUser = unserialize($_SESSION['id']);
+		$UserManagerPDO = new UserManagerPDO($this->db);
+		$user = $UserManagerPDO->getUnique($idUser);
+		$user->setDateUpdate(new Datetime);
+		$UserManagerPDO->save($user);
 		$NotificationManager = new NotificationManager($this->db);
 		return $count = $NotificationManager->countUnread($idUser);
-
-		return $count;
 	}
 
 	public function postReportProfile($request, $response, $args) {
@@ -1188,5 +1207,14 @@ class PagesController extends Controller {
 		}
 		$this->flash('You must be logged in to access this page.', 'error');
 		return $this->redirect($response, 'auth.login', 302);
+	}
+
+	public function postIsAlive($request, $response, $args) {
+		if (Validator::isConnected()){
+			$UserManagerPDO = new UserManagerPDO($this->db);
+			$user = unserialize($_SESSION['id']);
+			$user = $UserManagerPDO->getUnique($user);
+			$UserManagerPDO->updateLastSeen($user);
+		}
 	}
 }

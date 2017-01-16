@@ -102,9 +102,17 @@
 
 		</div>
 
+{###------------------------------------------------------------------------------------------------------------------###}
+{###------------------------------------------PROFILE PICTURE PREVIEW-------------------------------------------------###}
+{###------------------------------------------------------------------------------------------------------------------###}
+		{% if user.mainpicture %}
+			<a href="#" class="navbar-right"><img src="{{user.mainpicture}}" class="img-circle navavatar" alt="Avatar"></a>
+		{% endif %}
 	</div>
 </nav>
+{% if app.request.attributes.get('_route') == '/profile/' + user.login %}
 
+{% endif %}
 <script type="text/javascript">
 
 $("document").ready(function(){
@@ -139,5 +147,11 @@ function reload() {
 }
 
 setInterval(function(){reload()}, 5000);
+
+// var stillAlive = setInterval(function () {
+// 	$.post('{{ path_for("isAlive")}}', function(data){
+// 		console.log(data);
+// 	});
+// }, 2000);
 
 </script>

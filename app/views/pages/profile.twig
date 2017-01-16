@@ -1,7 +1,14 @@
 {% extends "app.twig" %}
 
 {% block content %}
-<h1>{{userprofile.login}}'s profile:</h1>
+
+{% if userprofile.isOnline == 'true' %}
+	{% set color, status = 'green', 'online' %}
+{% else %}
+	{% set color, status = 'red', 'offline' %}
+{% endif %}
+
+<h1><img src="../../public/ressources/circle_{{color}}.png" title="{{status}}"> {{userprofile.login}}'s profile:</h1>
 
 <div class="container">
 
@@ -98,12 +105,6 @@
 {###------------------------------------------------------------------------------------------------------------------###}
 {###---------------------------------------------INTRO PANNEL---------------------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
-
-{# {% if userprofile.gender == 'f' %}
-	{% set isShe, himHer, gender = 'she', 'her', 'female' %}
-{% else %}
-	{% set isShe, himHer, gender = 'he', 'him', 'male' %}
-{% endif %} #}
 
 	<div class="panel panel-default">
 		<div class="panel-heading">
@@ -215,22 +216,6 @@
 			{{userprofile.bio|e}}
 		</div>
 	</div>
-
-{###------------------------------------------------------------------------------------------------------------------###}
-{###------------------------------------------SEXUALITY PANNEL--------------------------------------------------------###}
-{###------------------------------------------------------------------------------------------------------------------###}
-
-{# Set in INTRO pannel #}
-
-{# 	<div class="panel panel-default">
-		<div class="panel-heading">
-			<h3 class="panel-title">Sexuality:</h3>
-		</div>
-		<div class="panel-body">
-			{{userprofile.sexuality}}
-		</div>
-	</div> #}
-
 
 {###------------------------------------------------------------------------------------------------------------------###}
 {###------------------------------------------HOBBIES PANNEL----------------------------------------------------------###}
@@ -357,12 +342,13 @@
 var modal = document.getElementById('myModal');
 
 /* Get the button that opens the modal */
-var btn = document.getElementById("reportButton");
+var btn = document.getElementById('reportButton');
 
 /* Get the <span> element that closes the modal*/
 var span = document.getElementsByClassName("close")[0];
 
 /* When the user clicks the button, open the modal */
+if 
 btn.onclick = function() {
 	modal.style.display = "block";
 }

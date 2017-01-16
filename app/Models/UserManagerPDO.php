@@ -967,11 +967,15 @@ class UserManagerPDO extends UserManager
 		$DB_REQ->execute();
 
 		$data = $DB_REQ->fetch(PDO::FETCH_ASSOC);
-		debug($date);
-		$date = new DateTime($data['updated_at']);
-		$now = new DateTime();
-		debug($date->diff($now)->format("%s"));
-		if ($date->diff($now)->format("%i") > 5) {
+			
+		date_default_timezone_set('Europe/Paris');
+		$date = strtotime($data['updated_at']);
+		$now = time();
+
+		// debug(round(abs($date - $now) / 60,2));
+		// die();
+
+		if (round(abs($date - $now) / 60,2) > 5) {
 			return FALSE;
 		}
 		return TRUE;

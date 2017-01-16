@@ -9,7 +9,6 @@ use \PDO;
 class Validator
 
 {
-
 	public static function isConnected() {
 		if (!isset($_SESSION['id']) || empty($_SESSION['id'])) {
 			return FALSE;
@@ -28,7 +27,7 @@ class Validator
 
 	public static function loginCharsCheck($login) {
 
-		if (!preg_match("/^[a-z0-9_-]*$/",$login)) {
+		if (!preg_match("/^[a-z0-9_-]*$/i", $login)) {
 			return FALSE;
 		}
 		return TRUE;
