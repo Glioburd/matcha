@@ -96,7 +96,7 @@ class PagesController extends Controller {
 					}
 
 				}
-					debug($data);
+
 				if (!empty($_GET['sortBy']) && isset($_GET['sortBy'])) {
 					switch ($_GET['sortBy']) {
 						case 'age':

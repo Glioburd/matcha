@@ -31,7 +31,7 @@
 		{% if canLike == true %}
 
 		<form action="{{ path_for('like') }}" method="post">
-			<button type="submit" name="likeButton" class="btn btn-danger btn-lg align-center" value="{{userprofile.id}}">Like ♡</button>
+			<button type="submit" name="likeButton" class="btn btn-success btn-lg align-center" value="{{userprofile.id}}">Like ♡</button>
 		</form>
 		{% else %}
 		<form action="{{ path_for('unlike') }}" method="post">
@@ -51,6 +51,7 @@
 {###------------------------------------------------------------------------------------------------------------------###}
 
 	{% if userprofile.login != user.login %}
+		<br>
 		{% if canBlock == true %}
 		<form action="{{ path_for('block') }}" method="post">
 			<button type="submit" name="blockButton" class="btn btn-danger btn-lg align-center" value="{{userprofile.id}}">Block</button>
@@ -90,7 +91,7 @@
 {###------------------------------------------------------------------------------------------------------------------###}
 {###---------------------------------------------POPULARITY PANNEL----------------------------------------------------###}
 {###------------------------------------------------------------------------------------------------------------------###}
-
+	<hr>
 	<div class="panel panel-default">
 		<div class="panel-heading">
 			<h3 class="panel-title">Popularity:</h3>

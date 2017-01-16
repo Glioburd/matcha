@@ -39,7 +39,6 @@ if (intval($result['count']) == 0) {
 			`longitude` decimal(9,6) DEFAULT NULL COMMENT 'Longitude',
 			`latitude` decimal(9,6) DEFAULT NULL COMMENT 'Latitude',
 			`map` tinyint(1) NOT NULL DEFAULT '0' COMMENT 'If user has allowed geoloc',
-			`ville` varchar(255) DEFAULT NULL
 			);");
 
 	$DB_REQ->execute();
@@ -307,15 +306,6 @@ if (intval($result['count']) == 0) {
 
 	$DB_REQ->execute();
 }
-	// $DB_REQ = $DB_PDO->prepare('
-	// 	ALTER TABLE `notifications`
-	// 	CASE
-	// 		WHEN notifications.type = "like" THEN ADD FOREIGN KEY (id_reference) REFERENCES likes(id)
-	// 		WHEN notifications.type = "visit" THEN ADD FOREIGN KEY (id_reference) REFERENCES visitors(id)
-	// 	ON DELETE CASCADE
-	// 	;');
-	//
-	// $DB_REQ->execute();
 
 	$DB_REQ = $container->db->query("
 	SELECT COUNT(*) AS count
