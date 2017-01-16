@@ -876,6 +876,10 @@ class PagesController extends Controller {
 			$errors['login'] = 'Your username must contain between 2 and 32 characters.';
 		}
 
+		if (!Validator::loginCharsCheck($request->getParam('login'))) {
+			$errors['login'] = 'Your username must contain only letters, numbers, underscores and hyphens.';
+		}
+
 		if (!Validator::bioLengthCheck($request->getParam('bio'))) {
 			$errors['bio'] = 'Your description must contain at least 20 characters. Don\'t be shy!';
 		}
