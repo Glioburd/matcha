@@ -21,8 +21,8 @@ $container['db'] = function ($container) {
 $container['view'] = function ($container) {
 	$dir = dirname(__DIR__);
 	$view = new \Slim\Views\Twig($dir . '/app/views', [
-		// 'cache' => $container->debug ? false : $dir . 'tmp/cache',
-		'cache' => false,
+		'cache' => $container->debug ? false : $dir . 'tmp/cache',
+		// 'cache' => false,
 		'debug' => $container->debug
 	]);
 
