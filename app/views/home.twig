@@ -18,7 +18,7 @@
 						<h2 class="page-header">You may be interested by:</h2>
 					</div>
 					{% for match in data %}
-						<div class="col-lg-2 col-md-4 col-xs-6 thumbnail"style="background-color:powderblue;" >
+						<div class="col-lg-2 col-md-4 col-xs-6 thumbnail"style="background-color:white;color:black;" >
 							<fieldset>
 								<a href="{{ path_for('user.profile', { 'userprofile': match.to_user }) }}">
 									<div class="parent">
@@ -29,7 +29,7 @@
 											{% set color, status = 'red', 'offline' %}
 										{% endif %}
 
-										<img src="{{match.to_user_pic}}" style="min-height:150px;height:150px;" class="img-circle image1">
+										<img src="{{match.to_user_pic}}" class="img-circle image1 matchavatar">
 										<img class="image2" src="../public/ressources/circle_{{color}}.png" title="{{status}}">
 									</div>
 								</a>

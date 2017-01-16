@@ -378,7 +378,7 @@ var btn = document.getElementById('reportButton');
 var span = document.getElementsByClassName("close")[0];
 
 /* When the user clicks the button, open the modal */
-if (btn) {
+if (typeof(btn) != 'undefined' && btn != null) {
 	btn.onclick = function() {
 		modal.style.display = "block";
 	}
