@@ -226,9 +226,39 @@
 			<h3 class="panel-title">Hobbies:</h3>
 		</div>
 		<div class="panel-body">
-			{% for hobbies in userprofile.hobbies %}
-			#{{ hobbies|e }}
-		{% endfor %}
+			<p>{{userprofile.login}} likes to:<p>
+			{% for hobby in userprofile.hobbies %}
+				{% if hobby == 'morph' %}
+					{% set hobby = 'Morph into creep colony.' %}
+				{% elseif hobby == 'eat' %}
+					{% set hobby = 'Eat Terrans.' %}
+				{% elseif hobby == 'invade' %}
+					{% set hobby = 'Invade Aiur.' %}
+				{% elseif hobby == 'obey' %}
+					{% set hobby = 'Obey to the Overmind.' %}
+				{% elseif hobby == 'gather' %}
+					{% set hobby = 'Gather minerals.' %}
+				{% elseif hobby == 'infest' %}
+					{% set hobby = 'Infest command centers.' %}
+				{% elseif hobby == 'praises' %}
+					{% set hobby = 'Praise our lord sAviOr, the Maestro.' %}
+				{% elseif hobby == 'praisej' %}
+					{% set hobby = 'Praise Jaedong, the Tyrant.' %}
+				{% elseif hobby == 'burrow' %}
+					{% set hobby = 'Burrow.' %}
+				{% elseif hobby == 'explode' %}
+					{% set hobby = 'Suicide exploding on marines.' %}
+				{% elseif hobby == 'spawn' %}
+					{% set hobby = 'Spawn more overlords.' %}
+				{% elseif hobby == 'killVessels' %}
+					{% set hobby = 'Kill science vessels.' %}
+				{% elseif hobby == 'plague' %}
+					{% set hobby = 'Plagues marines balls.' %}
+				{% elseif hobby == 'hide' %}
+					{% set hobby = 'Hide in dark swarms.' %}
+				{% endif %}
+				<li>{{ hobby|e }}</li>
+			{% endfor %}
 		</div>
 	</div>
 
@@ -348,11 +378,11 @@ var btn = document.getElementById('reportButton');
 var span = document.getElementsByClassName("close")[0];
 
 /* When the user clicks the button, open the modal */
-if 
-btn.onclick = function() {
-	modal.style.display = "block";
+if (btn) {
+	btn.onclick = function() {
+		modal.style.display = "block";
+	}
 }
-
 /* When the user clicks on <span> (x), close the modal */
 span.onclick = function() {
 	modal.style.display = "none";

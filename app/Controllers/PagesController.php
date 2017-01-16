@@ -44,7 +44,7 @@ class PagesController extends Controller {
 			if ($user->mainpicture()){
 
 				if(!(isset($_GET['distance'])) || empty($_GET['distance']) || $_GET['distance'] < 0)
-					$distance = 1000;
+					$distance = 10000;
 				else {
 					$distance = $_GET['distance'];
 				}

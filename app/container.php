@@ -6,7 +6,7 @@ $container = $app->getContainer();
 // Register component on container
 
 $container['debug'] = function () {
-	return false;
+	return true;
 };
 
 // $container['csrf'] = function () {
