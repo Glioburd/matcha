@@ -6,10 +6,15 @@ use \PDO;
 class DBFactory {
 
 	public static function getMysqlConnexionWithPDO() {
+		try{
 			$DB_PDO = new PDO('mysql:host=localhost;dbname=matcha', 'root', 'root');
 			$DB_PDO->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-			
-			return $DB_PDO;
+		}
+		catch(PDOException $e) {
+			die('SQL error : '.$e->getMessage());
+		}
+
+		return $DB_PDO;
 		}
 		
 		public static function getMysqlConnexionWithMySQLi() {
