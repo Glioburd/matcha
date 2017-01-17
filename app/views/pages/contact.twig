@@ -1,9 +1,10 @@
 {% extends "app.twig" %}
 
 {% block content %}
-
-	<h1>Me contacter</h1>
-	<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+<div class="well">
+	<h1>Contact admin</h1>
+	<p>Problem? Suggestion? Feel free to contact me, I'll read you as soon as possible!</p>
+</div>
 
 {# <pre> {{ dump(flash.errors) }} </pre>  #}
 {# <pre> {{ dump(old) }} </pre>  #}
@@ -15,41 +16,21 @@
 	<form action="{{ path_for('contact') }}" method="post">
 
 		{# {{ csrf() }} #}
-
-		<div class="form-group{% if flash.errors.login %} has-error {% endif %}" >
-			<label for ="login">Your name</label>
-			<input type="text" class="form-control" name="login" id="login" value="{{ old.login }}" required>
-			{% if flash.errors.login %}
-				<span class="help-block">{{ flash.errors.login }}</span>
+		<div class="form-group{% if flash.errors.contact %} has-error {% endif %}">
+			<label for ="contact" >Tell me what you want</label>
+			<textarea type="text" class="form-control" name="contact" id="contact" placeholder="(Please write at least 20 characters)" required>{{ old.contact }}</textarea>
+			{% if flash.errors.contact %}
+				<span class="help-block">{{ flash.errors.contact }}</span>
 			{% endif %}
 		</div>
 
-		<div class="form-group{% if flash.errors.email %} has-error {% endif %}">
-			<label for ="email">Your email</label>
-			<input type="text" class="form-control" name="email" id="email" value="{{ old.email }}" required>
-			{% if flash.errors.email %}
-				<span class="help-block">{{ flash.errors.email }}</span>
-			{% endif %}
-		</div>
+		<script type="text/javascript" src="../app/views/scripts/charcounter.js"></script>
+		<script type="text/javascript">
+			$("#contact").charCounter(20);
+		</script>
 
-		<div class="form-group{% if flash.errors.password %} has-error {% endif %}">
-			<label for ="password">Your password</label>
-			<input type="password" class="form-control" name="password" id="password" value="{{ old.password }}" required>
-			{% if flash.errors.password %}
-				<span class="help-block">{{ flash.errors.password }}</span>
-			{% endif %}
-		</div>
-
-		<div class="form-group{% if flash.errors.passwordConfirm  %} has-error {% endif %}">
-			<label for ="passwordConfirm">Confirm your password</label>
-			<input type="password" class="form-control" name="passwordConfirm" id="passwordConfirm" value="{{ old.passwordConfirm }}" required>
-			{% if flash.errors.passwordConfirm %}
-				<span class="help-block">{{ flash.errors.passwordConfirm }}</span>
-			{% endif %}
-		</div>
-
-		<div class="form-group">
-			<input type="submit" class="btn btn-primary" value="Envoyer">
-		</div>
+		<button type="submit" class="btn btn-lg">Submit</button>
+		
 	</form>
+
 {% endblock %} 

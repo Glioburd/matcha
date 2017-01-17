@@ -57,7 +57,7 @@ function getCoordinatesByIp() {
 }
 
 function ForceCoordinatesByIp() {
-	$('#allowGeolocDiv').hide();
+	// $('#allowGeolocDiv').hide();
 	$('#submitButton').prop("disabled", false);
 	$.get("http://ipinfo.io", function (response) {
 		var coord = response['loc'].split(",", 2);
@@ -97,22 +97,13 @@ function getCoordinates() {
 	}
 }
 
-// document.getElementById("allowGeoloc").addEventListener("click", function(){
-// 	getCoordinates();
-// });
-
 document.getElementById("allowGeoloc").addEventListener("change", function() {
-	// console.log(typeof(document.getElementById("latitude").value));
-	// console.log(typeof(document.getElementById("longitude").value));
-
 	if (document.getElementById("allowGeoloc").checked) {
 		latitudeG = document.getElementById("latitudeG").value;
 		longitudeG = document.getElementById("longitudeG").value;
 		$('#latitude').val(latitudeG);
 		$('#longitude').val(longitudeG);
 		$('#map').val('1');
-		// $('#latitude').val("Lat google");
-		// $('#longitude').val("Long google");
 	}
 	else if (document.getElementById("allowGeoloc").checked == false) {
 		latitudeIP = document.getElementById("latitudeIP").value;

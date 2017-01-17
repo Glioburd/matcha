@@ -150,6 +150,10 @@
 				{% if flash.errors.bio %}
 					<span class="help-block">{{ flash.errors.bio }}</span>
 				{% endif %}
+				<script type="text/javascript" src="../../app/views/scripts/charcounter.js"></script>
+				<script type="text/javascript">
+					$("#bio").charCounter(20);
+				</script>
 			</div>
 
 {###------------------------------------------------------------------------------------------------------------------###}

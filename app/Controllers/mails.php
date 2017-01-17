@@ -32,3 +32,13 @@ function reportMail(User $user, User $reportedProfile, $reportReason) {
 	";
 	mail($email, $subject, $message);
 }
+
+function contactMail(User $user, $contact) {
+	$subject = "Matcha - " . $user->login() . " has sent you a message";
+	$email = "glioburd@gmail.com";
+	$message = "
+	Hello\n
+	The user " . $user->login() . " (ID: " . $user->id() .") has sent you a message:\n
+	". $contact . "
+	";
+}

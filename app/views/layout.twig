@@ -146,13 +146,10 @@ function reload() {
 	});
 }
 
-// console.log("{{user}}");
-setInterval(function(){reload()}, 5000);
+var id = "{{user.id}}";
 
-// var stillAlive = setInterval(function () {
-// 	$.post('{{ path_for("isAlive")}}', function(data){
-// 		console.log(data);
-// 	});
-// }, 2000);
+if (id) {
+	setInterval(function(){reload()}, 5000);
+}
 
 </script>

@@ -313,8 +313,12 @@ a {
 	margin-top: 25%;
 }
 
+.matchthumbnailovered{
+	background-color: #e6e6e6;
+}
+
 .matchavatar {
-	min-height:150px;
 	height:150px;
+	width: 150px;
 	margin-left: 10%
 }

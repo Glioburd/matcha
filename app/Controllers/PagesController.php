@@ -187,7 +187,31 @@ class PagesController extends Controller {
 		}
 	}
 
-	public function postContact($request, $response){
+	public function postContact($request, $response) {
+		if (Validator::isConnected()){
+
+			$errors = [];
+
+			if (!Validator::bioLengthCheck($request->getParam('contact'))) {
+				$errors['contact'] = 'Please write at least 20 characters, what would you say to me in two fords excepted f*** you?';
+			}
+
+			if (empty($errors)) {
+				$UserManagerPDO = new UserManagerPDO($this->db);
+				$idUser = unserialize($_SESSION['id']);
+				$user = $UserManagerPDO->getUnique($idUser);
+
+				$contact = $request->getParam('contact');
+				contactMail($user, $contact);
+			}
+			else {
+				$this->flash('A field hasn\'t been field correctly', 'error');
+				$this->flash($errors, 'errors');
+				return $this->redirect($response, 'contact', 302);
+			}
+			$this->flash('Your message has been succesfully sent. Thank you!', 'info');
+			return $this->redirect($response, 'home', 200);
+		}
 	}
 
 	public function getSignUp($request, $response) {
@@ -369,7 +393,7 @@ class PagesController extends Controller {
 		}
 
 		else {
-			$this->flash('Un champ n\'a pas été rempli correctement', 'error');
+			$this->flash('A field hasn\'t been field correctly', 'error');
 			$this->flash($errors, 'errors');
 			return $this->redirect($response, 'auth.signupinfos', 302);
 		}
