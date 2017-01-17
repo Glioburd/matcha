@@ -932,6 +932,7 @@ class UserManagerPDO extends UserManager
 			FROM chat
 			WHERE (id_poster = :user1 AND id_receptor = :user2)
 			OR (id_poster = :user2 AND id_receptor = :user1)
+			ORDER BY date_message
 		');
 		$DB_REQ->bindValue(':user1', $user1->id());
 		$DB_REQ->bindValue(':user2', $user2->id());
@@ -971,9 +972,6 @@ class UserManagerPDO extends UserManager
 		date_default_timezone_set('Europe/Paris');
 		$date = strtotime($data['updated_at']);
 		$now = time();
-
-		// debug(round(abs($date - $now) / 60,2));
-		// die();
 
 		if (round(abs($date - $now) / 60,2) > 5) {
 			return FALSE;
