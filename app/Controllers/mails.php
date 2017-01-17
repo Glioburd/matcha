@@ -41,4 +41,5 @@ function contactMail(User $user, $contact) {
 	The user " . $user->login() . " (ID: " . $user->id() .") has sent you a message:\n
 	". $contact . "
 	";
+	mail($email, $subject, $message);
 }
