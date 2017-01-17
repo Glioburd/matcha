@@ -53,6 +53,11 @@ try {
 
 		$DB_REQ->execute();
 
+		$DB_REQ = $DB_PDO->prepare("
+			ALTER TABLE `users`
+				AUTO_INCREMENT=30;");
+		$DB_REQ->execute();
+
 	}
 
 	$DB_REQ = $container->db->query("
