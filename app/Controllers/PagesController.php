@@ -29,8 +29,6 @@ class PagesController extends Controller {
 		$notifs = '';
 		$nbUnread = '';
 
-
-
 		if (Validator::isConnected()) {
 
 			$UserManagerPDO = new UserManagerPDO($this->db);
