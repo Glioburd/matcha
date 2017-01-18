@@ -48,14 +48,12 @@
 
 				<li class="dropdown dropdown-notifications" id="notifsMenu" value="{{nbUnread}}">
 					<a href="#notifications-panel" class="dropdown-toggle" data-toggle="dropdown" id="cloche">
-						<i  id="clocheIcon" data-count="{{nBunread}}" class="glyphicon glyphicon-bell {% if nBunread > 0 %}notification-icon{% endif %}"></i>
+						<i id="clocheIcon" data-count="{{nBunread}}" class="glyphicon glyphicon-bell {% if nBunread > 0 %}notification-icon{% endif %}"></i>
 					</a>
 					<ul class="dropdown-menu">
 						<div class="dropdown-container">
 							<div class="dropdown-toolbar">
-								<div class="dropdown-toolbar-actions">
-									<a href="#">Mark all as read</a>
-								</div>
+
 								<h3 class="dropdown-toolbar-title">({{nBunread}}) unread.</h3>
 							</div><!-- /dropdown-toolbar -->
 							<hr>
@@ -91,9 +89,7 @@
 								{% endfor %}
 
 							</ul>
-							<div class="dropdown-footer text-center">
-								<a href="#">View All</a>
-							</div><!-- /dropdown-footer -->
+
 						</div><!-- /dropdown-container -->
 					</ul>
 				</li><!-- /dropdown -->
@@ -136,6 +132,7 @@ function reload() {
 	Ajax(function(output){
 		if (output > 0) {
 			$("#clocheIcon").addClass('notification-icon');
+			document.getElementById('clocheIcon').setAttribute("data-count", output);
 			$("#notifsMenu").val(output);
 		}
 		else {
