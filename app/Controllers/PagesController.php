@@ -16,7 +16,7 @@ include "sort_array.php";
 include "mails.php";
 
 /**
-*
+* Home page, displays the matched users if logged in
 */
 class PagesController extends Controller {
 
@@ -28,6 +28,12 @@ class PagesController extends Controller {
 		$data = '';
 		$notifs = '';
 		$nbUnread = '';
+		$minPopularity ='';
+		$minCommonHobbies = '';
+		$sortBy = '';
+		$ageMin = '';
+		$ageMax = '';
+		$distance = '';
 
 		if (Validator::isConnected()) {
 
@@ -133,12 +139,12 @@ class PagesController extends Controller {
 			$this->render($response, 'home.twig',[
 				'user' => $user,
 				'data' => $data,
-				'sortBy' =>$_GET['sortBy'],
-				'ageMin' =>$_GET['ageMin'],
-				'ageMax' => $_GET['ageMax'],
-				'distance' => $_GET['distance'],
-				'minPopularity' => $_GET['minPopularity'],
-				'minCommonHobbies' => $_GET['minCommonHobbies'],
+				'sortBy' =>$sortBy,
+				'ageMin' =>$ageMin,
+				'ageMax' => $ageMax,
+				'distance' => $distance,
+				'minPopularity' => $minPopularity,
+				'minCommonHobbies' => $minCommonHobbies,
 				'notifs' => $notifs,
 				'nbUnread' => $nbUnread
 				]);

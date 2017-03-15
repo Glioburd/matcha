@@ -16,7 +16,7 @@ class DBFactory {
 
 		return $DB_PDO;
 		}
-		
+
 		public static function getMysqlConnexionWithMySQLi() {
 			return new MySQLi('localhost', 'root', 'root', 'matcha');
 		}
