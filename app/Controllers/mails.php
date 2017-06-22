@@ -24,7 +24,7 @@ function confirmResetPwd($email, $hash) {
 
 function reportMail(User $user, User $reportedProfile, $reportReason) {
 	$subject = "Matcha - " . $user->login() . " has reported " . $reportedProfile->login();
-	$email = "glioburd@gmail.com";
+	$email = "admin@admin.com";
 	$message = "
 	Hello\n
 	The user " . $user->login() . " (ID: " . $user->id() .") has reported the user" . $reportedProfile->login() ." (ID: " . $reportedProfile->id() .") for the following reason:\n
@@ -35,7 +35,7 @@ function reportMail(User $user, User $reportedProfile, $reportReason) {
 
 function contactMail(User $user, $contact) {
 	$subject = "Matcha - " . $user->login() . " has sent you a message";
-	$email = "glioburd@gmail.com";
+	$email = "admin@admin.com";
 	$message = "
 	Hello\n
 	The user " . $user->login() . " (ID: " . $user->id() .") has sent you a message:\n
