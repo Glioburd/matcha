@@ -104,7 +104,7 @@ CREATE TABLE `users` (
 
 INSERT INTO `users` (`id`, `name`, `email`, `password`, `gender`, `bio`, `sexuality`, `created_at`, `updated_at`, `isactive`, `rank`) VALUES
 (1, 'Admin', 'admin@matcha.com', '$2y$10$ToC4Mag/3W7in1gJxTOWI.QoxQa2VrKnqoSGlNUAvBel13iuvtOqa', 'm', 'dsfdsfjdosfdoudsoifudsofudsoifudsoifudsoifds', 'hetero', '2016-11-21 17:04:50', '2016-11-21 18:09:41', 1, 1),
-(2, 'Glioburd', 'desmo04@dd.com', '$2y$10$YaSUfkC0r965pU3glAyMx.eZrYFB5nNPtKF0sZtQD5Ap8SWFaLtoO', 'm', 'GlioburdGlioburdGlioburdGlioburdGlioburdGlioburdGlioburdGlioburdGlioburdGlioburdGlioburdGlioburdGlioburdGlioburdGlioburdGlioburdGlioburd', 'hetero', '2016-11-21 18:08:18', '2016-11-23 19:03:49', 1, 0),
+(2, 'Blabl', 'desmo04@dd.com', '$2y$10$YaSUfkC0r965pU3glAyMx.eZrYFB5nNPtKF0sZtQD5Ap8SWFaLtoO', 'm', 'Awesome description okay okay okay', 'hetero', '2016-11-21 18:08:18', '2016-11-23 19:03:49', 1, 0),
 (3, 'Tassz', 'tassz@tassz.com', '$2y$10$xqoYW0x3uItSejsRWtf24uExZkq0YTeALp2yt6lfgm2M17u.o5pKW', 'm', 'TasszTasszTasszTasszTasszTasszTasszTasszTasszTasszTasszTasszTasszTasszTasszTasszTasszTassz', 'hetero', '2016-11-21 18:11:43', '2016-11-23 19:04:45', 1, 0),
 (4, 'totoyo', 'toto@toto.com', '$2y$10$HLnxOes8VdTqWO6fWn3ACO9E0R7Hgsms5hvcNCiqmiANYvaAKFcKi', NULL, NULL, 'bisexual', '2016-11-21 18:38:06', '2016-11-21 18:38:06', 1, 0);
 
@@ -126,23 +126,23 @@ CREATE TABLE `visitors` (
 --
 
 INSERT INTO `visitors` (`id`, `name_owner`, `name_visitor`, `visited_at`) VALUES
-(7, 'Tassz', 'Glioburd', '2016-11-23 18:58:09'),
-(8, 'Tassz', 'Glioburd', '2016-11-23 18:58:10'),
-(9, 'Tassz', 'Glioburd', '2016-11-23 18:58:11'),
-(10, 'Tassz', 'Glioburd', '2016-11-23 18:58:11'),
-(11, 'Tassz', 'Glioburd', '2016-11-23 18:58:11'),
-(12, 'Tassz', 'Glioburd', '2016-11-23 18:58:12'),
-(13, 'Tassz', 'Glioburd', '2016-11-23 18:58:12'),
-(14, 'Tassz', 'Glioburd', '2016-11-23 19:04:11'),
-(15, 'Tassz', 'Glioburd', '2016-11-23 19:04:13'),
-(16, 'Tassz', 'Glioburd', '2016-11-23 19:04:15'),
-(17, 'Tassz', 'Glioburd', '2016-11-23 19:04:15'),
-(18, 'Tassz', 'Glioburd', '2016-11-23 19:04:15'),
-(19, 'Tassz', 'Glioburd', '2016-11-23 19:04:16'),
-(20, 'Tassz', 'Glioburd', '2016-11-23 19:04:16'),
-(21, 'Tassz', 'Glioburd', '2016-11-23 19:04:16'),
-(22, 'Glioburd', 'Tassz', '2016-11-23 19:08:36'),
-(23, 'Glioburd', 'Tassz', '2016-11-23 19:09:54');
+(7, 'Tassz', 'Blabl', '2016-11-23 18:58:09'),
+(8, 'Tassz', 'Blabl', '2016-11-23 18:58:10'),
+(9, 'Tassz', 'Blabl', '2016-11-23 18:58:11'),
+(10, 'Tassz', 'Blabl', '2016-11-23 18:58:11'),
+(11, 'Tassz', 'Blabl', '2016-11-23 18:58:11'),
+(12, 'Tassz', 'Blabl', '2016-11-23 18:58:12'),
+(13, 'Tassz', 'Blabl', '2016-11-23 18:58:12'),
+(14, 'Tassz', 'Blabl', '2016-11-23 19:04:11'),
+(15, 'Tassz', 'Blabl', '2016-11-23 19:04:13'),
+(16, 'Tassz', 'Blabl', '2016-11-23 19:04:15'),
+(17, 'Tassz', 'Blabl', '2016-11-23 19:04:15'),
+(18, 'Tassz', 'Blabl', '2016-11-23 19:04:15'),
+(19, 'Tassz', 'Blabl', '2016-11-23 19:04:16'),
+(20, 'Tassz', 'Blabl', '2016-11-23 19:04:16'),
+(21, 'Tassz', 'Blabl', '2016-11-23 19:04:16'),
+(22, 'Blabl', 'Tassz', '2016-11-23 19:08:36'),
+(23, 'Blabl', 'Tassz', '2016-11-23 19:09:54');
 
 --
 -- Index pour les tables exportées
