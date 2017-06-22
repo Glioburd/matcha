@@ -465,7 +465,7 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`id`, `login`, `firstName`, `lastName`, `birthDate`, `password`, `gender`, `email`, `hash`, `isactive`, `bio`, `sexuality`, `created_at`, `updated_at`, `rank`, `longitude`, `latitude`, `map`) VALUES
-(1, 'Glioburd', 'Guilhem', 'Sauvaire', '1988-11-30', '$2y$10$TOVXii.u0KeX7cZwudFPdOX/ZihpmRGUnZhRpOdldQQVdQSyDQoBy', 'm', 'glioburd@gmail.com', '75abc0f5f29c1b7cf236852c434429cb', 1, 'Glioburd Glioburd Glioburd Glioburd Glioburd Glioburd Glioburd ', 'bi', '2017-01-06 11:48:03', '2017-01-17 17:16:33', 0, '2.269700', '48.884600', 1),
+(1, 'Blabl', 'Guilhem', 'Sauvaire', '1988-11-30', '$2y$10$TOVXii.u0KeX7cZwudFPdOX/ZihpmRGUnZhRpOdldQQVdQSyDQoBy', 'm', 'admin@admin.com', '75abc0f5f29c1b7cf236852c434429cb', 1, 'BlablBlablBlablBlablBlabl', 'bi', '2017-01-06 11:48:03', '2017-01-17 17:16:33', 0, '2.269700', '48.884600', 1),
 (2, 'Tassz', 'Tasszyo', 'Taszzyi', '1989-11-30', '$2y$10$68M/iHwGR/ZclhzRlLQnpuSDsiQaDB9nX/bmMIRXJiS5B1UrXcuOO', 'f', 'tasszkeke@gmail.com', NULL, 1, 'Tassz Tassz Tassz Tassz Tassz Tassz Tassz Tassz ', 'hetero', '2017-01-06 11:48:44', '2017-01-13 18:43:14', 0, '2.169700', '48.784600', 1),
 (3, 'LaLoliDuSite', 'Jim', 'Jim', '1992-11-30', '$2y$10$XjfqtRF443MvVlRGfa4DduBJyznysJ62ubXxFAKsblE57sFDcO4Py', 'f', 'jim@jim.com', NULL, 1, 'desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu desu ', 'bi', '2017-01-06 17:21:48', '2017-01-16 17:30:40', 0, '2.219839', '46.923763', 1),
 (5, 'Bomberman', 'bomber', 'man', '1997-11-30', '$2y$10$930OrUsW5QqjkAqCEC5TNu1.qDo5OwZzMTWc6/rIlFkoP2DpvJZ0i', 'm', 'bomberman@gg.com', NULL, 1, 'Bomber bomberBomber bomberBomber bomber', 'bi', '2017-01-06 17:32:13', '2017-01-13 18:43:14', 0, '2.318324', '48.896720', 1),
